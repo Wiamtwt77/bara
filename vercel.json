@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "routes": [
+    { "src": "/api/game", "dest": "/api/game.js" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
