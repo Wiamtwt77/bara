@@ -16,15 +16,16 @@ module.exports = async (req, res) => {
   const systemPrompt = `You are a game generator for "برا السالفة" (Out of Context) in Arabic.
 
 Rules:
-- Topics must be from DAILY LIFE, familiar to everyone (school, restaurant, travel, work, family, shopping, weather, hobbies, movies, music, food, sports, etc.)
+- Topics must be SLIGHTLY unusual but still relatable — from daily life but with a funny/weird twist
+  Examples: "مطعم برجر يقدم الحلوى مع الوجبات", "مدرسة تدرس الرقص بدلاً من الرياضيات", "حفلة عيد ميلاد في المقبرة", "متجر ملابس يبيع الزي الرسمي فقط"
 - The fake topic must be in the SAME category but a DIFFERENT specific thing
-- Hints must be very close and subtle - the spy hint should align with fakeTopic without being obviously wrong
-- Avoid these already-used topics: ${used.join(', ') || 'none'}
+- Hints must be very close and subtle
+- Avoid these used topics: ${used.join(', ') || 'none'}
 - Output ONLY valid JSON
 
 Output format:
 {
-  "topic": "الموضوع الحقيقي (معروف ويومي)",
+  "topic": "الموضوع الحقيقي (غريب قليلاً لكن مألوف)",
   "fakeTopic": "الموضوع الخاطئ (نفس التصنيف لكن مختلف)",
   "category": "التصنيف",
   "spyIndex": 0,
@@ -62,14 +63,12 @@ Output format:
       gameData = match ? JSON.parse(match[0]) : null;
     }
 
-    // Fallback data
     if (!gameData || !gameData.topic) {
       const pool = [
-        {t:'مطعم البرجر الشهير', f:'مطعم البيتزا الشهير', c:'مطاعم', h:['البرجر يُحضر باللحم المشوي','الصوص سرّ العائلة','البطاطس مقرمشة','الجبنة تذوب فوق اللحم']},
-        {t:'امتحان الرياضيات الصعب', f:'امتحان اللغة العربية الصعب', c:'مدرسة', h:['المعادلات تحتاج تركيزاً','الآلة الحاسبة مسموحة','الوقت 90 دقيقة','الأسئلة مقالية']},
-        {t:'رحلة البحر الأسبوعية', f:'رحلة البر الأسبوعية', c:'سفر', h:['الأمواج هادئة اليوم','الشمس ساطعة على الماء','الصيد متوقع','الغداء على متن القارب']},
-        {t:'شراء ملابس العيد', f:'شراء أثاث المنزل', c:'تسوق', h:['المقاسات تختلف بين المحلات','التخفيضات مغرية','الألوان هذا الموسم زاهية','الدفع كان بالبطاقة']},
-        {t:'مباراة كرة القدم', f:'مباراة كرة السلة', c:'رياضة', h:['الملعب ممتلئ بالجماهير','الحكم أعلن ركلة جزاء','التبديل في الدقيقة 70','الهدف الأخير في الوقت بدل الضائع']}
+        {t:'مطعم برجر يقدم الحلوى مع كل وجبة', f:'مطعم بيتزا يقدم الشوربة مع كل وجبة', c:'مطاعم', h:['البرجر يأتي مع قطعة كيك','الصوص حلو المذاق','الزبائن يطلبون الحلو أولاً','القائمة مقلوبة']},
+        {t:'مدرسة تدرس الرقص بدلاً من الرياضيات', f:'مدرسة تدرس الغناء بدلاً من العلوم', c:'مدرسة', h:['الفصل فيه مرآة كبيرة','الطلاب يرتدون أحذية خاصة','الامتحان عرض رقص','المدرس يصفق للإيقاع']},
+        {t:'حفلة عيد ميلاد في المقبرة', f:'حفلة زفاف في المستشفى', c:'مناسبات', h:['البالونات سوداء اللون','الكعكة على شكل تابوت','الضيوف يرتدون أسود','الهدايا عبارة عن شموع']},
+        {t:'متجر ملابس يبيع الزي الرسمي فقط', f:'متجر أحذية يبيع النعال فقط', c:'تسوق', h:['البنطالون ممنوع','الكل يرتدي بدلة','القمصان بيضاء حصراً','الأسعار غالية جداً']}
       ];
       const pick = pool[Math.floor(Math.random() * pool.length)];
       gameData = {
