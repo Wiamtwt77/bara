@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>برا السالفة</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,sans-serif}
+body{background:#0a0a0f;color:#e0e0e0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.screen{display:none;width:100%;max-width:500px}
+.screen.active{display:block}
+
+h1{color:#0a84ff;text-align:center;margin-bottom:8px;font-size:28px}
+.subtitle{text-align:center;color:#888;margin-bottom:30px;font-size:14px}
+
+input,button,select{width:100%;padding:14px;border:none;border-radius:12px;font-size:16px;margin-bottom:12px;outline:none}
+input,select{background:#1a1a24;color:#fff;border:1px solid #2a2a3a}
+button{background:#0a84ff;color:#fff;cursor:pointer;font-weight:bold}
+button:hover{background:#0066cc}
+
+.card{background:#1a1a24;border:1px solid #2a2a3a;border-radius:16px;padding:20px;margin-bottom:16px;text-align:center}
+.card-title{color:#0a84ff;font-size:14px;font-weight:bold;margin-bottom:8px}
+.card-text{color:#ccc;line-height:1.7;font-size:18px}
+
+.role-badge{display:inline-block;padding:8px 20px;border-radius:30px;font-size:16px;font-weight:bold;margin:12px 0;background:#30d15820;color:#30d158;border:2px solid #30d158}
+
+.timer{font-size:64px;text-align:center;color:#0a84ff;font-weight:bold;margin:20px 0}
+
+.blackout{background:#000;color:#ff2d55;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;position:fixed;top:0;left:0;right:0;bottom:0;z-index:100}
+.blackout h1{font-size:48px;margin-bottom:20px}
+.blackout p{font-size:18px;color:#888}
+
+.vote-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.vote-btn{background:#1a1a24;border:2px solid #2a2a3a;padding:16px;border-radius:12px;cursor:pointer;text-align:center;color:#fff}
+.vote-btn:hover{border-color:#0a84ff}
+.vote-btn.selected{border-color:#0a84ff;background:#0a84ff20}
+
+.reveal-screen{background:#0a0a0f;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+.reveal-title{font-size:36px;color:#ff2d55;margin-bottom:20px}
+.reveal-topic{font-size:24px;color:#0a84ff;margin-bottom:12px}
+.sparkle{width:100px;height:100px;margin:20px auto;background:radial-gradient(circle,#ff2d55,#ff9500,#0a84ff);border-radius:50%}
+
+.mode-select{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.mode-card{background:#1a1a24;border:2px solid #2a2a3a;border-radius:16px;padding:20px;cursor:pointer;text-align:center}
+.mode-card:hover{border-color:#0a84ff}
+.mode-card h3{color:#0a84ff;margin-bottom:8px}
+.mode-card p{color:#888;font-size:13px}
+
+.loading{text-align:center;padding:60px;color:#888}
+.spinner{width:50px;height:50px;border:4px solid #2a2a3a;border-top-color:#0a84ff;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div id="screen-mode" class="screen active">
+  <h1>🎭 برا السالفة</h1>
+  <p class="subtitle">اختر وضع اللعب</p>
+  <div class="mode-select">
+    <div class="mode-card" onclick="selectMode(1)">
+      <h3>🤡 الجاسوس الغافل</h3>
+      <p>الجاسوس لا يعرف أنه جاسوس!</p>
+    </div>
+    <div class="mode-card" onclick="alert('قريباً!')">
+      <h3>🕵️‍♂️ جاسوس وكاشف</h3>
+      <p>صراع ذكاء</p>
+    </div>
+  </div>
+</div>
+
+<div id="screen-setup" class="screen">
+  <h1>🤡 الجاسوس الغافل</h1>
+  <p class="subtitle">كم لاعباً؟</p>
+  <select id="playerCount">
+    <option value="3">3 لاعبين</option>
+    <option value="4" selected>4 لاعبين</option>
+    <option value="5">5 لاعبين</option>
+    <option value="6">6 لاعبين</option>
+    <option value="7">7 لاعبين</option>
+    <option value="8">8 لاعبين</option>
+  </select>
+  <button onclick="startGame()">ابدأ</button>
+  <button onclick="showScreen('screen-mode')" style="background:#2a2a3a">رجوع</button>
+</div>
+
+<div id="screen-loading" class="screen">
+  <div class="loading">
+    <div class="spinner"></div>
+    <div>AI يجهز اللعبة...</div>
+  </div>
+</div>
+
+<div id="screen-name" class="screen">
+  <h1>👤 اللاعب <span id="current-player-num">1</span></h1>
+  <p class="subtitle">أدخل اسمك</p>
+  <input id="playerNameInput" placeholder="اسمك..." maxlength="20">
+  <button onclick="submitName()">التالي →</button>
+</div>
+
+<div id="screen-role" class="screen">
+  <h1>🎭 دورك</h1>
+  <div class="card">
+    <div class="role-badge">أنت داخل الموضوع ✅</div>
+    <div class="card-title">الموضوع</div>
+    <div id="role-topic" class="card-text"></div>
+    <div class="card-title" style="margin-top:16px">تفصيلك</div>
+    <div id="role-detail" class="card-text" style="font-size:16px;color:#888"></div>
+  </div>
+  <button onclick="confirmRole()">فهمت 👍</button>
+</div>
+
+<div id="screen-blackout" class="blackout" style="display:none">
+  <h1>🚫 لا تنظر!</h1>
+  <p>مرر الهاتف للاعب التالي</p>
+  <button onclick="nextPlayer()" style="margin-top:30px;width:auto;padding:16px 40px">أنا اللاعب التالي</button>
+</div>
+
+<div id="screen-dialogue" class="screen">
+  <h1>💬 الحوار</h1>
+  <div class="timer" id="dialogue-timer">03:00</div>
+  <div class="card">
+    <div class="card-title">تذكير</div>
+    <div class="card-text" style="font-size:14px">
+      • تكلموا بحرية عن الموضوع<br>
+      • حاولوا اكتشاف من يتصرف بغرابة<br>
+      • الجاسوس يحاول فهم الموضوع!<br>
+      • لا تذكروا الكلمة المفتاحية مباشرة
+    </div>
+  </div>
+  <button onclick="endDialogue()">انتهى الوقت ⏭️</button>
+</div>
+
+<div id="screen-voting" class="screen">
+  <h1>🗳️ من برا السالفة؟</h1>
+  <p class="subtitle">صوت بسرية</p>
+  <div id="vote-list" class="vote-grid"></div>
+  <button onclick="submitVote()">تصويت</button>
+</div>
+
+<div id="screen-reveal" class="reveal-screen" style="display:none">
+  <div class="sparkle"></div>
+  <div class="reveal-title">🎆 الكشف! 🎆</div>
+  <div class="reveal-topic" id="reveal-real-topic"></div>
+  <div class="reveal-topic" id="reveal-spy-name"></div>
+  <div class="card" style="max-width:400px;width:100%">
+    <div class="card-title">الموضوع الخاطئ</div>
+    <div id="reveal-fake-topic" class="card-text" style="color:#ff2d55"></div>
+    <div class="card-title" style="margin-top:16px">النتيجة</div>
+    <div id="reveal-result" class="card-text" style="font-size:20px"></div>
+  </div>
+  <button onclick="saveAndMenu()" style="margin-top:20px">القائمة الرئيسية</button>
+</div>
+
+<script>
+let game = {
+  playerCount: 0, players: [], currentPlayer: 0,
+  topic: '', fakeTopic: '', spyIndex: 0, details: [],
+  votes: {}, selectedVote: undefined, dialogueTime: 180
+};
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function selectMode(mode) {
+  if (mode === 1) showScreen('screen-setup');
+}
+
+async function startGame() {
+  game.playerCount = parseInt(document.getElementById('playerCount').value);
+  game.players = []; game.currentPlayer = 0; game.votes = {};
+  showScreen('screen-loading');
+
+  try {
+    const res = await fetch('/api/game', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({players: game.playerCount})
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error('Server error: ' + text.substring(0, 100));
+    }
+
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+
+    game.topic = data.topic;
+    game.fakeTopic = data.fakeTopic;
+    game.spyIndex = data.spyIndex;
+    game.details = data.details;
+
+    showScreen('screen-name');
+    document.getElementById('current-player-num').textContent = '1';
+  } catch (e) {
+    alert('خطأ: ' + e.message);
+    showScreen('screen-setup');
+  }
+}
+
+function submitName() {
+  const name = document.getElementById('playerNameInput').value.trim();
+  if (!name) return alert('أدخل اسمك!');
+  game.players.push(name);
+  document.getElementById('playerNameInput').value = '';
+
+  const isSpy = game.currentPlayer === game.spyIndex;
+  const topicToShow = isSpy ? game.fakeTopic : game.topic;
+  const detail = game.details[game.currentPlayer] || 'تفاصيل سرية';
+
+  document.getElementById('role-topic').textContent = topicToShow;
+  document.getElementById('role-detail').textContent = detail;
+
+  showScreen('screen-role');
+}
+
+function confirmRole() {
+  document.getElementById('screen-blackout').style.display = 'flex';
+}
+
+function nextPlayer() {
+  document.getElementById('screen-blackout').style.display = 'none';
+  game.currentPlayer++;
+
+  if (game.currentPlayer >= game.playerCount) {
+    startDialogue();
+  } else {
+    showScreen('screen-name');
+    document.getElementById('current-player-num').textContent = game.currentPlayer + 1;
+  }
+}
+
+function startDialogue() {
+  showScreen('screen-dialogue');
+  game.dialogueTime = 180;
+  updateTimer();
+  game.timerInterval = setInterval(() => {
+    game.dialogueTime--;
+    updateTimer();
+    if (game.dialogueTime <= 0) {
+      clearInterval(game.timerInterval);
+      endDialogue();
+    }
+  }, 1000);
+}
+
+function updateTimer() {
+  const m = Math.floor(game.dialogueTime / 60).toString().padStart(2, '0');
+  const s = (game.dialogueTime % 60).toString().padStart(2, '0');
+  document.getElementById('dialogue-timer').textContent = m + ':' + s;
+}
+
+function endDialogue() {
+  clearInterval(game.timerInterval);
+  game.currentPlayer = 0;
+  game.votes = {};
+  game.selectedVote = undefined;
+  showVoting();
+}
+
+function showVoting() {
+  showScreen('screen-voting');
+  const list = document.getElementById('vote-list');
+  list.innerHTML = '';
+
+  for (let i = 0; i < game.playerCount; i++) {
+    const btn = document.createElement('div');
+    btn.className = 'vote-btn';
+    btn.textContent = game.players[i];
+    btn.onclick = () => {
+      document.querySelectorAll('.vote-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      game.selectedVote = i;
+    };
+    list.appendChild(btn);
+  }
+}
+
+function submitVote() {
+  if (game.selectedVote === undefined) return alert('اختر لاعباً!');
+
+  game.votes[game.currentPlayer] = game.selectedVote;
+  game.currentPlayer++;
+  game.selectedVote = undefined;
+
+  if (game.currentPlayer >= game.playerCount) {
+    showResults();
+  } else {
+    document.getElementById('screen-blackout').style.display = 'flex';
+    document.querySelector('#screen-blackout h1').textContent = '🗳️ صوت بسرية';
+    document.querySelector('#screen-blackout p').textContent = 'لا تُظهر اختيارك لأحد!';
+  }
+}
+
+function showResults() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-reveal').style.display = 'flex';
+
+  const voteCounts = {};
+  for (let i = 0; i < game.playerCount; i++) voteCounts[i] = 0;
+  for (let v in game.votes) voteCounts[game.votes[v]]++;
+
+  let maxVotes = -1, suspectedSpy = -1;
+  for (let i = 0; i < game.playerCount; i++) {
+    if (voteCounts[i] > maxVotes) { maxVotes = voteCounts[i]; suspectedSpy = i; }
+  }
+
+  const caught = suspectedSpy === game.spyIndex;
+
+  document.getElementById('reveal-real-topic').textContent = 'الموضوع الحقيقي: ' + game.topic;
+  document.getElementById('reveal-spy-name').textContent = '🕵️‍♂️ الجاسوس كان: ' + game.players[game.spyIndex];
+  document.getElementById('reveal-fake-topic').textContent = game.fakeTopic;
+
+  const resultEl = document.getElementById('reveal-result');
+  if (caught) {
+    resultEl.innerHTML = '🎉 الجميع فاز! اكتشفتم الجاسوس!<br><small>الجاسوس كان يظن أن الموضوع: ' + game.fakeTopic + '</small>';
+    resultEl.style.color = '#30d158';
+  } else {
+    resultEl.innerHTML = '😂 الجاسوس فاز!<br><small>' + game.players[game.spyIndex] + ' كان يظن أن الجميع يتحدثون عن ' + game.fakeTopic + '</small>';
+    resultEl.style.color = '#ff2d55';
+  }
+}
+
+function saveAndMenu() {
+  document.getElementById('screen-reveal').style.display = 'none';
+  showScreen('screen-mode');
+}
+</script>
+</body>
+</html>
