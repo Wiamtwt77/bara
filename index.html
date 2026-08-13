@@ -40,18 +40,19 @@ button:disabled{background:#333;color:#666;cursor:not-allowed;transform:none}
 .vote-btn.selected{border-color:#0a84ff;background:#0a84ff20}
 
 .reveal-screen{background:#0a0a0f;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
-.reveal-title{font-size:40px;color:#ff2d55;margin-bottom:20px}
-.reveal-topic{font-size:22px;color:#0a84ff;margin-bottom:12px}
+.reveal-title{font-size:40px;color:#ff2d55;margin-bottom:20px;animation:fadeIn .6s ease}
+.reveal-topic{font-size:22px;color:#0a84ff;margin-bottom:12px;animation:fadeIn .8s ease .2s both}
+.reveal-spy{font-size:20px;color:#ff9500;margin-bottom:24px;animation:fadeIn .8s ease .4s both}
 .sparkle{width:100px;height:100px;margin:20px auto;background:radial-gradient(circle,#ff2d55,#ff9500,#0a84ff);border-radius:50%;animation:pulse 1.5s infinite}
 
 .cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
-.cat-btn{background:#1a1a24;border:2px solid #2a2a3a;padding:14px;border-radius:12px;cursor:pointer;text-align:center;color:#ccc;font-size:14px}
+.cat-btn{background:#1a1a24;border:2px solid #2a2a3a;padding:14px;border-radius:12px;cursor:pointer;text-align:center;color:#ccc;font-size:14px;transition:.2s}
 .cat-btn:hover{border-color:#0a84ff}
 .cat-btn.selected{border-color:#30d158;background:#30d15820;color:#30d158;font-weight:bold}
 
 .mode-select{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
-.mode-card{background:#1a1a24;border:2px solid #2a2a3a;border-radius:16px;padding:24px;cursor:pointer;text-align:center}
-.mode-card:hover{border-color:#0a84ff}
+.mode-card{background:#1a1a24;border:2px solid #2a2a3a;border-radius:16px;padding:24px;cursor:pointer;text-align:center;transition:.2s}
+.mode-card:hover{border-color:#0a84ff;background:#0a84ff10}
 .mode-card h3{color:#0a84ff;margin-bottom:10px}
 .mode-card p{color:#888;font-size:13px}
 
@@ -61,12 +62,12 @@ button:disabled{background:#333;color:#666;cursor:not-allowed;transform:none}
 
 .hint-box{background:#1a1a24;border-left:4px solid #ff9500;padding:16px;border-radius:0 12px 12px 0;margin:12px 0;color:#ccc}
 
-.result-win{color:#30d158;font-size:24px;font-weight:bold;margin:16px 0}
-.result-lose{color:#ff2d55;font-size:24px;font-weight:bold;margin:16px 0}
+.result-win{color:#30d158;font-size:26px;font-weight:bold;margin:16px 0}
+.result-lose{color:#ff2d55;font-size:26px;font-weight:bold;margin:16px 0}
 
-.action-btns{display:flex;gap:10px;margin-top:20px}
-.action-btns button{flex:1}
-.btn-secondary{background:#2a2a3a}
+.replay-btn{background:#30d158;font-size:20px;padding:18px;margin-top:20px}
+.replay-btn:hover{background:#28b24a}
+.new-btn{background:#2a2a3a;margin-top:10px}
 </style>
 </head>
 <body>
@@ -93,7 +94,7 @@ button:disabled{background:#333;color:#666;cursor:not-allowed;transform:none}
   <p class="subtitle">اختر واحداً أو أكثر</p>
   <div class="cat-grid" id="cat-grid"></div>
   <button id="btn-cats" onclick="goSetup()" disabled>التالي</button>
-  <button onclick="showPage('p-mode')" class="btn-secondary">رجوع</button>
+  <button onclick="showPage('p-mode')" style="background:#2a2a3a">رجوع</button>
 </div>
 
 <!-- 2: اللاعبون -->
@@ -109,8 +110,8 @@ button:disabled{background:#333;color:#666;cursor:not-allowed;transform:none}
     <option value="8">8 لاعبين</option>
   </select>
   <div id="p-inputs"></div>
-  <button onclick="startGame()">ابدأ</button>
-  <button onclick="showPage('p-cats')" class="btn-secondary">رجوع</button>
+  <button onclick="startGame()">ابدأ اللعبة</button>
+  <button onclick="showPage('p-cats')" style="background:#2a2a3a">رجوع</button>
 </div>
 
 <!-- 3: تحميل -->
@@ -169,17 +170,15 @@ button:disabled{background:#333;color:#666;cursor:not-allowed;transform:none}
   <div class="sparkle"></div>
   <div class="reveal-title">🎆 الكشف!</div>
   <div class="reveal-topic" id="r-topic"></div>
-  <div class="reveal-topic" id="r-spy"></div>
+  <div class="reveal-spy" id="r-spy"></div>
   <div class="card" style="max-width:420px;width:100%">
     <div class="card-title">الموضوع الخاطئ</div>
     <div id="r-fake" style="color:#ff2d55;font-size:18px"></div>
     <div class="card-title" style="margin-top:16px">النتيجة</div>
     <div id="r-result"></div>
   </div>
-  <div class="action-btns" style="max-width:420px;width:100%;margin-top:24px">
-    <button onclick="newRound()">🔄 جولة جديدة</button>
-    <button onclick="newPlayers()" class="btn-secondary">👥 لاعبون جدد</button>
-  </div>
+  <button class="replay-btn" onclick="replayGame()">🔄 العب مرة أخرى</button>
+  <button class="new-btn" onclick="resetAll()">🏠 القائمة الرئيسية</button>
 </div>
 
 <script>
@@ -188,14 +187,13 @@ const CATS = ['يوميات','مدرسة','مطاعم','سفر','عمل','منا
 
 let G = {players:[],current:0,topic:'',fake:'',spy:0,hints:[],votes:{},sel:-1,time:180,used:[],cats:[],timer:null};
 
-// ====== مساعدة: عرض الصفحة بأمان ======
 function showPage(id) {
   document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
   const el = document.getElementById(id);
   if (el) el.classList.add('active');
 }
 
-// ====== 0: اختيار الوضع ======
+// ====== 0: الوضع ======
 function goCategories() {
   const grid = document.getElementById('cat-grid');
   if (!grid) return;
@@ -212,8 +210,7 @@ function goCategories() {
 
 function updateCatBtn() {
   const btn = document.getElementById('btn-cats');
-  if (!btn) return;
-  btn.disabled = document.querySelectorAll('.cat-btn.selected').length === 0;
+  if (btn) btn.disabled = document.querySelectorAll('.cat-btn.selected').length === 0;
 }
 
 // ====== 1: التصنيفات ======
@@ -272,7 +269,7 @@ async function startGame() {
 
     showRole();
   } catch (e) {
-    alert('خطأ: ' + e.message);
+    alert('خطأ في الاتصال: ' + e.message);
     showPage('p-setup');
   }
 }
@@ -300,10 +297,12 @@ function goBlackout() {
   if (el) el.style.display = 'flex';
 }
 
+// ====== ⚠️ مهم: لا نزيد current هنا! ======
 function nextPlayer() {
   const el = document.getElementById('p-blackout');
   if (el) el.style.display = 'none';
-  G.current++;
+  // G.current تم زيادته بالفعل في submitVote
+  // لا نلمس G.current هنا!
   if (G.current >= G.players.length) {
     startDialogue();
   } else {
@@ -335,7 +334,7 @@ function updateTimer() {
 
 function endDialogue() {
   if (G.timer) { clearInterval(G.timer); G.timer = null; }
-  G.current = 0;
+  G.current = 0;  // نبدأ التصويت من اللاعب 0
   G.votes = {};
   G.sel = -1;
   showVote();
@@ -363,8 +362,9 @@ function showVote() {
 function submitVote() {
   if (G.sel === -1) { alert('اختر لاعباً!'); return; }
   G.votes[G.current] = G.sel;
-  G.current++;
   G.sel = -1;
+  G.current++;  // ننتقل للاعب التالي
+
   if (G.current >= G.players.length) {
     showReveal();
   } else {
@@ -410,8 +410,8 @@ function showReveal() {
   }
 }
 
-// ====== حلقة ======
-function newRound() {
+// ====== أزرار نهاية اللعبة ======
+function replayGame() {
   const el = document.getElementById('p-reveal');
   if (el) el.style.display = 'none';
   G.current = 0;
@@ -420,7 +420,7 @@ function newRound() {
   startGame();
 }
 
-function newPlayers() {
+function resetAll() {
   const el = document.getElementById('p-reveal');
   if (el) el.style.display = 'none';
   G.players = [];
