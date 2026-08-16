@@ -38,7 +38,7 @@
 <script>
 const state = {
   screen: "setup", playerCount: 4, players: [], round: 1, phase: "event", event: null,
-  currentPlayerIndex: 0, secretActions: [], votes: {}, logs: [], loading: false, error: "",
+  currentPlayerIndex: 0, secretActions: [], votes: [], logs: [], loading: false, error: "",
   trialResult: null, cardChoices: [], gameOver: false
 };
 const app = document.getElementById("app");
@@ -115,7 +115,7 @@ function game() {
   bindGameEvents();
 }
 
-function loading() { return `<div class="loading"><div><div class="dots"><i></i><i></i><i></i></div><div class="muted">الذكاء الاصطناعي يعالج القرار...</div></div></div>`; }
+function loading() { return `<div class="loading"><div><div class="dots"><i></i><i></i><i></i></div><div class="muted">الخادم يعالج الطلب...</div></div></div>`; }
 
 function phaseContent() {
   if (state.phase === "event") {
@@ -138,7 +138,7 @@ function phaseContent() {
     let html = `<h2>🗳️ نتائج التصويت والاشتباه</h2>`;
     alive().forEach(p => {
       const c = counts[p.id] || 0;
-      html += `<div class="vote-bar"><span class="name">${esc(p.name)}</span><div class="bar"><div class="fill" style="width:${Math.round((c / alive().length) * 100)}%"></div></div><span>${c} صوت</span></div>`;
+      html += `<div class="vote-bar"><span class="name">${esc(p.name)}</span><div class="bar"><div class="fill" style="width:${Math.round((c / Math.max(1, alive().length)) * 100)}%"></div></div><span>${c} صوت</span></div>`;
     });
     if (accused) html += `<div class="notice">⚖️ المتهم المعروض على المنصة: <strong>${esc(accused.name)}</strong></div>`;
     html += `<div class="actions"><button class="btn primary full" id="runTrial">إصدار حكم المحكمة</button></div>`;
@@ -189,13 +189,13 @@ function privateScreen() {
     
     <h3 style="margin-top:15px">اختر فعلك السري أو استغلالك للسيادة</h3>
     <div class="private-actions">
-      <button class="private-action" data-act="conspiracy"><strong>🗡️ مؤامرة تكتيكية (تكلفة: 2 نفوذ)</strong><small>تستهدف خصماً وتلحق به الضرر.</small></button>
-      <button class="private-action" data-act="exploit" style="border-color:var(--danger)"><strong>🔥 استغلال دموي مظلم</strong><small>اسحب 2 نفوذ من ضحية محددة قسراً لترفع نفوذك، تفقد 20 نقطة سمعة!</small></button>
+      <button class="private-action" data-act="conspiracy" style="border-color:var(--accent)"><strong>🗡️ مؤامرة تكتيكية (تكلفة: 2 نفوذ)</strong><small>تستهدف خصماً وتلحق به الضرر.</small></button>
+      <button class="private-action" data-act="exploit"><strong>🔥 استغلال دموي مظلم</strong><small>اسحب 2 نفوذ من ضحية محددة قسراً لترفع نفوذك، تفقد 20 نقطة سمعة!</small></button>
       <button class="private-action" data-act="protect"><strong>🛡️ درع الحماية (تكلفة: 1 نفوذ)</strong><small>تحصين نفسك من الأضرار.</small></button>
       <button class="private-action" data-act="monopoly"><strong>💰 احتكار السوق</strong><small>+2 نفوذ فوري على حساب نزاهتك (-5 سمعة).</small></button>
     </div>
 
-    <div id="target-selector-box" style="margin-top:15px; display:none;">
+    <div id="target-selector-box" style="margin-top:15px;">
       <label class="muted">اختر الضحية المستهدفة لهذا الفعل:</label>
       <select id="action-target">${alive().filter(t => t.id !== p.id).map(target => `<option value="${target.id}">${esc(target.name)}</option>`).join("")}</select>
     </div>
@@ -220,7 +220,6 @@ function privateScreen() {
   });
 
   document.getElementById("confirmAction").onclick = () => {
-    // التحقق من الموارد قبل التنفيذ
     if (selectedAction === "conspiracy" && p.influence < 2) {
       alert("عذراً، لا تمتلك رصيد نفوذ كافي لتنفيذ المؤامرة (تحتاج 2 نفوذ).");
       return;
@@ -230,7 +229,7 @@ function privateScreen() {
       return;
     }
 
-    const targetId = document.getElementById("action-target") ? +document.getElementById("action-target").value : null;
+    const targetId = document.getElementById("action-target") && targetBox.style.display !== "none" ? +document.getElementById("action-target").value : null;
     const voteId = +document.getElementById("vote-target").value;
 
     state.secretActions.push({ actorId: p.id, action: selectedAction, targetId: targetId });
@@ -256,7 +255,6 @@ function applySecretActions() {
         target.shield = false;
       }
     } else if (sa.action === "exploit" && target && target.alive) {
-      // الاستغلال المظلم الفعلي: سحب موارد من الضحية وزيادة نفوذ المعتدي على حساب السمعة
       const drainAmount = Math.min(2, target.influence);
       target.influence -= drainAmount;
       actor.influence += drainAmount;
@@ -271,6 +269,7 @@ function applySecretActions() {
       actor.reputation -= 5;
       state.logs.push(`💰 احتكر ${actor.name} السوق لرفع نفوذه.`);
     }
+    if (target && target.hp <= 0) target.alive = false;
   });
 }
 
