@@ -1,33 +1,7 @@
-# المحكمة السرية — Vercel
-
-## الملفات
-
-- `index.html` واجهة اللعبة.
-- `api/game.js` نقطة API serverless للذكاء الاصطناعي.
-- `vercel.json` إعداد Vercel.
-
-## إعداد المفتاح
-
-في Vercel:
-Project Settings → Environment Variables
-
-أضف:
-
-`OPENROUTER_KEY`
-
-بقيمة مفتاح OpenRouter.
-
-اختياري:
-`OPENROUTER_MODEL`
-
-الافتراضي الموجود في الكود:
-`openai/gpt-4o-mini`
-
-بعد إضافة المتغير نفذ Redeploy.
-
-لا تضع المفتاح داخل `index.html` أو GitHub.
-
-## التشغيل
-
-ارفع الملفات إلى GitHub واربط المستودع بـ Vercel.
-واجهة اللعبة تستدعي `/api/game`، والـAPI يقرأ المفتاح من `process.env.OPENROUTER_KEY`.
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
