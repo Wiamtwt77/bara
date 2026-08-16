@@ -1,435 +1,240 @@
-<!DOCTYPE html>
-<html dir="rtl">
+<!doctype html>
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>برا السالفة</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,sans-serif}
-body{background:#0a0a0f;color:#e0e0e0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
-.page{display:none;width:100%;max-width:500px}
-.page.active{display:block;animation:fadeIn .4s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-
-h1{color:#0a84ff;text-align:center;margin-bottom:8px;font-size:26px}
-p.subtitle{text-align:center;color:#888;margin-bottom:24px;font-size:14px}
-
-input,button,select{width:100%;padding:14px;border:none;border-radius:12px;font-size:16px;margin-bottom:12px;outline:none}
-input,select{background:#1a1a24;color:#fff;border:1px solid #2a2a3a}
-button{background:#0a84ff;color:#fff;cursor:pointer;font-weight:bold;transition:.2s}
-button:hover{background:#0066cc;transform:translateY(-2px)}
-button:disabled{background:#333;color:#666;cursor:not-allowed;transform:none}
-
-.card{background:#1a1a24;border:1px solid #2a2a3a;border-radius:16px;padding:20px;margin-bottom:16px;text-align:center}
-.card-title{color:#0a84ff;font-size:13px;font-weight:bold;margin-bottom:8px;text-transform:uppercase}
-.card-text{color:#ccc;line-height:1.7;font-size:17px}
-
-.role-badge{display:inline-block;padding:10px 24px;border-radius:30px;font-size:16px;font-weight:bold;margin:12px 0;background:#30d15820;color:#30d158;border:2px solid #30d158}
-
-.timer{font-size:64px;text-align:center;color:#0a84ff;font-weight:bold;margin:20px 0}
-.timer.danger{color:#ff2d55;animation:pulse .5s infinite}
-
-.blackout{background:#000;color:#ff2d55;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;position:fixed;top:0;left:0;right:0;bottom:0;z-index:100}
-.blackout h1{font-size:48px;margin-bottom:16px}
-.blackout p{font-size:18px;color:#888}
-
-.vote-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
-.vote-btn{background:#1a1a24;border:2px solid #2a2a3a;padding:18px;border-radius:14px;cursor:pointer;text-align:center;color:#fff;font-size:16px;transition:.2s}
-.vote-btn:hover{border-color:#0a84ff}
-.vote-btn.selected{border-color:#0a84ff;background:#0a84ff20}
-
-.reveal-screen{background:#0a0a0f;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
-.reveal-title{font-size:40px;color:#ff2d55;margin-bottom:20px;animation:fadeIn .6s ease}
-.reveal-topic{font-size:22px;color:#0a84ff;margin-bottom:12px;animation:fadeIn .8s ease .2s both}
-.reveal-spy{font-size:20px;color:#ff9500;margin-bottom:24px;animation:fadeIn .8s ease .4s both}
-.sparkle{width:100px;height:100px;margin:20px auto;background:radial-gradient(circle,#ff2d55,#ff9500,#0a84ff);border-radius:50%;animation:pulse 1.5s infinite}
-
-.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
-.cat-btn{background:#1a1a24;border:2px solid #2a2a3a;padding:14px;border-radius:12px;cursor:pointer;text-align:center;color:#ccc;font-size:14px;transition:.2s}
-.cat-btn:hover{border-color:#0a84ff}
-.cat-btn.selected{border-color:#30d158;background:#30d15820;color:#30d158;font-weight:bold}
-
-.mode-select{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
-.mode-card{background:#1a1a24;border:2px solid #2a2a3a;border-radius:16px;padding:24px;cursor:pointer;text-align:center;transition:.2s}
-.mode-card:hover{border-color:#0a84ff;background:#0a84ff10}
-.mode-card h3{color:#0a84ff;margin-bottom:10px}
-.mode-card p{color:#888;font-size:13px}
-
-.loading{text-align:center;padding:60px;color:#888}
-.spinner{width:50px;height:50px;border:4px solid #2a2a3a;border-top-color:#0a84ff;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-.hint-box{background:#1a1a24;border-left:4px solid #ff9500;padding:16px;border-radius:0 12px 12px 0;margin:12px 0;color:#ccc}
-
-.result-win{color:#30d158;font-size:26px;font-weight:bold;margin:16px 0}
-.result-lose{color:#ff2d55;font-size:26px;font-weight:bold;margin:16px 0}
-
-.replay-btn{background:#30d158;font-size:20px;padding:18px;margin-top:20px}
-.replay-btn:hover{background:#28b24a}
-.new-btn{background:#2a2a3a;margin-top:10px}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#090b12">
+  <title>المحكمة السرية</title>
+  <style>
+    :root{--bg:#090b12;--panel:#121724;--panel2:#171c2b;--border:#2a3245;--text:#f5f7fb;--muted:#9aa4b8;--accent:#8b5cf6;--danger:#b91c1c;--good:#15803d}
+    *{box-sizing:border-box} body{margin:0;min-height:100vh;background:radial-gradient(circle at 10% 0%,rgba(139,92,246,.18),transparent 28%),radial-gradient(circle at 100% 100%,rgba(185,28,28,.1),transparent 28%),var(--bg);color:var(--text);font-family:Arial,Tahoma,sans-serif}
+    button{font:inherit;cursor:pointer}.shell{width:min(960px,calc(100% - 24px));margin:auto;padding:22px 0 50px}.center{min-height:100vh;display:grid;place-items:center}
+    .hero{text-align:center;margin-bottom:22px}.eyebrow{display:inline-block;border:1px solid var(--border);background:#101421;color:#c4b5fd;border-radius:999px;padding:7px 12px;font-size:13px;margin-bottom:12px}
+    h1{margin:0;font-size:clamp(34px,7vw,60px)}h2,h3{margin-top:0}.hero p,.muted,.hint{color:var(--muted);line-height:1.8}
+    .panel,.private-box{background:rgba(18,23,36,.95);border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.24)}
+    .setup{width:min(620px,100%);margin:auto}.count-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:14px 0 18px}
+    .count-btn,.btn{border:1px solid var(--border);color:var(--text);background:var(--panel2);border-radius:13px;padding:13px 15px}.count-btn.active,.btn.primary{background:var(--accent);border-color:var(--accent)}
+    .btn.danger{background:var(--danger);border-color:var(--danger)}.btn.good{background:var(--good);border-color:var(--good)}.btn.full{width:100%}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px}.round{color:#a78bfa;font-size:13px;font-weight:700}.topbar h1{font-size:30px;margin:3px 0 0}
+    .players{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:9px;margin-bottom:15px}.player{background:#111625;border:1px solid var(--border);border-radius:15px;padding:11px}.player.dead{opacity:.34;filter:grayscale(1)}
+    .player-name{font-weight:700;font-size:13px}.stats{color:#cbd5e1;font-size:12px;margin-top:6px;display:grid;gap:3px}
+    .event{text-align:center;border:1px solid #343b52;background:#111624;border-radius:18px;padding:20px}.event-icon{font-size:42px}.event h2{font-size:28px;margin:7px 0}
+    .clues{display:grid;gap:8px;margin-top:14px}.clue{border:1px solid var(--border);background:#111624;border-radius:13px;padding:11px 13px;color:#dbeafe}
+    .actions,.private-actions,.targets{display:grid;gap:10px;margin-top:15px}.target{width:100%;display:flex;justify-content:space-between;text-align:right;background:#151a28;color:var(--text);border:1px solid var(--border);border-radius:15px;padding:15px}
+    .private-screen{min-height:100vh;display:grid;place-items:center;padding:20px}.private-box{width:min(620px,100%);text-align:center}.private-icon{font-size:52px}
+    .private-action{display:block;width:100%;text-align:right;color:var(--text);background:#171c2b;border:1px solid var(--border);border-radius:15px;padding:14px}.private-action strong{display:block;margin-bottom:4px}.private-action small{color:var(--muted);line-height:1.7}
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.card{min-height:120px;display:grid;place-items:center;align-content:center;gap:7px;text-align:center;border:1px solid var(--border);border-radius:16px;background:#151a28;color:var(--text);padding:12px}
+    .log{margin-top:15px}.log-item{padding:9px 0;border-bottom:1px solid #202638;color:#cbd5e1;font-size:13px}.loading{display:grid;place-items:center;min-height:250px;text-align:center}
+    .dots{display:flex;gap:6px;margin-bottom:10px}.dots i{width:8px;height:8px;border-radius:50%;background:#a78bfa;animation:b .75s infinite alternate}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+    @keyframes b{to{transform:translateY(-7px);opacity:.4}}.error{border:1px solid #7f1d1d;background:#2a1114;color:#fecaca;padding:13px;border-radius:13px;margin-top:12px}.notice{border:1px solid #4c3a0d;background:#241d0b;color:#fde68a;padding:12px;border-radius:13px;margin-top:12px}
+    @media(max-width:650px){.count-grid{grid-template-columns:repeat(3,1fr)}.cards{grid-template-columns:repeat(2,1fr)}}
+  </style>
 </head>
 <body>
-
-<!-- 0: الوضع -->
-<div id="p-mode" class="page active">
-  <h1>🎭 برا السالفة</h1>
-  <p class="subtitle">اختر وضع اللعب</p>
-  <div class="mode-select">
-    <div class="mode-card" onclick="goCategories()">
-      <h3>🤡 الجاسوس الغافل</h3>
-      <p>الجاسوس لا يعرف أنه جاسوس!</p>
-    </div>
-    <div class="mode-card" style="opacity:.5;cursor:not-allowed">
-      <h3>🕵️‍♂️ جاسوس وكاشف</h3>
-      <p>قريباً</p>
-    </div>
-  </div>
-</div>
-
-<!-- 1: التصنيفات -->
-<div id="p-cats" class="page">
-  <h1>📂 التصنيفات</h1>
-  <p class="subtitle">اختر واحداً أو أكثر</p>
-  <div class="cat-grid" id="cat-grid"></div>
-  <button id="btn-cats" onclick="goSetup()" disabled>التالي</button>
-  <button onclick="showPage('p-mode')" style="background:#2a2a3a">رجوع</button>
-</div>
-
-<!-- 2: اللاعبون -->
-<div id="p-setup" class="page">
-  <h1>👥 اللاعبون</h1>
-  <p class="subtitle">أدخل الأسماء</p>
-  <select id="p-count" onchange="renderInputs()">
-    <option value="3">3 لاعبين</option>
-    <option value="4" selected>4 لاعبين</option>
-    <option value="5">5 لاعبين</option>
-    <option value="6">6 لاعبين</option>
-    <option value="7">7 لاعبين</option>
-    <option value="8">8 لاعبين</option>
-  </select>
-  <div id="p-inputs"></div>
-  <button onclick="startGame()">ابدأ اللعبة</button>
-  <button onclick="showPage('p-cats')" style="background:#2a2a3a">رجوع</button>
-</div>
-
-<!-- 3: تحميل -->
-<div id="p-loading" class="page">
-  <div class="loading">
-    <div class="spinner"></div>
-    <div>AI يبتكر موضوعاً...</div>
-  </div>
-</div>
-
-<!-- 4: الدور -->
-<div id="p-role" class="page">
-  <h1 id="role-title">🎭 دورك</h1>
-  <div class="card">
-    <div class="role-badge">أنت داخل الموضوع ✅</div>
-    <div class="card-title">الموضوع</div>
-    <div id="role-topic" class="card-text" style="font-size:22px;font-weight:bold;color:#fff"></div>
-    <div class="card-title" style="margin-top:16px">تلميحك</div>
-    <div id="role-hint" class="hint-box"></div>
-  </div>
-  <button onclick="goBlackout()">فهمت 👍</button>
-</div>
-
-<!-- 5: ستارة -->
-<div id="p-blackout" class="blackout" style="display:none">
-  <h1>🚫 لا تنظر!</h1>
-  <p>مرر الهاتف للاعب التالي</p>
-  <button onclick="nextPlayer()" style="margin-top:30px;width:auto;padding:16px 40px">أنا اللاعب التالي ➡️</button>
-</div>
-
-<!-- 6: حوار -->
-<div id="p-dialogue" class="page">
-  <h1>💬 الحوار</h1>
-  <div class="timer" id="timer">03:00</div>
-  <div class="card">
-    <div class="card-title">تذكير</div>
-    <div class="card-text" style="font-size:14px">
-      • تكلموا بحرية عن الموضوع<br>
-      • حاولوا اكتشاف من يتصرف بغرابة<br>
-      • الجاسوس يحاول فهم الموضوع!
-    </div>
-  </div>
-  <button onclick="endDialogue()">انتهى الوقت ⏭️</button>
-</div>
-
-<!-- 7: تصويت -->
-<div id="p-vote" class="page">
-  <h1>🗳️ من برا السالفة؟</h1>
-  <p class="subtitle">اختر اللاعب المشتبه به</p>
-  <div id="vote-list" class="vote-grid"></div>
-  <button onclick="submitVote()">تصويت</button>
-</div>
-
-<!-- 8: كشف -->
-<div id="p-reveal" class="reveal-screen" style="display:none">
-  <div class="sparkle"></div>
-  <div class="reveal-title">🎆 الكشف!</div>
-  <div class="reveal-topic" id="r-topic"></div>
-  <div class="reveal-spy" id="r-spy"></div>
-  <div class="card" style="max-width:420px;width:100%">
-    <div class="card-title">الموضوع الخاطئ</div>
-    <div id="r-fake" style="color:#ff2d55;font-size:18px"></div>
-    <div class="card-title" style="margin-top:16px">النتيجة</div>
-    <div id="r-result"></div>
-  </div>
-  <button class="replay-btn" onclick="replayGame()">🔄 العب مرة أخرى</button>
-  <button class="new-btn" onclick="resetAll()">🏠 القائمة الرئيسية</button>
-</div>
+<div id="app"></div>
 
 <script>
-// ====== بيانات ======
-const CATS = ['يوميات','مدرسة','مطاعم','سفر','عمل','مناسبات','رياضة','تسوق','مواصلات','صحة','تكنولوجيا','منزل','طقس','أصدقاء','عائلة','هوايات','سينما','موسيقى','أزياء','طعام','كتب','ألعاب','حيوانات','طبخ'];
+const state={
+  screen:"setup",playerCount:4,players:[],round:1,phase:"event",event:null,
+  currentPlayerIndex:0,logs:[],loading:false,error:""
+};
+const app=document.getElementById("app");
+const esc=s=>String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+const alive=()=>state.players.filter(p=>p.alive);
 
-let G = {players:[],current:0,topic:'',fake:'',spy:0,hints:[],votes:{},sel:-1,time:180,used:[],cats:[],timer:null};
-
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-  const el = document.getElementById(id);
-  if (el) el.classList.add('active');
+function render(){
+  if(state.screen==="setup") return setup();
+  if(state.screen==="private") return privateScreen();
+  game();
 }
 
-// ====== 0: الوضع ======
-function goCategories() {
-  const grid = document.getElementById('cat-grid');
-  if (!grid) return;
-  grid.innerHTML = '';
-  CATS.forEach(c => {
-    const b = document.createElement('div');
-    b.className = 'cat-btn';
-    b.textContent = c;
-    b.onclick = () => { b.classList.toggle('selected'); updateCatBtn(); };
-    grid.appendChild(b);
-  });
-  showPage('p-cats');
+function setup(){
+  app.innerHTML=`
+  <main class="center"><div class="shell">
+    <section class="hero">
+      <div class="eyebrow">لعبة اجتماعية + مدير ذكاء اصطناعي</div>
+      <h1>المحكمة السرية</h1>
+      <p>مرروا الهاتف. نفذوا أفعالاً سرية. اتهموا. تحالفوا. انتقموا. ولا يوجد جاسوس ثابت.</p>
+    </section>
+    <section class="panel setup">
+      <h2>عدد اللاعبين</h2>
+      <div class="count-grid">${[3,4,5,6,7,8].map(n=>`<button class="count-btn ${state.playerCount===n?"active":""}" data-count="${n}">${n}</button>`).join("")}</div>
+      <button class="btn primary full" id="start">بدء اللعبة</button>
+      ${state.error?`<div class="error">${esc(state.error)}</div>`:""}
+      <p class="hint">كل لاعب يبدأ بـ 10 ❤️ و3 موارد.</p>
+    </section>
+  </div></main>`;
+  document.querySelectorAll("[data-count]").forEach(b=>b.onclick=()=>{state.playerCount=+b.dataset.count;render()});
+  document.getElementById("start").onclick=start;
 }
 
-function updateCatBtn() {
-  const btn = document.getElementById('btn-cats');
-  if (btn) btn.disabled = document.querySelectorAll('.cat-btn.selected').length === 0;
+async function start(){
+  state.screen="game";state.round=1;state.phase="event";state.logs=[];state.error="";
+  state.players=Array.from({length:state.playerCount},(_,i)=>({id:i+1,name:"اللاعب "+(i+1),hp:10,resources:3,cards:[],alive:true}));
+  await newEvent();
 }
 
-// ====== 1: التصنيفات ======
-function goSetup() {
-  const sel = document.querySelectorAll('.cat-btn.selected');
-  G.cats = Array.from(sel).map(b => b.textContent);
-  renderInputs();
-  showPage('p-setup');
+function game(){
+  const title={event:"حدث الجولة",secret:"الفعل السري",accuse:"جولة الاتهام",cards:"اختيار البطاقات",end:"نهاية الجولة"}[state.phase]||"";
+  app.innerHTML=`
+  <main class="shell">
+    <header class="topbar"><div><div class="round">الجولة ${state.round}</div><h1>${title}</h1></div><button class="btn" id="restart">إعادة</button></header>
+    <section class="players">${state.players.map(p=>`<article class="player ${p.alive?"":"dead"}"><div class="player-name">${esc(p.name)}</div><div class="stats"><span>❤️ ${p.hp}</span><span>◆ ${p.resources}</span><span>🎴 ${p.cards.length}</span></div></article>`).join("")}</section>
+    <section class="panel">${state.loading?loading():phase()}</section>
+    ${state.logs.length?`<section class="panel log"><h3>سجل اللعبة</h3>${state.logs.slice(-10).reverse().map(x=>`<div class="log-item">${esc(x)}</div>`).join("")}</section>`:""}
+  </main>`;
+  document.getElementById("restart").onclick=()=>{state.screen="setup";state.players=[];state.logs=[];state.error="";render()};
+  bind();
 }
 
-// ====== 2: إدخال الأسماء ======
-function renderInputs() {
-  const n = parseInt(document.getElementById('p-count').value);
-  const box = document.getElementById('p-inputs');
-  if (!box) return;
-  box.innerHTML = '';
-  for (let i = 0; i < n; i++) {
-    const inp = document.createElement('input');
-    inp.placeholder = 'اسم اللاعب ' + (i + 1);
-    inp.id = 'inp-' + i;
-    inp.maxLength = 20;
-    box.appendChild(inp);
+function loading(){return `<div class="loading"><div><div class="dots"><i></i><i></i><i></i></div><div class="muted">الذكاء الاصطناعي يدير الجولة...</div></div></div>`}
+
+function phase(){
+  if(state.phase==="event"){
+    const e=state.event||{};
+    return `<div class="event"><div class="event-icon">⚡</div><h2>${esc(e.title||"حدث غامض")}</h2><p>${esc(e.story||"")}</p></div>
+    <div class="clues">${(e.publicClues||[]).map(c=>`<div class="clue">🔎 ${esc(c)}</div>`).join("")}</div>
+    ${e.twist?`<div class="notice">🎭 ${esc(e.twist)}</div>`:""}
+    <div class="actions"><button class="btn primary full" id="beginSecret">بدء الأفعال السرية</button></div>`;
+  }
+  if(state.phase==="secret") return `<div class="event"><div class="event-icon">🔒</div><h2>تمرير الهاتف</h2><p>كل لاعب سيختار فعله سراً.</p><button class="btn primary full" id="nextPrivate">متابعة</button></div>`;
+  if(state.phase==="accuse"){
+    return `<h2>⚖️ اختاروا من سيتم اتهامه</h2><p class="muted">ناقشوا الحدث. الاتهام لا يعني أن المتهم جاسوس.</p><div class="targets">${alive().map(p=>`<button class="target" data-target="${p.id}"><strong>${esc(p.name)}</strong><span>❤️ ${p.hp} · ◆ ${p.resources}</span></button>`).join("")}</div>`;
+  }
+  if(state.phase==="cards"){
+    const cs=[["🛡️","درع"],["💰","مورد"],["🕵️","معلومة"],["⚔️","سلاح"],["🎭","خدعة"],["☠️","مخاطرة"]];
+    return `<h2>🎴 جولة الاختيار</h2><p class="muted">اختر بطاقة أو استخدم مواردك بدلاً منها.</p><div class="cards">${cs.map((c,i)=>`<button class="card" data-card="${i}"><strong style="font-size:28px">${c[0]}</strong><span>${c[1]}</span><small class="muted">مخفية</small></button>`).join("")}</div><div class="actions"><button class="btn danger full" id="attackInstead">⚔️ أستخدم مورداً بدل البطاقة</button></div>`;
+  }
+  if(state.phase==="end"){
+    const a=alive();
+    if(a.length<=1) return `<div class="event"><div class="event-icon">👑</div><h2>انتهت اللعبة</h2><p>${a[0]?`الفائز هو ${esc(a[0].name)}!`:"لا يوجد فائز."}</p></div><button class="btn primary full" id="newGame">لعبة جديدة</button>`;
+    return `<div class="event"><div class="event-icon">🌙</div><h2>انتهت الجولة</h2><p>الآن يمكن بدء الجولة التالية.</p></div><button class="btn primary full" id="nextRound">بدء الجولة التالية</button>`;
   }
 }
 
-// ====== بدء اللعبة ======
-async function startGame() {
-  const n = parseInt(document.getElementById('p-count').value);
-  const names = [];
-  for (let i = 0; i < n; i++) {
-    const v = document.getElementById('inp-' + i);
-    if (!v || !v.value.trim()) { alert('أدخل اسم اللاعب ' + (i + 1)); return; }
-    names.push(v.value.trim());
-  }
-  G.players = names;
-  G.current = 0;
-  G.votes = {};
-  G.sel = -1;
-  showPage('p-loading');
+function bind(){
+  document.getElementById("beginSecret")?.addEventListener("click",()=>{state.phase="secret";state.currentPlayerIndex=0;render()});
+  document.getElementById("nextPrivate")?.addEventListener("click",()=>{state.screen="private";render()});
+  document.querySelectorAll("[data-target]").forEach(b=>b.onclick=()=>accuse(+b.dataset.target));
+  document.querySelectorAll("[data-card]").forEach(b=>b.onclick=()=>card(+b.dataset.card));
+  document.getElementById("attackInstead")?.addEventListener("click",()=>{state.screen="private";render()});
+  document.getElementById("nextRound")?.addEventListener("click",nextRound);
+  document.getElementById("newGame")?.addEventListener("click",()=>{state.screen="setup";state.players=[];render()});
+}
 
-  try {
-    const res = await fetch('/api/game', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({players: n, categories: G.cats, usedTopics: G.used})
+function privateScreen(){
+  const a=alive(); if(!a.length){state.screen="game";state.phase="end";return render()}
+  const p=a[state.currentPlayerIndex%a.length];
+  app.innerHTML=`<main class="private-screen"><section class="private-box">
+    <div class="private-icon">🔒</div><div class="eyebrow">سري — ${esc(p.name)}</div><h1 style="font-size:34px">${esc(p.name)}</h1><p class="muted">لا تجعل الآخرين يرون الشاشة.</p>
+    <div class="private-actions">
+      <button class="private-action" data-action="attack"><strong>⚔️ إيذاء لاعب</strong><small>يتطلب مورداً.</small></button>
+      <button class="private-action" data-action="protect"><strong>🛡️ حماية</strong><small>جهز درعاً سرياً.</small></button>
+      <button class="private-action" data-action="hint"><strong>🕵️ تلميح</strong><small>أنفق مورداً لمعرفة شيء.</small></button>
+      <button class="private-action" data-action="alliance"><strong>🤝 تحالف</strong><small>احصل على منفعة سرية.</small></button>
+      <button class="private-action" data-action="save"><strong>🎴 احتفظ</strong><small>لا تفعل شيئاً.</small></button>
+    </div></section></main>`;
+  document.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>privateAction(b.dataset.action));
+}
+
+function privateAction(action){
+  const a=alive(),p=a[state.currentPlayerIndex%a.length];
+
+  if(action==="attack"){
+    if(p.resources<1) return alert("لا تملك مورداً كافياً.");
+    const targets=a.filter(x=>x.id!==p.id);
+    app.innerHTML=`<main class="private-screen"><section class="private-box"><div class="private-icon">⚔️</div><h1 style="font-size:32px">اختر الهدف</h1><div class="private-actions">${targets.map(t=>`<button class="private-action" data-atk="${t.id}"><strong>${esc(t.name)}</strong><small>❤️ ${t.hp}</small></button>`).join("")}</div></section></main>`;
+    document.querySelectorAll("[data-atk]").forEach(b=>b.onclick=()=>{
+      const t=state.players.find(x=>x.id===+b.dataset.atk);
+      p.resources--;t.hp=Math.max(0,t.hp-2);if(t.hp===0)eliminate(t);
+      state.logs.push("⚔️ حدث إيذاء سري.");finishSecret();
     });
-    if (!res.ok) throw new Error('Server: ' + res.status);
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
-
-    G.topic = data.topic || '';
-    G.fake = data.fakeTopic || '';
-    G.spy = (data.spyIndex === undefined || data.spyIndex < 0 || data.spyIndex >= n) ? Math.floor(Math.random() * n) : data.spyIndex;
-    G.hints = Array.isArray(data.hints) ? data.hints : [];
-    if (G.topic) G.used.push(G.topic);
-
-    showRole();
-  } catch (e) {
-    alert('خطأ في الاتصال: ' + e.message);
-    showPage('p-setup');
+    return;
   }
-}
 
-// ====== عرض الدور ======
-function showRole() {
-  const title = document.getElementById('role-title');
-  const topicEl = document.getElementById('role-topic');
-  const hintEl = document.getElementById('role-hint');
-
-  if (title) title.textContent = '🎭 دور ' + G.players[G.current];
-  if (topicEl) {
-    const isSpy = G.current === G.spy;
-    topicEl.textContent = isSpy ? G.fake : G.topic;
+  if(action==="protect"){
+    if(p.resources<1)return alert("لا تملك مورداً كافياً.");
+    p.resources--;p.cards.push({name:"درع"});state.logs.push(p.name+" جهز حماية سرية.");
+  }else if(action==="hint"){
+    if(p.resources<1)return alert("لا تملك مورداً كافياً.");
+    p.resources--;alert((state.event?.publicClues||["هناك معلومة مخفية."])[0]);state.logs.push("🕵️ استخدم لاعب مورداً للحصول على تلميح.");
+  }else if(action==="alliance"){
+    p.resources++;state.logs.push("🤝 تم إنشاء منفعة تحالف سرية.");
+  }else{
+    state.logs.push(p.name+" احتفظ بموارده.");
   }
-  if (hintEl) {
-    const h = G.hints[G.current];
-    hintEl.textContent = h || 'تلميح سري';
+  finishSecret();
+}
+
+function finishSecret(){
+  state.currentPlayerIndex++;
+  state.screen="game";
+  if(state.currentPlayerIndex>=alive().length){state.currentPlayerIndex=0;state.phase="accuse"}else state.phase="secret";
+  render();
+}
+
+async function accuse(id){
+  const t=state.players.find(p=>p.id===id);if(!t||!t.alive)return;
+  state.loading=true;render();
+  try{
+    const r=await callAI({
+      task:"accusation_result",
+      game:{
+        round:state.round,event:state.event,
+        players:state.players.map(p=>({id:p.id,hp:p.hp,resources:p.resources,cards:p.cards.map(c=>c.name)}))
+      },
+      player:{accusedId:id}
+    });
+    const dmg=Number(r.damage??2),reward=Number(r.reward??0);
+    const shield=t.cards.findIndex(c=>c.name==="درع");
+    if(shield>=0){t.cards.splice(shield,1);t.hp=Math.min(10,t.hp+1);state.logs.push("🛡️ "+t.name+" نجا من الاتهام.");}
+    else{t.hp=Math.max(0,t.hp-dmg);state.logs.push("⚖️ "+t.name+" خسر "+dmg+" نقاط.");}
+    if(reward>0){const b=alive().filter(x=>x.id!==t.id).sort((x,y)=>y.resources-x.resources)[0];if(b){b.resources+=reward;state.logs.push("💰 حصل لاعب مستفيد على موارد.");}}
+    if(t.hp===0)eliminate(t);
+  }catch(e){
+    t.hp=Math.max(0,t.hp-2);state.logs.push("⚖️ تم تنفيذ الاتهام بنتيجة احتياطية.");if(t.hp===0)eliminate(t);
   }
-  showPage('p-role');
+  state.loading=false;state.phase="cards";render();
 }
 
-function goBlackout() {
-  const el = document.getElementById('p-blackout');
-  if (el) el.style.display = 'flex';
+function card(i){
+  const a=alive();if(!a.length){state.phase="end";return render()}
+  const p=a[Math.floor(Math.random()*a.length)];
+  if(i===0){p.cards.push({name:"درع"});state.logs.push("🛡️ حصل لاعب على درع.")}
+  if(i===1){p.resources+=2;state.logs.push("💰 ظهر مورد جديد.")}
+  if(i===2){state.logs.push("🕵️ ظهرت معلومة جديدة.")}
+  if(i===3){p.resources=Math.max(0,p.resources-1);state.logs.push("⚔️ بطاقة استنزفت مورداً.")}
+  if(i===4){p.cards.push({name:"خدعة"});state.logs.push("🎭 دخلت بطاقة خدعة.")}
+  if(i===5){p.hp=Math.max(0,p.hp-1);state.logs.push("☠️ بطاقة مخاطرة أضرت بلاعب.");if(p.hp===0)eliminate(p)}
+  state.phase="end";render();
 }
 
-// ====== ⚠️ مهم: لا نزيد current هنا! ======
-function nextPlayer() {
-  const el = document.getElementById('p-blackout');
-  if (el) el.style.display = 'none';
-  // G.current تم زيادته بالفعل في submitVote
-  // لا نلمس G.current هنا!
-  if (G.current >= G.players.length) {
-    startDialogue();
-  } else {
-    showRole();
+function eliminate(p){p.alive=false;p.hp=0;state.logs.push("☠️ خرج "+p.name+" من اللعبة.")}
+
+async function nextRound(){
+  state.round++;state.phase="event";state.currentPlayerIndex=0;alive().forEach(p=>p.resources++);
+  await newEvent();
+}
+
+async function newEvent(){
+  state.loading=true;state.error="";render();
+  try{
+    state.event=await callAI({task:"new_event",game:{round:state.round,players:state.players.map(p=>({id:p.id,hp:p.hp,resources:p.resources,alive:p.alive})),recentLog:state.logs.slice(-8)}});
+  }catch(e){
+    state.error=e.message;
+    state.event={title:"حادث غامض",story:"حدث شيء غير متوقع، وظهرت مصالح متعارضة.",publicClues:["أحد اللاعبين استفاد من الفوضى.","هناك معلومة ناقصة."],twist:"لا تفترضوا أن المستفيد هو المتسبب."};
   }
+  state.loading=false;render();
 }
 
-// ====== حوار ======
-function startDialogue() {
-  showPage('p-dialogue');
-  G.time = 180;
-  updateTimer();
-  if (G.timer) clearInterval(G.timer);
-  G.timer = setInterval(() => {
-    G.time--;
-    updateTimer();
-    if (G.time <= 0) { clearInterval(G.timer); G.timer = null; endDialogue(); }
-  }, 1000);
+async function callAI(payload){
+  const r=await fetch("/api/game",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+  const d=await r.json();
+  if(!r.ok)throw new Error(d?.error||"فشل الاتصال بالذكاء الاصطناعي.");
+  return d.result;
 }
 
-function updateTimer() {
-  const el = document.getElementById('timer');
-  if (!el) return;
-  const m = Math.floor(G.time / 60).toString().padStart(2, '0');
-  const s = (G.time % 60).toString().padStart(2, '0');
-  el.textContent = m + ':' + s;
-  el.className = G.time <= 10 ? 'timer danger' : 'timer';
-}
-
-function endDialogue() {
-  if (G.timer) { clearInterval(G.timer); G.timer = null; }
-  G.current = 0;  // نبدأ التصويت من اللاعب 0
-  G.votes = {};
-  G.sel = -1;
-  showVote();
-}
-
-// ====== تصويت ======
-function showVote() {
-  showPage('p-vote');
-  const list = document.getElementById('vote-list');
-  if (!list) return;
-  list.innerHTML = '';
-  G.players.forEach((name, i) => {
-    const b = document.createElement('div');
-    b.className = 'vote-btn';
-    b.textContent = name;
-    b.onclick = () => {
-      document.querySelectorAll('.vote-btn').forEach(x => x.classList.remove('selected'));
-      b.classList.add('selected');
-      G.sel = i;
-    };
-    list.appendChild(b);
-  });
-}
-
-function submitVote() {
-  if (G.sel === -1) { alert('اختر لاعباً!'); return; }
-  G.votes[G.current] = G.sel;
-  G.sel = -1;
-  G.current++;  // ننتقل للاعب التالي
-
-  if (G.current >= G.players.length) {
-    showReveal();
-  } else {
-    const el = document.getElementById('p-blackout');
-    if (el) {
-      el.style.display = 'flex';
-      const h1 = el.querySelector('h1');
-      const p = el.querySelector('p');
-      if (h1) h1.textContent = '🗳️ صوت بسرية';
-      if (p) p.textContent = G.players[G.current] + '، لا تُظهر اختيارك!';
-    }
-  }
-}
-
-// ====== كشف ======
-function showReveal() {
-  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-  const el = document.getElementById('p-reveal');
-  if (el) el.style.display = 'flex';
-
-  const counts = {};
-  G.players.forEach((_, i) => counts[i] = 0);
-  Object.values(G.votes).forEach(v => counts[v]++);
-
-  let max = -1, winner = -1;
-  G.players.forEach((_, i) => { if (counts[i] > max) { max = counts[i]; winner = i; } });
-  const caught = winner === G.spy;
-
-  const rt = document.getElementById('r-topic');
-  const rs = document.getElementById('r-spy');
-  const rf = document.getElementById('r-fake');
-  const rr = document.getElementById('r-result');
-
-  if (rt) rt.textContent = 'الموضوع الحقيقي: ' + G.topic;
-  if (rs) rs.textContent = '🕵️‍♂️ الجاسوس: ' + G.players[G.spy];
-  if (rf) rf.textContent = 'كان يظن أنه: ' + G.fake;
-  if (rr) {
-    if (caught) {
-      rr.innerHTML = '<div class="result-win">🎉 الجميع فاز!<br><small>اكتشفتم ' + G.players[G.spy] + '</small></div>';
-    } else {
-      rr.innerHTML = '<div class="result-lose">😂 الجاسوس فاز!<br><small>' + G.players[G.spy] + ' خدع الجميع</small></div>';
-    }
-  }
-}
-
-// ====== أزرار نهاية اللعبة ======
-function replayGame() {
-  const el = document.getElementById('p-reveal');
-  if (el) el.style.display = 'none';
-  G.current = 0;
-  G.votes = {};
-  G.sel = -1;
-  startGame();
-}
-
-function resetAll() {
-  const el = document.getElementById('p-reveal');
-  if (el) el.style.display = 'none';
-  G.players = [];
-  G.used = [];
-  showPage('p-mode');
-}
-
-// تهيئة
-renderInputs();
+render();
 </script>
 </body>
 </html>
