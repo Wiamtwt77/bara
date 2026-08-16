@@ -66,7 +66,7 @@ function setup() {
       <button class="btn primary full" id="start">بدء المعركة السياسية</button>
       <div style="margin-top:14px">
         <p class="hint">❤️ حياة (10) · ◆ نفوذ (3) · ⭐ سمعة (50)</p>
-        <p class="hint">الفوز: الوصول إلى 25 نفوذ، 100 سمعة، البقاء أخيراً، أو تحالف النصر.</p>
+        <p class="hint">الفوز: الوصول إلى 25 نفوذ، 100 سمعة، أو البقاء أخيراً.</p>
       </div>
     </section>
   </div></main>`;
@@ -93,7 +93,7 @@ async function fetchEvent() {
     });
     state.event = await res.json();
   } catch (e) {
-    state.event = { title: "جلسة طارئة", story: "تبدأ الجولة وسط توتر شديد بين أعضاء المحكمة.", rule: "الجميع في خطر.", publicClues: ["شوهد أحدهق يخطط سراً"] };
+    state.event = { title: "جلسة طارئة", story: "تبدأ الجولة وسط توتر شديد بين أعضاء المحكمة.", rule: "الجميع في خطر.", publicClues: ["شوهد أحدهم يخطط سراً"] };
   }
   state.loading = false; render();
 }
@@ -189,28 +189,52 @@ function privateScreen() {
     
     <h3 style="margin-top:15px">اختر فعلك السري أو استغلالك للسيادة</h3>
     <div class="private-actions">
-      <button class="private-action" data-act="conspiracy"><strong>🗡️ مؤامرة تكتيكية</strong><small>أنفق 2 نفوذ لإلحاق ضرر بخصمك.</small></button>
-      <button class="private-action" data-act="exploit" style="border-color:var(--danger)"><strong>🔥 استغلال دموي (Dark Pact)</strong><small>اسحب 3 نقاط نفوذ أو حياة من خصمك قسراً لتحقيق تفوقك، مقابل خسارة 20 نقطة سمعة وفضح أمرك جزئياً!</small></button>
-      <button class="private-action" data-act="protect"><strong>🛡️ درع الحماية</strong><small>أنفق 1 نفوذ لتحصين نفسك.</small></button>
-      <button class="private-action" data-act="monopoly"><strong>💰 احتكار السوق</strong><small>احصل على +2 نفوذ فوري على حساب نزاهتك (-5 سمعة).</small></button>
+      <button class="private-action" data-act="conspiracy"><strong>🗡️ مؤامرة تكتيكية (تكلفة: 2 نفوذ)</strong><small>تستهدف خصماً وتلحق به الضرر.</small></button>
+      <button class="private-action" data-act="exploit" style="border-color:var(--danger)"><strong>🔥 استغلال دموي مظلم</strong><small>اسحب 2 نفوذ من ضحية محددة قسراً لترفع نفوذك، تفقد 20 نقطة سمعة!</small></button>
+      <button class="private-action" data-act="protect"><strong>🛡️ درع الحماية (تكلفة: 1 نفوذ)</strong><small>تحصين نفسك من الأضرار.</small></button>
+      <button class="private-action" data-act="monopoly"><strong>💰 احتكار السوق</strong><small>+2 نفوذ فوري على حساب نزاهتك (-5 سمعة).</small></button>
     </div>
 
-    <h3 style="margin-top:15px">صوت على المشتبه به</h3>
+    <div id="target-selector-box" style="margin-top:15px; display:none;">
+      <label class="muted">اختر الضحية المستهدفة لهذا الفعل:</label>
+      <select id="action-target">${alive().filter(t => t.id !== p.id).map(target => `<option value="${target.id}">${esc(target.name)}</option>`).join("")}</select>
+    </div>
+
+    <h3 style="margin-top:15px">صوت على المشتبه به للمحكمة</h3>
     <select id="vote-target">${alive().map(target => `<option value="${target.id}">${esc(target.name)}</option>`).join("")}</select>
     <button class="btn primary full" style="margin-top:15px" id="confirmAction">تأكيد وانتقال للهاتف التالي</button>
   </section></main>`;
 
   let selectedAction = "conspiracy";
+  const targetBox = document.getElementById("target-selector-box");
+
   document.querySelectorAll("[data-act]").forEach(btn => btn.onclick = (e) => {
     document.querySelectorAll("[data-act]").forEach(b => b.style.borderColor = "var(--border)");
     btn.style.borderColor = "var(--accent)";
     selectedAction = btn.dataset.act;
+    if (selectedAction === "conspiracy" || selectedAction === "exploit") {
+      targetBox.style.display = "block";
+    } else {
+      targetBox.style.display = "none";
+    }
   });
 
   document.getElementById("confirmAction").onclick = () => {
-    const targetId = +document.getElementById("vote-target").value;
-    state.secretActions.push({ actorId: p.id, action: selectedAction });
-    state.votes[p.id] = targetId;
+    // التحقق من الموارد قبل التنفيذ
+    if (selectedAction === "conspiracy" && p.influence < 2) {
+      alert("عذراً، لا تمتلك رصيد نفوذ كافي لتنفيذ المؤامرة (تحتاج 2 نفوذ).");
+      return;
+    }
+    if (selectedAction === "protect" && p.influence < 1) {
+      alert("عذراً، لا تمتلك نفوذاً كافياً للحماية (تحتاج 1 نفوذ).");
+      return;
+    }
+
+    const targetId = document.getElementById("action-target") ? +document.getElementById("action-target").value : null;
+    const voteId = +document.getElementById("vote-target").value;
+
+    state.secretActions.push({ actorId: p.id, action: selectedAction, targetId: targetId });
+    state.votes[p.id] = voteId;
     state.currentPlayerIndex++;
     render();
   };
@@ -219,14 +243,33 @@ function privateScreen() {
 function applySecretActions() {
   state.secretActions.forEach(sa => {
     const actor = state.players.find(p => p.id === sa.actorId);
+    const target = state.players.find(p => p.id === sa.targetId);
     if (!actor || !actor.alive) return;
-    if (sa.action === "exploit") {
-      actor.influence += 3;
+
+    if (sa.action === "conspiracy" && target && target.alive) {
+      actor.influence -= 2;
+      if (!target.shield) {
+        target.hp -= 2;
+        state.logs.push(`🗡️ دبر ${actor.name} مؤامرة ناجحة ضد ${target.name} فخصم 2 من صحته!`);
+      } else {
+        state.logs.push(`🛡️ تصدى درع ${target.name} لمؤامرة ${actor.name}!`);
+        target.shield = false;
+      }
+    } else if (sa.action === "exploit" && target && target.alive) {
+      // الاستغلال المظلم الفعلي: سحب موارد من الضحية وزيادة نفوذ المعتدي على حساب السمعة
+      const drainAmount = Math.min(2, target.influence);
+      target.influence -= drainAmount;
+      actor.influence += drainAmount;
       actor.reputation -= 20;
-      state.logs.push(`🔥 قام ${actor.name} بعملية استغلال دموي مظلم ورفع نفوذه على حساب سمعته!`);
+      state.logs.push(`🔥 استغل ${actor.name} اللاعب ${target.name} وسحب منه ${drainAmount} نفوذ قسراً وسط استياء المحكمة!`);
+    } else if (sa.action === "protect") {
+      actor.influence -= 1;
+      actor.shield = true;
+      state.logs.push(`🛡️ قام ${actor.name} بتحصين نفسه بدرع سري.`);
     } else if (sa.action === "monopoly") {
       actor.influence += 2;
       actor.reputation -= 5;
+      state.logs.push(`💰 احتكر ${actor.name} السوق لرفع نفوذه.`);
     }
   });
 }
@@ -243,7 +286,14 @@ async function runTrial() {
     const res = await fetch('/api/game', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'trial', payload: { accusedName: accused?.name || "لا أحد", votesCount: max } })
+      body: JSON.stringify({ 
+        type: 'trial', 
+        payload: { 
+          accusedName: accused?.name || "لا أحد", 
+          votesCount: max,
+          secretActions: state.secretActions
+        } 
+      })
     });
     state.trialResult = await res.json();
     if (accused && state.trialResult.effects) {
@@ -253,7 +303,7 @@ async function runTrial() {
       if (accused.hp <= 0) accused.alive = false;
     }
   } catch (e) {
-    state.trialResult = { verdict: "light", story: "محاكمة سريعة", message: "تم تمرير الجلسة بسلام.", effects: {} };
+    state.trialResult = { verdict: "light", story: "محاكمة سريعة بناءً على المعطيات", message: "تم تمرير الجلسة وعقاب المتهم.", effects: {} };
   }
   state.loading = false; state.phase = "trial"; render();
 }
@@ -287,6 +337,8 @@ function applyCard(idx) {
   }
   state.phase = "end"; render();
 }
+
+render();
 </script>
 </body>
 </html>
