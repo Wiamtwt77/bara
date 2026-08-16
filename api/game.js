@@ -1,96 +1,127 @@
-module.exports = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+export default async function handler(req, res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  const key = process.env.OPENROUTER_KEY;
-  if (!key) return res.status(500).json({ error: 'OPENROUTER_KEY missing' });
+  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });
 
-  const { players, categories, usedTopics } = req.body;
-  const playerCount = players || 4;
-  const cats = categories && categories.length ? categories : ['يوميات'];
-  const used = usedTopics || [];
+  const apiKey = process.env.OPENROUTER_KEY;
+  if (!apiKey) {
+    return res.status(500).json({ error: "OPENROUTER_KEY غير مضبوط في Vercel." });
+  }
 
-  const systemPrompt = `You are a game generator for "برا السالفة" (Out of Context) in Arabic.
+  let body = req.body;
+  if (typeof body === "string") {
+    try { body = JSON.parse(body); }
+    catch { return res.status(400).json({ error: "JSON غير صالح." }); }
+  }
 
-Rules:
-- Topics must be SLIGHTLY unusual but still relatable — from daily life but with a funny/weird twist
-  Examples: "مطعم برجر يقدم الحلوى مع الوجبات", "مدرسة تدرس الرقص بدلاً من الرياضيات", "حفلة عيد ميلاد في المقبرة", "متجر ملابس يبيع الزي الرسمي فقط"
-- The fake topic must be in the SAME category but a DIFFERENT specific thing
-- Hints must be very close and subtle
-- Avoid these used topics: ${used.join(', ') || 'none'}
-- Output ONLY valid JSON
+  const systemPrompt = `
+أنت مدير لعبة اجتماعية اسمها "المحكمة السرية".
+اللعبة ليست لعبة جاسوس ولا يوجد دور ثابت اسمه جاسوس.
+كل لاعب لديه مصالح وموارد وتحالفات وأعداء.
 
-Output format:
+قواعد العالم:
+- لكل لاعب نقاط حياة وموارد وبطاقات.
+- الأفعال القوية تحتاج موارد.
+- من يتعرض لفعل سري لا يعرف بالضرورة من فعله.
+- توجد جولات أحداث، أفعال سرية، اتهام، بطاقات، وانتقام.
+- الإقصاء نتيجة لقرار الجولة وليس كشف جاسوس.
+- لا تجعل كل حدث يحتاج إلى مذنب واحد؛ قد يكون السبب لاعباً أو عدة لاعبين أو ظرفاً.
+- المعلومات السرية يجب ألا تكشف أسرار لاعب لغيره.
+- اجعل الأحداث قابلة للعب ومثيرة للتحليل والتحالف والاتهام والانتقام.
+- "الإيذاء" يعني خسارة نقاط أو موارد أو تعطيل، وليس وصفاً دموياً.
+
+مهم جداً: أعد JSON صالحاً فقط، بلا Markdown.
+
+لحدث جديد:
 {
-  "topic": "الموضوع الحقيقي (غريب قليلاً لكن مألوف)",
-  "fakeTopic": "الموضوع الخاطئ (نفس التصنيف لكن مختلف)",
-  "category": "التصنيف",
-  "spyIndex": 0,
-  "hints": ["تلميح اللاعب 1", "تلميح اللاعب 2", ...]
-}`;
+  "title": "عنوان",
+  "story": "وصف قصير",
+  "publicClues": ["تلميح 1", "تلميح 2"],
+  "secretInfo": [{"playerId": 1, "text": "معلومة سرية"}],
+  "twist": "قاعدة الجولة"
+}
+
+لنتيجة اتهام:
+{
+  "damage": 2,
+  "reward": 1,
+  "publicResult": "النتيجة العلنية",
+  "secretResult": "النتيجة السرية"
+}
+
+لبطاقات:
+{
+  "cards": [
+    {
+      "name": "اسم",
+      "type": "good|bad|utility",
+      "description": "الوصف",
+      "effect": "التأثير"
+    }
+  ]
+}
+`;
+
+  const task = body?.task || "new_event";
+  const game = body?.game || {};
+  const player = body?.player || null;
 
   try {
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
+    const model = process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini";
+
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
       headers: {
-        'Authorization': 'Bearer ' + key,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://bra-alsalfa.vercel.app',
-        'X-Title': 'Bra AlSalfa'
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://vercel.com",
+        "X-Title": "Secret Court"
       },
       body: JSON.stringify({
-        model: 'openai/gpt-3.5-turbo',
+        model,
+        temperature: 0.85,
         messages: [
-          {role: 'system', content: systemPrompt},
-          {role: 'user', content: 'Generate a game in Arabic. Categories: ' + cats.join(', ') + '. Players: ' + playerCount + '. Used before: ' + (used.join(', ') || 'none')}
-        ],
-        temperature: 0.95,
-        max_tokens: 900
+          { role: "system", content: systemPrompt },
+          {
+            role: "user",
+            content: JSON.stringify({ task, game, player })
+          }
+        ]
       })
     });
 
-    const data = await response.json();
-    const content = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : '{}';
+    const raw = await response.text();
 
-    let gameData;
+    if (!response.ok) {
+      return res.status(response.status).json({
+        error: "فشل اتصال OpenRouter.",
+        details: raw
+      });
+    }
+
+    const data = JSON.parse(raw);
+    const content = data?.choices?.[0]?.message?.content;
+
+    if (!content) {
+      return res.status(502).json({ error: "لم تصل نتيجة من الذكاء الاصطناعي." });
+    }
+
+    let result;
     try {
-      gameData = JSON.parse(content);
-    } catch (e) {
-      const match = content.match(/\{[\s\S]*\}/);
-      gameData = match ? JSON.parse(match[0]) : null;
+      result = typeof content === "string" ? JSON.parse(content) : content;
+    } catch {
+      return res.status(502).json({
+        error: "الذكاء الاصطناعي أعاد نتيجة غير صالحة.",
+        raw: content
+      });
     }
 
-    if (!gameData || !gameData.topic) {
-      const pool = [
-        {t:'مطعم برجر يقدم الحلوى مع كل وجبة', f:'مطعم بيتزا يقدم الشوربة مع كل وجبة', c:'مطاعم', h:['البرجر يأتي مع قطعة كيك','الصوص حلو المذاق','الزبائن يطلبون الحلو أولاً','القائمة مقلوبة']},
-        {t:'مدرسة تدرس الرقص بدلاً من الرياضيات', f:'مدرسة تدرس الغناء بدلاً من العلوم', c:'مدرسة', h:['الفصل فيه مرآة كبيرة','الطلاب يرتدون أحذية خاصة','الامتحان عرض رقص','المدرس يصفق للإيقاع']},
-        {t:'حفلة عيد ميلاد في المقبرة', f:'حفلة زفاف في المستشفى', c:'مناسبات', h:['البالونات سوداء اللون','الكعكة على شكل تابوت','الضيوف يرتدون أسود','الهدايا عبارة عن شموع']},
-        {t:'متجر ملابس يبيع الزي الرسمي فقط', f:'متجر أحذية يبيع النعال فقط', c:'تسوق', h:['البنطالون ممنوع','الكل يرتدي بدلة','القمصان بيضاء حصراً','الأسعار غالية جداً']}
-      ];
-      const pick = pool[Math.floor(Math.random() * pool.length)];
-      gameData = {
-        topic: pick.t,
-        fakeTopic: pick.f,
-        category: pick.c,
-        spyIndex: Math.floor(Math.random() * playerCount),
-        hints: pick.h.slice(0, playerCount)
-      };
-    }
-
-    while (gameData.hints.length < playerCount) {
-      gameData.hints.push('تلميح إضافي عن ' + gameData.topic);
-    }
-    gameData.hints = gameData.hints.slice(0, playerCount);
-
-    if (gameData.spyIndex === undefined || gameData.spyIndex < 0 || gameData.spyIndex >= playerCount) {
-      gameData.spyIndex = Math.floor(Math.random() * playerCount);
-    }
-
-    res.status(200).json(gameData);
+    return res.status(200).json({ ok: true, result });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    return res.status(500).json({ error: "خطأ داخلي في API." });
   }
-};
+}
