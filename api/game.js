@@ -11,7 +11,6 @@ export default async function handler(req, res) {
   const apiKey = process.env.OPENROUTER_GAME || process.env.OPENROUTER_API_KEY;
 
   if (!apiKey) {
-    // استجابة احتياطية ذكية في حال عدم توفر مفتاح الـ API لضمان استمرارية اللعبة
     return res.status(200).json(getFallbackResponse(type, payload));
   }
 
@@ -45,12 +44,13 @@ export default async function handler(req, res) {
 
 function buildPrompt(type, data) {
   if (type === 'event') {
-    return `أنت مدير لعبة "المحكمة السرية". ولد حدثاً درامياً وسياسياً للجولة ${data.round} بصيغة JSON فقط:
+    return `أنت مدير لعبة "المحكمة السرية". ولد حدثاً سياسياً للجولة ${data.round} بصيغة JSON فقط:
     {"title": "عنوان الحدث", "story": "قصة قصيرة مثيرة", "rule": "قاعدة خاصة لهذه الجولة", "publicClues": ["تلميح 1", "تلميح 2"]}`;
   }
   if (type === 'trial') {
-    return `أنت محكمة الظلال. المتهم هو ${data.accusedName} وحصل على ${data.votesCount} أصوات. ولد نتيجة محاكمة بصيغة JSON فقط:
-    {"verdict": "acquit|light|heavy|deal", "story": "قصة المحاكمة الدرامية", "message": "رسالة النتيجة", "effects": {"hp": 0, "influence": 0, "reputation": 0}}`;
+    const actionsSummary = (data.secretActions || []).map(a => `اللاعب ${a.actorId} نفذ فعل: ${a.action} على الهدف ${a.targetId || 'لا يوجد'}`).join(", ");
+    return `أنت محكمة الظلال. المتهم الرئيسي هو ${data.accusedName} وحصل على ${data.votesCount} أصوات. سجل الأفعال السرية والأسرار لهذه الجولة هي: [${actionsSummary}]. ولد نتيجة محاكمة مبنية على هذه الأفعال بدقة بصيغة JSON فقط:
+    {"verdict": "acquit|light|heavy|deal", "story": "قصة محاكمة درامية تربط بين أصوات المحكمة والأفعال السرية السابقة", "message": "رسالة النتيجة والعقاب", "effects": {"hp": 0, "influence": 0, "reputation": 0}}`;
   }
   if (type === 'cards') {
     return `ولد 3 بطاقات جماعية استراتيجية بصيغة JSON فقط:
@@ -71,8 +71,8 @@ function getFallbackResponse(type, data) {
   if (type === 'trial') {
     return {
       verdict: "light",
-      story: `وقفت المحكمة طويلاً أمام الأدلة التي أُدين بها ${data?.accusedName || "المتهم"}، ولم يجد مفراً من العقاب.`,
-      message: "ثبتت عليه بعض التهم وتم خصم جزء من حيويته.",
+      story: `وقفت المحكمة طويلاً أمام الأدلة التي أُدين بها ${data?.accusedName || "المتهم"}، وتم مطابقة أفعاله السرية مع الشكوك الموجهة ضده.`,
+      message: "ثبتت عليه الإدانة وتم خصم من رصيده.",
       effects: { hp: -2, influence: 0, reputation: -5 }
     };
   }
