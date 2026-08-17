@@ -18,39 +18,29 @@ export default async function handler(req, res) {
   }
 
   const systemPrompt = `
-أنت مدير أحداث لعبة "المحكمة السرية ٢.٠".
-هذه لعبة اجتماعية استراتيجية. لا يوجد جاسوس ثابت. كل لاعب له مصالح متغيرة.
+أنت مدير أحداث لعبة "المحكمة السرية: الأدوار الملعونة".
+هذه لعبة اجتماعية استراتيجية.
 
 قواعد العالم:
-- الموارد: 💰 ذهب، 🔮 معلومة، ⭐ نفوذ.
-- الأفعال السرية: 🗡️ اغتيال، 🛡️ حماية، 🕵️ تجسس، 💰 سرقة، 🤝 مقايضة، 🎭 خداع، 🌙 انتظار.
-- كل جولة: أجندة سرية + دور سري + حدث.
-- الاتهام يعتمد على الأدلة والتصويت وليس عشوائياً.
-- الفوز: ٧ نفوذ، أو البقاء أخيراً.
+- 6 أدوار سرية: المحقق (يجمع 3 أدلة)، القاتل (يقتل 2)، التاجر (يجمع 10 ذهب)، السياسي (يجمع 5 نفوذ)، المنشق (يبقى أخيراً)، الحارس (يحمي لاعباً).
+- البطاقات: فعل (هجوم/علاج/سرقة/درع/كشف)، مورد (دليل/ذهب/نفوذ)، ملعونة (قنبلة/سم/لعنة).
+- الحد: 3 بطاقات في اليد. القنبلة تنفجر إذا امتلأت اليد.
+- السم يخسر 1 حياة كل جولة حتى يُستخدم.
+- اللعنة تمنع السحب.
 
 مهم جداً: أعد JSON صالحاً فقط، بلا Markdown.
 
 لحدث جديد:
 {
-  "title": "عنوان الحدث",
+  "title": "عنوان",
   "story": "وصف قصير ومثير",
-  "clues": ["تلميح 1", "تلميح 2"],
   "twist": "قاعدة الجولة الخاصة",
-  "effect": {"type": "judge_gold|all_intel|all_gold|ban_attack|spy_bonus|alliance_bonus|betray_bonus|witness_extra", "value": 1}
-}
-
-للأجندات:
-{
-  "agendas": [
-    {"text": "وصف المهمة", "difficulty": "easy|medium|hard"}
-  ]
-}
-
-للأدوار:
-{
-  "roles": [
-    {"name": "اسم الدور", "desc": "الوصف", "power": "verdict|witness|accuse|defend|spy|block"}
-  ]
+  "ban": "attack|attack_poison|none",
+  "bonus": {"gold": 0, "influence": 0},
+  "plague": false,
+  "auction": false,
+  "treasure": false,
+  "revealBonus": false
 }
 `;
 
@@ -66,46 +56,30 @@ export default async function handler(req, res) {
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json",
         "HTTP-Referer": "https://vercel.com",
-        "X-Title": "Secret Court v2"
+        "X-Title": "Secret Court Cursed"
       },
       body: JSON.stringify({
         model,
         temperature: 0.85,
         messages: [
           { role: "system", content: systemPrompt },
-          {
-            role: "user",
-            content: JSON.stringify({ task, game })
-          }
+          { role: "user", content: JSON.stringify({ task, game }) }
         ]
       })
     });
 
     const raw = await response.text();
-
     if (!response.ok) {
-      return res.status(response.status).json({
-        error: "فشل اتصال OpenRouter.",
-        details: raw
-      });
+      return res.status(response.status).json({ error: "فشل اتصال OpenRouter.", details: raw });
     }
 
     const data = JSON.parse(raw);
     const content = data?.choices?.[0]?.message?.content;
-
-    if (!content) {
-      return res.status(502).json({ error: "لم تصل نتيجة من الذكاء الاصطناعي." });
-    }
+    if (!content) return res.status(502).json({ error: "لم تصل نتيجة من الذكاء الاصطناعي." });
 
     let result;
-    try {
-      result = typeof content === "string" ? JSON.parse(content) : content;
-    } catch {
-      return res.status(502).json({
-        error: "الذكاء الاصطناعي أعاد نتيجة غير صالحة.",
-        raw: content
-      });
-    }
+    try { result = typeof content === "string" ? JSON.parse(content) : content; }
+    catch { return res.status(502).json({ error: "الذكاء الاصطناعي أعاد نتيجة غير صالحة.", raw: content }); }
 
     return res.status(200).json({ ok: true, result });
   } catch (error) {
