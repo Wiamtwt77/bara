@@ -4,753 +4,287 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0a0e1a">
-<title>المحكمة السرية — الأدوار الملعونة</title>
+<title>المحكمة السرية V2 — أثر الشبهة</title>
 <style>
-:root{--bg:#0a0e1a;--panel:#111827;--panel2:#1a2236;--border:#2d3748;--text:#f7fafc;--muted:#a0aec0;
---gold:#ecc94b;--intel:#4299e1;--influence:#9f7aea;--danger:#f56565;--good:#48bb78;--accent:#ed8936;--curse:#e53e3e;}
+:root{--bg:#0a0e1a;--panel:#111827;--panel2:#1a2236;--border:#2d3748;--text:#f7fafc;--muted:#a0aec0;--gold:#ecc94b;--intel:#4299e1;--influence:#9f7aea;--danger:#f56565;--good:#48bb78;--accent:#ed8936;--curse:#e53e3e;--sl:#48bb78;--sm:#ecc94b;--sh:#ed8936;--sd:#e53e3e;--ghost:#9f7aea}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 0%,rgba(159,122,234,.12),transparent 30%),radial-gradient(circle at 95% 100%,rgba(237,137,54,.08),transparent 30%),var(--bg);color:var(--text);font-family:Tahoma,Arial,sans-serif;line-height:1.7}
 button{font:inherit;cursor:pointer;transition:.15s}button:disabled{opacity:.35;cursor:not-allowed}
-.shell{width:min(980px,calc(100% - 24px));margin:auto;padding:22px 0 50px}
-.center{min-height:100vh;display:grid;place-items:center}
-
-.hero{text-align:center;margin-bottom:26px}
-.eyebrow{display:inline-block;border:1px solid var(--border);background:#0f1525;color:var(--influence);border-radius:999px;padding:8px 16px;font-size:13px;margin-bottom:14px;font-weight:700}
-h1{margin:0;font-size:clamp(32px,6vw,56px);letter-spacing:-1px}
-h2,h3{margin-top:0;font-weight:700}
-.muted,.hint{color:var(--muted)}.hint{font-size:13px;margin-top:8px}
-
-.panel,.private-box{background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.35)}
-.setup{width:min(640px,100%);margin:auto}
-
-.count-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:14px 0 18px}
-.count-btn,.btn{border:1px solid var(--border);color:var(--text);background:var(--panel2);border-radius:14px;padding:14px 16px;font-weight:600}
-.count-btn.active,.btn.primary{background:linear-gradient(135deg,var(--influence),#805ad5);border-color:transparent}
-.btn.danger{background:linear-gradient(135deg,var(--danger),#c53030);border-color:transparent}
-.btn.good{background:linear-gradient(135deg,var(--good),#2f855a);border-color:transparent}
-.btn.gold{background:linear-gradient(135deg,var(--gold),#d69e2e);border-color:transparent;color:#1a202c}
-.btn.curse{background:linear-gradient(135deg,var(--curse),#9b2c2c);border-color:transparent}
+.shell{width:min(980px,calc(100% - 24px));margin:auto;padding:22px 0 50px}.center{min-height:100vh;display:grid;place-items:center}
+.hero{text-align:center;margin-bottom:26px}.eyebrow{display:inline-block;border:1px solid var(--border);background:#0f1525;color:var(--influence);border-radius:999px;padding:8px 16px;font-size:13px;margin-bottom:14px;font-weight:700}
+h1{margin:0;font-size:clamp(32px,6vw,56px);letter-spacing:-1px}h2,h3{margin-top:0;font-weight:700}.muted,.hint{color:var(--muted)}.hint{font-size:13px;margin-top:8px}
+.panel,.private-box{background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.35)}.setup{width:min(640px,100%);margin:auto}
+.count-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:14px 0 18px}.count-btn,.btn{border:1px solid var(--border);color:var(--text);background:var(--panel2);border-radius:14px;padding:14px 16px;font-weight:600}
+.count-btn.active,.btn.primary{background:linear-gradient(135deg,var(--influence),#805ad5);border-color:transparent}.btn.danger{background:linear-gradient(135deg,var(--danger),#c53030);border-color:transparent}
+.btn.good{background:linear-gradient(135deg,var(--good),#2f855a);border-color:transparent}.btn.gold{background:linear-gradient(135deg,var(--gold),#d69e2e);border-color:transparent;color:#1a202c}
+.btn.curse{background:linear-gradient(135deg,var(--curse),#9b2c2c);border-color:transparent}.btn.ghost{background:linear-gradient(135deg,var(--ghost),#6b46c1);border-color:transparent}
 .btn.full{width:100%}.btn:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.1)}
-
-.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
-.round{color:var(--influence);font-size:13px;font-weight:800;background:rgba(159,122,234,.1);padding:6px 12px;border-radius:999px}
-.topbar h1{font-size:28px;margin:4px 0 0}
-
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}.round{color:var(--influence);font-size:13px;font-weight:800;background:rgba(159,122,234,.1);padding:6px 12px;border-radius:999px}.topbar h1{font-size:28px;margin:4px 0 0}
 .players{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:18px}
-.player{background:var(--panel2);border:1px solid var(--border);border-radius:16px;padding:14px;position:relative;transition:.2s}
-.player.dead{opacity:.25;filter:grayscale(1)}
-.player.winner{border-color:var(--gold);box-shadow:0 0 20px rgba(236,201,75,.15)}
-.player-name{font-weight:800;font-size:14px;display:flex;align-items:center;gap:6px}
-.role-badge{font-size:11px;background:rgba(159,122,234,.15);color:var(--influence);padding:2px 8px;border-radius:999px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;font-size:12px}
-.stat{display:flex;align-items:center;gap:4px;background:rgba(0,0,0,.2);padding:6px 8px;border-radius:8px}
-.stat.gold{color:var(--gold)}.stat.influence{color:var(--influence)}.stat.hp{color:var(--danger)}
-
-.hand{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
-.card-mini{width:36px;height:48px;border-radius:8px;display:grid;place-items:center;font-size:20px;border:1px solid var(--border);background:var(--panel)}
-.card-mini.curse{border-color:var(--curse);background:rgba(229,62,62,.15)}
-
-.event{text-align:center;border:1px solid var(--border);background:var(--panel2);border-radius:20px;padding:24px}
-.event-icon{font-size:44px;margin-bottom:8px}
-.event h2{font-size:26px;margin:8px 0}
-.clues{display:grid;gap:8px;margin-top:16px}
-.clue{border:1px solid var(--border);background:rgba(66,153,225,.08);border-radius:12px;padding:12px 14px;color:#bee3f8;font-size:14px}
+.player{background:var(--panel2);border:1px solid var(--border);border-radius:16px;padding:14px;position:relative;transition:.2s}.player.dead{opacity:.25;filter:grayscale(1)}.player.watcher{border-color:var(--sh);box-shadow:0 0 12px rgba(237,137,54,.2)}.player.winner{border-color:var(--gold);box-shadow:0 0 20px rgba(236,201,75,.15)}
+.player-name{font-weight:800;font-size:14px;display:flex;align-items:center;gap:6px}.role-badge{font-size:11px;background:rgba(159,122,234,.15);color:var(--influence);padding:2px 8px;border-radius:999px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;font-size:12px}.stat{display:flex;align-items:center;gap:4px;background:rgba(0,0,0,.2);padding:6px 8px;border-radius:8px}.stat.gold{color:var(--gold)}.stat.influence{color:var(--influence)}.stat.hp{color:var(--danger)}
+.susp-bar{margin-top:8px;background:rgba(0,0,0,.3);border-radius:8px;padding:6px 8px;font-size:12px;display:flex;align-items:center;gap:6px}.susp-bar .fill{height:4px;border-radius:4px;flex:1;background:var(--border);overflow:hidden}.susp-bar .fill span{display:block;height:100%;border-radius:4px;transition:width .3s}
+.sl{color:var(--sl)}.sm{color:var(--sm)}.sh{color:var(--sh)}.sd{color:var(--sd)}
+.wb{font-size:10px;background:rgba(237,137,54,.2);color:var(--sh);padding:2px 6px;border-radius:999px;margin-right:4px}
+.hand{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}.card-mini{width:36px;height:48px;border-radius:8px;display:grid;place-items:center;font-size:20px;border:1px solid var(--border);background:var(--panel)}.card-mini.curse{border-color:var(--curse);background:rgba(229,62,62,.15)}.card-mini.new{border-color:var(--accent);background:rgba(237,137,54,.1)}
+.event{text-align:center;border:1px solid var(--border);background:var(--panel2);border-radius:20px;padding:24px}.event-icon{font-size:44px;margin-bottom:8px}.event h2{font-size:26px;margin:8px 0}
 .twist{border:1px solid rgba(237,137,54,.3);background:rgba(237,137,54,.08);color:#fbd38d;padding:12px 14px;border-radius:12px;margin-top:12px;font-size:14px}
-
-.actions,.private-actions{display:grid;gap:10px;margin-top:16px}
-.private-screen{min-height:100vh;display:grid;place-items:center;padding:20px}
-.private-box{width:min(640px,100%);text-align:center}
-.private-icon{font-size:56px;margin-bottom:10px}
-.private-action{display:block;width:100%;text-align:right;color:var(--text);background:var(--panel2);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;position:relative}
-.private-action strong{display:block;margin-bottom:6px;font-size:16px}
-.private-action small{color:var(--muted);line-height:1.6;display:block}
-.private-action:hover:not(:disabled){border-color:var(--influence);background:rgba(159,122,234,.06)}
-.private-action.curse{border-color:var(--curse);background:rgba(229,62,62,.08)}
-.private-action.curse:hover{border-color:var(--curse);background:rgba(229,62,62,.15)}
-
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
-.card{min-height:150px;display:grid;place-items:center;align-content:center;gap:6px;text-align:center;border:1px solid var(--border);border-radius:18px;background:var(--panel2);color:var(--text);padding:14px;transition:.15s}
-.card:hover:not(:disabled){border-color:var(--accent);transform:translateY(-2px)}
-.card.curse{border-color:var(--curse);background:rgba(229,62,62,.08)}
-.card.curse:hover{border-color:var(--curse);background:rgba(229,62,62,.15)}
-.card strong{font-size:32px}
-.card .type{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
-.card .desc{font-size:12px;color:var(--muted);line-height:1.5}
-
-.log{margin-top:18px}
-.log-item{padding:10px 0;border-bottom:1px solid var(--border);color:#cbd5e1;font-size:13px}
-
-.loading{display:grid;place-items:center;min-height:220px;text-align:center}
-.dots{display:flex;gap:7px;justify-content:center;margin-bottom:12px}
-.dots i{width:9px;height:9px;border-radius:50%;background:var(--influence);animation:b .8s infinite alternate}
-.dots i:nth-child(2){animation-delay:.18s}.dots i:nth-child(3){animation-delay:.36s}
-@keyframes b{to{transform:translateY(-8px);opacity:.35}}
-
-.info-box{border:1px solid rgba(66,153,225,.3);background:rgba(66,153,225,.08);color:#bee3f8;padding:14px;border-radius:14px;margin:14px 0;font-size:14px}
-.notice{border:1px solid rgba(237,137,54,.3);background:rgba(237,137,54,.08);color:#fbd38d;padding:14px;border-radius:14px;margin-top:14px}
-.danger-box{border:1px solid rgba(245,101,101,.4);background:rgba(245,101,101,.08);color:#feb2b2;padding:14px;border-radius:14px;margin-top:14px}
-
-.reveal-grid{display:grid;gap:10px;margin-top:16px}
-.reveal-item{background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px}
-.reveal-item .icon{font-size:28px}
-.reveal-item .text{flex:1}
-.reveal-item .text strong{display:block;font-size:15px}
-.reveal-item .text small{color:var(--muted);font-size:12px}
-
-.vote-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:14px}
-.vote-btn{background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;color:var(--text);font-weight:700}
-.vote-btn:hover{border-color:var(--danger);background:rgba(245,101,101,.08)}
-.vote-btn.voted{border-color:var(--danger);background:rgba(245,101,101,.12)}
-.vote-count{font-size:24px;font-weight:800;color:var(--danger);margin-top:6px}
-
-.phase-indicator{display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
-.phase-dot{width:10px;height:10px;border-radius:50%;background:var(--border)}
-.phase-dot.active{background:var(--influence);box-shadow:0 0 8px var(--influence)}
-.phase-dot.done{background:var(--good)}
-
-.role-card{background:var(--panel2);border:2px solid var(--influence);border-radius:20px;padding:24px;text-align:center;margin:16px 0}
-.role-card .role-icon{font-size:64px;margin-bottom:12px}
-.role-card h2{color:var(--influence);margin:8px 0}
-.role-card .role-goal{font-size:18px;color:var(--gold);font-weight:700;margin:12px 0}
-.role-card .role-power{font-size:14px;color:var(--muted);line-height:1.8}
-
-.target-grid{display:grid;gap:10px;margin-top:16px}
-.target-btn{background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:right;color:var(--text);font-weight:700}
-.target-btn:hover{border-color:var(--accent);background:rgba(237,137,54,.08)}
-
-@media(max-width:650px){
-.count-grid{grid-template-columns:repeat(3,1fr)}
-.players{grid-template-columns:repeat(2,1fr)}
-}
+.actions,.private-actions{display:grid;gap:10px;margin-top:16px}.private-screen{min-height:100vh;display:grid;place-items:center;padding:20px}.private-box{width:min(640px,100%);text-align:center}.private-icon{font-size:56px;margin-bottom:10px}
+.private-action{display:block;width:100%;text-align:right;color:var(--text);background:var(--panel2);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px}.private-action strong{display:block;margin-bottom:6px;font-size:16px}.private-action small{color:var(--muted);line-height:1.6;display:block}.private-action:hover:not(:disabled){border-color:var(--influence);background:rgba(159,122,234,.06)}.private-action.curse{border-color:var(--curse);background:rgba(229,62,62,.08)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}.card{min-height:150px;display:grid;place-items:center;align-content:center;gap:6px;text-align:center;border:1px solid var(--border);border-radius:18px;background:var(--panel2);color:var(--text);padding:14px;transition:.15s}.card:hover:not(:disabled){border-color:var(--accent);transform:translateY(-2px)}.card.curse{border-color:var(--curse);background:rgba(229,62,62,.08)}.card.new-card{border-color:var(--accent);background:rgba(237,137,54,.08)}.card strong{font-size:32px}.card .type{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}.card .desc{font-size:12px;color:var(--muted);line-height:1.5}
+.log{margin-top:18px}.log-item{padding:10px 0;border-bottom:1px solid var(--border);color:#cbd5e1;font-size:13px}
+.loading{display:grid;place-items:center;min-height:220px;text-align:center}.dots{display:flex;gap:7px;justify-content:center;margin-bottom:12px}.dots i{width:9px;height:9px;border-radius:50%;background:var(--influence);animation:b .8s infinite alternate}.dots i:nth-child(2){animation-delay:.18s}.dots i:nth-child(3){animation-delay:.36s}@keyframes b{to{transform:translateY(-8px);opacity:.35}}
+.info-box{border:1px solid rgba(66,153,225,.3);background:rgba(66,153,225,.08);color:#bee3f8;padding:14px;border-radius:14px;margin:14px 0;font-size:14px}.notice{border:1px solid rgba(237,137,54,.3);background:rgba(237,137,54,.08);color:#fbd38d;padding:14px;border-radius:14px;margin-top:14px}.danger-box{border:1px solid rgba(245,101,101,.4);background:rgba(245,101,101,.08);color:#feb2b2;padding:14px;border-radius:14px;margin-top:14px}.susp-box{border:1px solid rgba(159,122,234,.4);background:rgba(159,122,234,.08);color:#d6bcfa;padding:14px;border-radius:14px;margin-top:14px}
+.reveal-grid{display:grid;gap:10px;margin-top:16px}.reveal-item{background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px}.reveal-item .icon{font-size:28px}.reveal-item .text{flex:1}.reveal-item .text strong{display:block;font-size:15px}.reveal-item .text small{color:var(--muted);font-size:12px}
+.vote-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:14px}.vote-btn{background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;color:var(--text);font-weight:700}.vote-btn:hover{border-color:var(--danger);background:rgba(245,101,101,.08)}.vote-btn.voted{border-color:var(--danger);background:rgba(245,101,101,.12)}.vote-count{font-size:24px;font-weight:800;color:var(--danger);margin-top:6px}
+.phase-indicator{display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}.phase-dot{width:10px;height:10px;border-radius:50%;background:var(--border)}.phase-dot.active{background:var(--influence);box-shadow:0 0 8px var(--influence)}.phase-dot.done{background:var(--good)}
+.role-card{background:var(--panel2);border:2px solid var(--influence);border-radius:20px;padding:24px;text-align:center;margin:16px 0}.role-card .role-icon{font-size:64px;margin-bottom:12px}.role-card h2{color:var(--influence);margin:8px 0}.role-card .role-goal{font-size:18px;color:var(--gold);font-weight:700;margin:12px 0}.role-card .role-power{font-size:14px;color:var(--muted);line-height:1.8}
+.target-grid{display:grid;gap:10px;margin-top:16px}.target-btn{background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:right;color:var(--text);font-weight:700}.target-btn:hover{border-color:var(--accent);background:rgba(237,137,54,.08)}
+.accuse-mode{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:14px}.accuse-mode-btn{background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center;color:var(--text);font-weight:700}.accuse-mode-btn:hover{border-color:var(--accent);background:rgba(237,137,54,.08)}.accuse-mode-btn.selected{border-color:var(--influence);background:rgba(159,122,234,.1)}.accuse-mode-btn small{display:block;color:var(--muted);margin-top:4px}
+@media(max-width:650px){.count-grid{grid-template-columns:repeat(3,1fr)}.players{grid-template-columns:repeat(2,1fr)}.accuse-mode{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <script>
-
-// ==================== GAME DATA ====================
+const SCAP=15,ECAP=5,BCD=3,WTAX=8,IATH=2,HL=3,MHP=5,GRL=12;
+const SGEN={attack:1,steal:1,kill:2,heal:-1,shield:-1};
 const ROLES=[
-  {id:"detective",name:"المحقق",icon:"🕵️",goal:"اجمع 3 أدلة (📜) للفوز",power:"كشف دور لاعب مجاناً مرة بالجولة",winCheck:(p)=>p.clues>=3,winText:"كشف الحقيقة!"},
-  {id:"killer",name:"القاتل",icon:"🗡️",goal:"اقتل لاعبين (أوصل حياتهم لصفر)",power:"هجومك لا يكلف شيئاً (مجاني)",winCheck:(p,g)=>(g.killsBy?.[p.id]||0)>=2,winText:"أنجز مهمته!"},
-  {id:"merchant",name:"التاجر",icon:"💰",goal:"اجمع 10 ذهب للفوز",power:"السرقة تسرق 3 بدلاً من 2",winCheck:(p)=>p.gold>=10,winText:"بنى إمبراطوريته!"},
-  {id:"politician",name:"السياسي",icon:"⭐",goal:"اجمع 5 نفوذ للفوز",power:"صوتك يحتسب ضعف",winCheck:(p)=>p.influence>=5,winText:"تسلق السلّة!"},
-  {id:"rebel",name:"المنشق",icon:"🎭",goal:"كن آخر من يبقى حياً",power:"إذا وصلت لـ 1 ❤️ وتهاجم، تنجو",winCheck:(p,g)=>g.players.filter(x=>x.alive).length===1&&p.alive,winText:"البقاء للأقوى!"},
-  {id:"guardian",name:"الحارس",icon:"🛡️",goal:"حمِّ لاعبك المكلف حياً حتى النهاية",power:"يمكنك حماية لاعباً مجاناً",winCheck:(p,g)=>{const w=g.players.find(x=>x.id===p.wardId);return w&&w.alive&&g.players.filter(x=>x.alive).length<=2;},winText:"أوفى بعهده!"}
+  {id:"detective",name:"المحقق",icon:"🕵️",goal:"اجمع 3 أدلة 📜",power:"كشف دور مجاناً مرة/جولة",winCheck:p=>p.clues>=3,winText:"كشف الحقيقة!"},
+  {id:"killer",name:"القاتل",icon:"🗡️",goal:"اقتل 2 لاعبين",power:"هجوم أقوى (−3❤️)",winCheck:(p,g)=>(g.killsBy?.[p.id]||0)>=2,winText:"أنجز مهمته!"},
+  {id:"merchant",name:"التاجر",icon:"💰",goal:"اجمع 10 ذهب",power:"السرقة تسرق 3 بدلاً من 2",winCheck:p=>p.gold>=10,winText:"بنى إمبراطوريته!"},
+  {id:"politician",name:"السياسي",icon:"⭐",goal:"اجمع 5 نفوذ",power:"صوتك ×2 + −1 شبهة",winCheck:p=>p.influence>=5,winText:"تسلق السلّة!"},
+  {id:"rebel",name:"المنشق",icon:"🎭",goal:"كن آخر من يبقى",power:"النجاة عند 1❤️",winCheck:(p,g)=>g.players.filter(x=>x.alive).length===1&&p.alive,winText:"البقاء للأقوى!"},
+  {id:"guardian",name:"الحارس",icon:"🛡️",goal:"حمِّ لاعبك للنهاية",power:"حماية مجانية + −1 شبهة للهدف",winCheck:(p,g)=>{const w=g.players.find(x=>x.id===p.wardId);return w&&w.alive&&g.players.filter(x=>x.alive).length<=2;},winText:"أوفى بعهده!"}
 ];
-
 const DECK=[
-  {id:"attack",name:"هجوم",icon:"⚔️",type:"action",needsTarget:true,desc:"اختر لاعباً: يخسر 2 ❤️",effect:"attack",count:8},
-  {id:"heal",name:"علاج",icon:"💊",type:"action",needsTarget:false,desc:"+2 ❤️ لك",effect:"heal",count:6},
-  {id:"steal",name:"سرقة",icon:"💰",type:"action",needsTarget:true,desc:"اختر لاعباً: تسرق 2 💰",effect:"steal",count:6},
-  {id:"shield",name:"درع",icon:"🛡️",type:"action",needsTarget:false,desc:"تحمي نفسك من هجوم هذه الجولة",effect:"shield",count:6},
-  {id:"reveal",name:"كشف",icon:"🔍",type:"action",needsTarget:true,desc:"اختر لاعباً: تعرف دوره السري",effect:"reveal",count:4},
-  {id:"clue",name:"دليل",icon:"📜",type:"resource",needsTarget:false,desc:"+1 دليل (للمحقق) أو بيعه بـ 1💰",effect:"clue",count:5},
-  {id:"gold2",name:"ذهب",icon:"💎",type:"resource",needsTarget:false,desc:"+2 ذهب",effect:"gold2",count:8},
-  {id:"influence",name:"نفوذ",icon:"🌟",type:"resource",needsTarget:false,desc:"+1 نفوذ",effect:"influence",count:6},
-  {id:"bomb",name:"قنبلة",icon:"💣",type:"curse",needsTarget:false,desc:"استخدمها الآن (-1 ❤️) أو احتفظ بها... إذا وصلت يدك لـ 3 تنفجر (-3 ❤️)!",effect:"bomb",count:4},
-  {id:"poison",name:"سم",icon:"☠️",type:"curse",needsTarget:false,desc:"استخدمه الآن (-1 ❤️) أو في نهاية الجولة تخسر 1 ❤️",effect:"poison",count:4},
-  {id:"curse",name:"لعنة",icon:"🔥",type:"curse",needsTarget:false,desc:"استخدمها الآن (تفقد دورك لجولة) أو لا يمكنك السحب",effect:"curse",count:3}
+  {id:"attack",name:"هجوم",icon:"⚔️",type:"action",needsTarget:true,desc:"−2❤️ للهدف (+1 شبهة)",effect:"attack",count:6},
+  {id:"heal",name:"علاج",icon:"💊",type:"action",needsTarget:false,desc:"+2❤️ لك (−1 شبهة)",effect:"heal",count:5},
+  {id:"steal",name:"سرقة",icon:"💰",type:"action",needsTarget:true,desc:"تسرق 2💰 (+1 شبهة)",effect:"steal",count:5},
+  {id:"shield",name:"درع",icon:"🛡️",type:"action",needsTarget:false,desc:"تحمي من هجوم الجولة (−1 شبهة)",effect:"shield",count:4},
+  {id:"reveal",name:"كشف",icon:"🔍",type:"action",needsTarget:true,desc:"تعرف دور الهدف",effect:"reveal",count:4},
+  {id:"evidence",name:"تتبع",icon:"📋",type:"action",needsTarget:true,desc:"+2 شبهة للهدف",effect:"evidence",count:4},
+  {id:"clue",name:"دليل",icon:"📜",type:"resource",needsTarget:false,desc:"+1دليل (محقق) أو بيع 1💰",effect:"clue",count:4},
+  {id:"gold2",name:"ذهب",icon:"💎",type:"resource",needsTarget:false,desc:"+2 ذهب",effect:"gold2",count:6},
+  {id:"influence",name:"نفوذ",icon:"🌟",type:"resource",needsTarget:false,desc:"+1 نفوذ",effect:"influence",count:5},
+  {id:"amnesty",name:"إعفاء",icon:"🎫",type:"resource",needsTarget:true,desc:"أنقِذ من اتهام (+2 شبهة لك)",effect:"amnesty",count:3},
+  {id:"key",name:"مفتاح",icon:"🔑",type:"resource",needsTarget:false,desc:"−2 شبهة منك",effect:"key",count:4},
+  {id:"pact",name:"協力",icon:"🤝",type:"resource",needsTarget:true,desc:"كلاكما −1 شبهة (+ علاقتكما معروفة)",effect:"pact",count:3},
+  {id:"bomb",name:"قنبلة",icon:"💣",type:"curse",needsTarget:false,desc:"−1❤️ أو تنفجر −3❤️ إذا اليد ممتلئة",effect:"bomb",count:3},
+  {id:"poison",name:"سم",icon:"☠️",type:"curse",needsTarget:false,desc:"−1❤️ الآن أو −1❤️/جولة",effect:"poison",count:3},
+  {id:"curse",name:"لعنة",icon:"🔥",type:"curse",needsTarget:false,desc:"تفقد دورك أو لا سحب",effect:"curse",count:2}
 ];
-
 const EVENTS=[
-  {title:"ليلة العاصفة",story:"عاصفة أغلقت الأبواب. لا أحد يدخل أو يخرج.",twist:"لا يمكن استخدام ⚔️ هجوم هذه الجولة.",ban:"attack"},
-  {title:"السوق السوداء",story:"تجار سرية ظهروا في الردهة.",twist:"كل لاعب يحصل على +1 💰 و +1 ⭐.",bonus:{gold:1,influence:1}},
-  {title:"الخيانة المكشوفة",story:"وثيقة سرية تسربت. الثقة معدومة.",twist:"من يكشف دور لاعب يحصل على +1 ⭐.",revealBonus:true},
-  {title:"الوباء",story:"مرض غامض ينتشر.",twist:"في نهاية الجولة، كل لاعب يخسر 1 ❤️.",plague:true},
-  {title:"المزاد",story:"مزاد علني للنفوذ.",twist:"من يملك أكثر ذهباً يخسر 2 💰 ويكسب 2 ⭐.",auction:true},
-  {title:"الهدنة",story:"هدنة مفاجئة.",twist:"لا يمكن استخدام ⚔️ هجوم أو ☠️ سم.",ban:"attack_poison"},
-  {title:"الكنز المفقود",story:"عُثر على كنز في القبو.",twist:"أول لاعب يسحب 💎 ذهب يحصل على +3 💰 إضافية.",treasure:true},
-  {title:"الانقلاب",story:"انقلاب داخلي!",twist:"القاتل والمحقق يتبادلان القوى هذه الجولة.",swapPowers:["killer","detective"]}
+  {title:"ليلة العاصفة",story:"عاصفة أغلقت الأبواب.",twist:"الهجوم يُضاعف الشبهة (+2).",eventMod:{atkMult:2}},
+  {title:"السوق السوداء",story:"تجار سرية ظهروا.",twist:"+1💰 و −1 شبهة للجميع.",bonus:{gold:1},susR:1},
+  {title:"الخيانة المكشوفة",story:"وثيقة سرية تسربت.",twist:"كشف الدور: +1⭐ لكن +1 شبهة للهدف.",revealBonus:true,revealSus:1},
+  {title:"الوباء",story:"مرض غامض.",twist:"كل لاعب −1❤️ +1 شبهة.",plague:true,susA:1},
+  {title:"المزاد",story:"مزاد نفوذ.",twist:"الأغنى −2💰 +2⭐ +2 شبهة.",auction:true},
+  {title:"الهدنة",story:"هدنة مفاجئة.",twist:"لا هجوم + لا شبهة جديدة.",ban:"atk_pois",noS:true},
+  {title:"الكنز المفقود",story:"كنز في القبو.",twist:"أول من يسحب 💎: +3💰 +1 شبهة.",treasure:true},
+  {title:"الانقلاب",story:"انقلاب!",twist:"قاتل/محقق يتبادلان القوى +Everyone +1 شبهة.",swap:["killer","detective"],susA:1},
+  {title:"ذعر جماعي",story:"شائعة ذعر.",twist:"من يملك 3 بطاقات: −1❤️ +2 شبهة.",panic:true},
+  {title:"صمت القبور",story:"صمت رهيب.",twist:"الأشباح لا تهمس − Everyone −1 شبهة.",noG:true,susR:1}
 ];
-
-// ==================== STATE ====================
-const state={
-  screen:"setup",playerCount:4,players:[],round:1,phase:"setup",event:null,
-  currentPlayerIndex:0,logs:[],loading:false,error:"",winner:null,
-  deck:[],discard:[],pendingActions:{},gameOver:false,
-  killsBy:{},revealedRoles:{},protectedThisRound:[],
-  accusationVotes:{},useAI:false,currentDrawnCard:null
-};
+const state={screen:"setup",playerCount:4,players:[],round:1,phase:"setup",event:null,currentPlayerIndex:0,logs:[],loading:false,error:"",winner:null,deck:[],discard:[],pendingActions:{},gameOver:false,killsBy:{},revealedRoles:{},protectedThisRound:[],accusationVotes:{},accuseMode:{},currentDrawnCard:null,roundActions:{},ghostWhispers:{},savedBy:{}};
 const app=document.getElementById("app");
-const esc=s=>String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+const esc=s=>String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
 const alive=()=>state.players.filter(p=>p.alive);
-const rand=(arr)=>arr[Math.floor(Math.random()*arr.length)];
-const shuffle=(arr)=>[...arr].sort(()=>Math.random()-.5);
+const dead=()=>state.players.filter(p=>!p.alive);
+const rand=a=>a[Math.floor(Math.random()*a.length)];
+const shuf=a=>[...a].sort(()=>Math.random()-.5);
+function addLog(m){state.logs.push(m);if(state.logs.length>30)state.logs=state.logs.slice(-30);}
+function sCol(s){return s<=2?"sl":s<=5?"sm":s<=9?"sh":"sd"}
+function sPct(s){return Math.min(100,(s/SCAP)*100)}
+function isW(p){return p.suspicion>=7}
+function genS(p,amt){if(state.event?.noS)return 0;let a=amt;if(state.event?.eventMod?.atkMult&&amt>0)a=amt*state.event.eventMod.atkMult;const o=p.suspicion;p.suspicion=Math.min(SCAP,Math.max(0,p.suspicion+a));return p.suspicion-o}
+function buildDeck(){const d=[];DECK.forEach(c=>{for(let i=0;i<c.count;i++)d.push({...c,uid:c.id+"_"+i+"_"+Math.random().toString(36).slice(2,6)});});return shuf(d)}
 
-function buildDeck(){
-  const deck=[];
-  DECK.forEach(c=>{for(let i=0;i<c.count;i++)deck.push({...c,uid:c.id+"_"+i+"_"+Math.random().toString(36).slice(2,6)});});
-  return shuffle(deck);
-}
-
-function render(){
-  if(state.screen==="setup")return renderSetup();
-  if(state.screen==="private")return renderPrivate();
-  if(state.screen==="game")return renderGame();
-}
-
+function render(){if(state.screen==="setup")return renderSetup();if(state.screen==="private")return renderPrivate();if(state.screen==="game")return renderGame();}
 function renderSetup(){
-  app.innerHTML=`<main class="center"><div class="shell">
-    <section class="hero">
-      <div class="eyebrow">أدوار سرية + بطاقات ملعونة + أهداف مختلفة</div>
-      <h1>المحكمة السرية</h1>
-      <p>كل لاعب له دور سري وهدف فوز مختلف.<br>البطاقات ملعونة — احتفظ بها طويلاً وقد تنفجر!</p>
-    </section>
-    <section class="panel setup">
-      <h2>⚙️ إعداد اللعبة</h2>
-      <label class="hint">عدد اللاعبين (3–6)</label>
-      <div class="count-grid">${[3,4,5,6].map(n=>`<button class="count-btn ${state.playerCount===n?"active":""}" data-count="${n}">${n}</button>`).join("")}</div>
-      <div style="margin:14px 0">
-        <label class="hint">أسماء اللاعبين</label>
-        <div id="nameInputs" style="display:grid;gap:8px;margin-top:10px">${Array.from({length:state.playerCount},(_,i)=>`<input type="text" data-name="${i}" placeholder="اللاعب ${i+1}" style="background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:12px 14px;border-radius:12px;width:100%;font:inherit" value="${esc(state.players[i]?.name||'')}">`).join("")}</div>
-      </div>
-      <button class="btn primary full" id="start">🚀 بدء اللعبة</button>
-      ${state.error?`<div class="danger-box">${esc(state.error)}</div>`:""}
-      <div class="info-box">
-        <strong>🎯 كيف تُلعب:</strong><br>
-        ١. كل لاعب يحصل على <strong>دور سري</strong> و<strong>هدف فوز مختلف</strong>.<br>
-        ٢. كل جولة تسحب <strong>بطاقة</strong> — إما تستخدمها فوراً أو تحتفظ بها.<br>
-        ٣. <strong>الحد: 3 بطاقات</strong> — إذا امتلأت يدك يجب استخدام واحدة!<br>
-        ٤. <strong>البطاقات الملعونة</strong> (💣☠️🔥) إذا احتفظت بها... تنفجر!<br>
-        ٥. في النهاية: <strong>اتهام</strong> + تحقق من شروط الفوز.
-      </div>
-      <div style="margin-top:16px">
-        <h3>🎭 الأدوار السرية</h3>
-        <div class="players" style="margin-top:10px">${ROLES.map(r=>`<article class="player"><div class="player-name">${r.icon} ${r.name}</div><div class="stats"><span class="stat gold">${r.goal}</span></div></article>`).join("")}</div>
-      </div>
-    </section>
-  </div></main>`;
+  app.innerHTML=`<main class="center"><div class="shell"><section class="hero"><div class="eyebrow">أثر الشبهة — عملة مشتركة واحدة</div><h1>المحكمة السرية V2</h1><p>كل فعل خطير يرفع شبهتك المرئية. كم من الظهور تستحق دفعه؟</p></section><section class="panel setup"><h2>⚙️ إعداد اللعبة</h2><label class="hint">عدد اللاعبين (3–6)</label><div class="count-grid">${[3,4,5,6].map(n=>`<button class="count-btn ${state.playerCount===n?"active":""}" data-count="${n}">${n}</button>`).join("")}</div><div style="margin:14px 0"><label class="hint">أسماء اللاعبين</label><div id="nameInputs" style="display:grid;gap:8px;margin-top:10px">${Array.from({length:state.playerCount},(_,i)=>`<input type="text" data-name="${i}" placeholder="اللاعب ${i+1}" style="background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:12px 14px;border-radius:12px;width:100%;font:inherit" value="${esc(state.players[i]?.name||'')}">`).join("")}</div></div><button class="btn primary full" id="start">🚀 بدء اللعبة</button>${state.error?`<div class="danger-box">${esc(state.error)}</div>`:""}<div class="info-box"><strong>🎯 القواعد:</strong><br>١. أدوار سرية + أهداف مختلفة<br>٢. اسحب بطاقة: استخدمها أو احتفظ بها (حد ${HL})<br>٣. <strong>الشبهة</strong>: كل فعل خطير يرفعها — مرئية للجميع<br>٤. <strong>الاتهام يكلّف شبهة</strong><br>٥. <strong>الفضح النهائي</strong>: الشبهة تتحول لسلاح</div><div class="susp-box"><strong>🔍 جدول الشبهة:</strong><br>⚔️ هجوم +1 | 💰 سرقة +1 | 🗡️ قتل +2 | 💊 علاج −1 | 🛡️ درع −1<br>🃏 3 بطاقات +1 | 💎 أغنى +1 | ⭐ الأعلى نفوذ +1<br>📋 تتبع +2 للهدف | 🔑 مفتاح −2 | 🤝 شراكة −1/−1</div><div style="margin-top:16px"><h3>🎭 الأدوار</h3><div class="players" style="margin-top:10px">${ROLES.map(r=>`<article class="player"><div class="player-name">${r.icon} ${r.name}</div><div class="stats"><span class="stat gold">${r.goal}</span></div></article>`).join("")}</div></div></section></div></main>`;
   document.querySelectorAll("[data-count]").forEach(b=>b.onclick=()=>{state.playerCount=+b.dataset.count;renderSetupInputs()});
-  document.getElementById("start").onclick=start;
-  renderSetupInputs();
+  document.getElementById("start").onclick=start;renderSetupInputs();
 }
-
-function renderSetupInputs(){
-  const c=document.getElementById("nameInputs");
-  if(!c)return;
-  c.innerHTML=Array.from({length:state.playerCount},(_,i)=>`<input type="text" data-name="${i}" placeholder="اللاعب ${i+1}" style="background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:12px 14px;border-radius:12px;width:100%;font:inherit" value="${esc(state.players[i]?.name||'')}">`).join("");
-}
-
-async function start(){
-  const inputs=document.querySelectorAll("[data-name]");
-  const names=Array.from(inputs).map((inp,i)=>inp.value.trim()||"اللاعب "+(i+1));
-  if(names.length<3){state.error="تحتاج 3 لاعبين على الأقل!";render();return;}
-
-  state.players=names.map((name,i)=>({
-    id:i+1,name,hp:5,gold:2,influence:0,clues:0,
-    role:null,roleRevealed:false,wardId:null,
-    hand:[],alive:true,cursed:false,cantDraw:false
-  }));
-  state.round=1;state.phase="roles";state.logs=[];state.error="";state.winner=null;
-  state.deck=buildDeck();state.discard=[];state.killsBy={};state.revealedRoles={};
-  state.gameOver=false;state.screen="game";
-
-  const shuffledRoles=shuffle(ROLES).slice(0,state.players.length);
-  state.players.forEach((p,i)=>{
-    p.role=shuffledRoles[i];
-    if(p.role.id==="guardian"){
-      const targets=state.players.filter(x=>x.id!==p.id);
-      p.wardId=rand(targets).id;
-    }
-  });
-
-  state.logs.push("🎭 توزيع الأدوار السرية...");
-  state.event=rand(EVENTS);
-  render();
+function renderSetupInputs(){const c=document.getElementById("nameInputs");if(!c)return;c.innerHTML=Array.from({length:state.playerCount},(_,i)=>`<input type="text" data-name="${i}" placeholder="اللاعب ${i+1}" style="background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:12px 14px;border-radius:12px;width:100%;font:inherit" value="${esc(state.players[i]?.name||'')}">`).join("");}
+function start(){
+  const inputs=document.querySelectorAll("[data-name]");const names=Array.from(inputs).map((inp,i)=>inp.value.trim()||"اللاعب "+(i+1));
+  if(names.length<3){state.error="تحتاج 3 لاعبين!";render();return;}
+  state.players=names.map((name,i)=>({id:i+1,name,hp:MHP,gold:2,influence:0,clues:0,role:null,wardId:null,hand:[],alive:true,cursed:false,cantDraw:false,suspicion:0,inactivityCount:0,lastBetrayalRound:0,recycled:false}));
+  state.round=1;state.phase="roles";state.logs=[];state.error="";state.winner=null;state.deck=buildDeck();state.discard=[];state.killsBy={};state.revealedRoles={};state.gameOver=false;state.screen="game";state.roundActions={};state.ghostWhispers={};state.savedBy={};state.accusationVotes={};state.accuseMode={};
+  const sr=shuf(ROLES).slice(0,state.players.length);state.players.forEach((p,i)=>{p.role=sr[i];if(p.role.id==="guardian"){p.wardId=rand(state.players.filter(x=>x.id!==p.id)).id;}});
+  addLog("🎭 توزيع الأدوار...");state.event=rand(EVENTS);render();
 }
 
 function renderGame(){
-  const phaseNames={roles:"الأدوار",event:"حدث الجولة",draw:"السحب",reveal:"الكشف",accuse:"الاتهام",end:"نهاية الجولة"};
-  const phaseOrder=["roles","event","draw","reveal","accuse","end"];
-  const phaseIndex=phaseOrder.indexOf(state.phase);
-
-  app.innerHTML=`<main class="shell">
-    <header class="topbar">
-      <div><div class="round">الجولة ${state.round} — ${phaseNames[state.phase]||""}</div><h1>المحكمة السرية</h1></div>
-      <button class="btn" id="restart">إعادة</button>
-    </header>
-    <div class="phase-indicator">${phaseOrder.map((ph,i)=>`<div class="phase-dot ${i===phaseIndex?"active":i<phaseIndex?"done":""}" title="${phaseNames[ph]}"></div>`).join("")}</div>
-    <section class="players">${state.players.map(p=>{
-      const known=state.revealedRoles[p.id];
-      return `<article class="player ${p.alive?"":"dead"} ${p.id===state.winner?.id?"winner":""}">
-        <div class="player-name">${known?p.role.icon+" ":""}${esc(p.name)} ${known?`<span class="role-badge">${p.role.name}</span>`:""}</div>
-        <div class="stats">
-          <span class="stat hp">❤️ ${p.hp}</span>
-          <span class="stat gold">💰 ${p.gold}</span>
-          <span class="stat influence">⭐ ${p.influence}</span>
-          ${p.role?.id==="detective"?`<span class="stat">📜 ${p.clues}</span>`:""}
-        </div>
-        <div class="hand">${p.hand.map(c=>`<span class="card-mini ${c.type==="curse"?"curse":""}">${c.icon}</span>`).join("")}</div>
-      </article>`;
-    }).join("")}</section>
-    <section class="panel">${state.loading?renderLoading():renderPhase()}</section>
-    ${state.logs.length?`<section class="panel log"><h3>📜 سجل اللعبة</h3>${state.logs.slice(-12).reverse().map(x=>`<div class="log-item">${x}</div>`).join("")}</section>`:""}
-  </main>`;
-  document.getElementById("restart")?.addEventListener("click",()=>{state.screen="setup";state.players=[];state.logs=[];state.error="";render();});
-  bindPhase();
+  const pn={roles:"الأدوار",event:"حدث",draw:"سحب",ghost:"أشباح",reveal:"كشف",accuse:"اتهام",end:"نهاية"};
+  const po=["roles","event","draw","ghost","reveal","accuse","end"];const pi=po.indexOf(state.phase);
+  app.innerHTML=`<main class="shell"><header class="topbar"><div><div class="round">جولة ${state.round} — ${pn[state.phase]||""}</div><h1>المحكمة السرية</h1></div><button class="btn" id="restart">إعادة</button></header><div class="phase-indicator">${po.map((p,i)=>`<div class="phase-dot ${i===pi?"active":i<pi?"done":""}" title="${pn[p]}"></div>`).join("")}</div><section class="players">${state.players.map(p=>{const k=state.revealedRoles[p.id];const w=isW(p);return`<article class="player ${p.alive?"":"dead"} ${w?"watcher":""} ${p.id===state.winner?.id?"winner":""}"><div class="player-name">${k?p.role.icon+" ":""}${esc(p.name)} ${k?`<span class="role-badge">${p.role.name}</span>`:""} ${w?`<span class="wb">مُراقَب</span>`:""}</div><div class="stats"><span class="stat hp">❤️ ${p.hp}</span><span class="stat gold">💰 ${p.gold}</span><span class="stat influence">⭐ ${p.influence}</span>${p.role?.id==="detective"?`<span class="stat">📜 ${p.clues}</span>`:""}</div><div class="susp-bar ${sCol(p.suspicion)}"><span>🔍</span><span>${p.suspicion}/${SCAP}</span><div class="fill"><span style="width:${sPct(p.suspicion)}%;background:var(--${sCol(p.suspicion)})"></span></div></div><div class="hand">${p.hand.map(c=>`<span class="card-mini ${c.type==="curse"?"curse":(c.id==="key"||c.id==="amnesty"||c.id==="pact")?"new":""}">${c.icon}</span>`).join("")}</div></article>`;}).join("")}</section><section class="panel">${state.loading?`<div class="loading"><div><div class="dots"><i></i><i></i><i></i></div><div class="muted">جارِ التحضير...</div></div></div>`:renderPhase()}</section>${state.logs.length?`<section class="panel log"><h3>📜 السجل</h3>${state.logs.slice(-12).reverse().map(x=>`<div class="log-item">${x}</div>`).join("")}</section>`:""}</main>`;
+  document.getElementById("restart")?.addEventListener("click",()=>{state.screen="setup";state.players=[];state.logs=[];render();});bindPhase();
 }
-
-function renderLoading(){return `<div class="loading"><div><div class="dots"><i></i><i></i><i></i></div><div class="muted">جارِ التحضير...</div></div></div>`}
-
-function renderPhase(){
-  if(state.phase==="roles")return renderRolesPhase();
-  if(state.phase==="event")return renderEventPhase();
-  if(state.phase==="draw")return renderDrawPhase();
-  if(state.phase==="reveal")return renderRevealPhase();
-  if(state.phase==="accuse")return renderAccusePhase();
-  if(state.phase==="end")return renderEndPhase();
-}
-
-function renderRolesPhase(){
-  return `<div class="event"><div class="event-icon">🎭</div><h2>توزيع الأدوار السرية</h2>
-  <p class="muted">كل لاعب له دور سري وهدف فوز مختلف. لا أحد يعرف دور الآخر!</p>
-  <div class="info-box">⚠️ مرر الهاتف لكل لاعب ليرى دوره السري.</div>
-  <div class="actions"><button class="btn primary full" id="viewRoles">عرض الأدوار (تمرير الهاتف)</button></div>`;
-}
-
-function renderEventPhase(){
-  const e=state.event||{};
-  return `<div class="event"><div class="event-icon">⚡</div><h2>${esc(e.title||"حدث غامض")}</h2><p>${esc(e.story||"")}</p></div>
-  ${e.twist?`<div class="twist">🎭 ${esc(e.twist)}</div>`:""}
-  <div class="actions"><button class="btn primary full" id="beginDraw">ابدأ السحب</button></div>`;
-}
-
-function renderDrawPhase(){
-  const remaining=alive().filter(p=>!state.pendingActions[p.id]).length;
-  return `<div class="event"><div class="event-icon">🃏</div><h2>سحب البطاقات</h2>
-  <p class="muted">كل لاعب يسحب بطاقة. يمكنه استخدامها فوراً أو الاحتفاظ بها.</p>
-  <div class="info-box">⏳ باقي ${remaining} لاعب${remaining===1?"":"ين"} لم يسحبوا بعد.<br>💡 الحد: 3 بطاقات. إذا امتلأت يدك يجب استخدام واحدة!</div>
-  <div class="actions"><button class="btn primary full" id="nextPrivate">تمرير الهاتف — سحب البطاقة</button></div>`;
-}
-
-function renderRevealPhase(){
-  const actions=Object.values(state.pendingActions);
-  return `<h2>🔓 كشف الأفعال</h2>
-  <div class="reveal-grid">${actions.map(a=>{
-    const p=state.players.find(x=>x.id===a.playerId);
-    const c=a.card;
-    let res="";
-    if(a.cancelled)res="<span style='color:var(--danger)'>⛔ أُلغي</span>";
-    else if(a.blocked)res="<span style='color:var(--good)'>🛡️ حُمي</span>";
-    else if(a.success===false)res="<span style='color:var(--danger)'>❌ فشل</span>";
-    else if(a.success)res="<span style='color:var(--good)'>✅ نجح</span>";
-    return `<div class="reveal-item"><div class="icon">${c.icon}</div><div class="text"><strong>${esc(p?.name||"???")} — ${esc(c.name)}</strong><small>${esc(c.desc)} ${res}</small></div></div>`;
-  }).join("")}</div>
-  <div class="actions"><button class="btn primary full" id="toAccuse">جولة الاتهام</button></div>`;
-}
-
-function renderAccusePhase(){
-  const a=alive();
-  return `<h2>⚖️ جولة الاتهام</h2>
-  <p class="muted">ناقشوا ما رأيتم. من يُتهم؟ الأصوات سرية.</p>
-  <div class="vote-grid">${a.map(p=>`<button class="vote-btn ${state.accusationVotes[state.currentPlayerIndex]===p.id?'voted':''}" data-vote="${p.id}"><div>${esc(p.name)}</div><div class="vote-count">${Object.values(state.accusationVotes).filter(v=>v===p.id).length} صوت</div></button>`).join("")}</div>
-  <div class="info-box">صوتك: ${state.accusationVotes[state.currentPlayerIndex]?esc(state.players.find(p=>p.id===state.accusationVotes[state.currentPlayerIndex])?.name):"لم تختار بعد"}</div>
-  <div class="actions"><button class="btn primary full" id="submitVote" ${state.accusationVotes[state.currentPlayerIndex]?"":"disabled"}>تأكيد الاتهام</button></div>`;
-}
-
-function renderEndPhase(){
-  const a=alive();
-  for(const p of a){
-    if(p.role&&p.role.winCheck(p,state)){state.winner=p;state.gameOver=true;break;}
-  }
-  if(!state.gameOver&&a.length<=1){state.winner=a[0]||null;state.gameOver=true;}
-
-  if(state.gameOver){
-    return `<div class="event"><div class="event-icon">👑</div><h2>انتهت اللعبة</h2>
-    <p>${state.winner?`${state.winner.role.icon} <strong>${esc(state.winner.name)}</strong> — ${esc(state.winner.role.winText)}`:"لا يوجد فائز."}</p>
-    <div class="players" style="margin-top:20px">${state.players.map(p=>`<article class="player ${p.alive?"":"dead"} ${p.id===state.winner?.id?"winner":""}"><div class="player-name">${state.revealedRoles[p.id]?p.role.icon+" ":""}${esc(p.name)} ${state.revealedRoles[p.id]?`<span class="role-badge">${p.role.name}</span>`:""}</div><div class="stats"><span class="stat hp">❤️ ${p.hp}</span><span class="stat gold">💰 ${p.gold}</span><span class="stat influence">⭐ ${p.influence}</span>${p.role?.id==="detective"?`<span class="stat">📜 ${p.clues}</span>`:""}</div></article>`).join("")}</div>
-    <button class="btn primary full" id="newGame" style="margin-top:20px">لعبة جديدة</button></div>`;
-  }
-  return `<div class="event"><div class="event-icon">🌙</div><h2>انتهت الجولة ${state.round}</h2>
-  <p class="muted">تم تطبيق الانفجارات واللعنات.</p>
-  <div class="info-box">${state.logs.slice(-6).map(l=>`<div>${l}</div>`).join("")}</div>
-  <button class="btn primary full" id="nextRound">الجولة التالية</button></div>`;
-}
-
 function bindPhase(){
   document.getElementById("viewRoles")?.addEventListener("click",()=>{state.screen="private";state.currentPlayerIndex=0;state.phase="roles";render();});
-  document.getElementById("beginDraw")?.addEventListener("click",()=>{state.phase="draw";state.currentPlayerIndex=0;state.pendingActions={};render();});
+  document.getElementById("beginDraw")?.addEventListener("click",()=>{state.phase="draw";state.currentPlayerIndex=0;state.pendingActions={};state.roundActions={};render();});
   document.getElementById("nextPrivate")?.addEventListener("click",()=>{state.screen="private";render();});
-  document.getElementById("toAccuse")?.addEventListener("click",()=>{state.phase="accuse";state.currentPlayerIndex=0;state.accusationVotes={};render();});
-  document.querySelectorAll("[data-vote]").forEach(b=>b.onclick=()=>castVote(+b.dataset.vote));
-  document.getElementById("submitVote")?.addEventListener("click",submitVote);
+  document.getElementById("toReveal")?.addEventListener("click",()=>{state.phase="reveal";resolveRound();render();});
+  document.getElementById("toAccuse")?.addEventListener("click",()=>{state.phase="accuse";state.currentPlayerIndex=0;state.accusationVotes={};state.accuseMode={};render();});
+  document.getElementById("toEnd")?.addEventListener("click",()=>{state.phase="end";render();});
   document.getElementById("nextRound")?.addEventListener("click",nextRound);
   document.getElementById("newGame")?.addEventListener("click",()=>{state.screen="setup";state.players=[];render();});
+  document.getElementById("ghostWhisper")?.addEventListener("click",()=>{state.screen="private";state.phase="ghost";state.currentPlayerIndex=0;render();});
+  document.querySelectorAll("[data-vote]").forEach(b=>b.onclick=()=>{state.accusationVotes[state.currentPlayerIndex]=+b.dataset.vote;render();});
+  document.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{state.accuseMode[state.currentPlayerIndex]=b.dataset.mode;render();});
+  document.getElementById("submitVote")?.addEventListener("click",submitVote);
+  document.getElementById("passVote")?.addEventListener("click",passVote);
 }
 
-// ==================== PRIVATE SCREENS ====================
-function renderPrivate(){
+function renderPhase(){
+  if(state.phase==="roles")return`<div class="event"><div class="event-icon">🎭</div><h2>توزيع الأدوار السرية</h2><p class="muted">كل لاعب له دور سري وهدف مختلف!</p><div class="info-box">⚠️ مرر الهاتف لكل لاعب ليرى دوره.</div><div class="actions"><button class="btn primary full" id="viewRoles">عرض الأدوار</button></div></div>`;
+  if(state.phase==="event"){const e=state.event||{};return`<div class="event"><div class="event-icon">⚡</div><h2>${esc(e.title)}</h2><p>${esc(e.story)}</p></div>${e.twist?`<div class="twist">🎭 ${esc(e.twist)}</div>`:""}<div class="actions"><button class="btn primary full" id="beginDraw">ابدأ السحب</button></div>`;}
+  if(state.phase==="draw"){const r=alive().filter(p=>!state.pendingActions[p.id]).length;return`<div class="event"><div class="event-icon">🃏</div><h2>سحب البطاقات</h2><p class="muted">كل لاعب يسحب بطاقة. الحد: ${HL} بطاقات.</p><div class="info-box">⏳ باقي ${r} لاعب${r===1?"":"ين"}<br>💡 تذكر: كل فعل يُضيف شبهة!</div><div class="actions"><button class="btn primary full" id="nextPrivate">تمرير الهاتف</button></div></div>`;}
+  if(state.phase==="ghost"){const d=dead(),a=alive();if(!d.length||!a.length||state.event?.noG)return`<div class="event"><div class="event-icon">👻</div><h2>الأشباح</h2><p class="muted">${state.event?.noG?"صمت القبور: لا همسات.":"لا أشباح."}</p><div class="actions"><button class="btn primary full" id="toReveal">الكشف</button></div></div>`;if(!Object.keys(state.ghostWhispers).length)return`<div class="event"><div class="event-icon">👻</div><h2>همس الأشباح</h2><p class="muted">الأموات يضيفون +1 شبهة لحي.</p><div class="info-box">👥 أحياء: ${a.map(p=>esc(p.name)).join("، ")}</div><div class="actions"><button class="btn ghost full" id="ghostWhisper">همس الأشباح</button></div></div>`;return`<div class="event"><div class="event-icon">👻</div><h2>تم الهمس</h2>${Object.entries(state.ghostWhispers).map(([g,t])=>{const gp=state.players.find(p=>p.id===+g),tp=state.players.find(p=>p.id===+t);return`<div class="clue">👻 ${esc(gp?.name||"?")} همس لـ ${esc(tp?.name||"?")} → +1 شبهة</div>`;}).join("")}<div class="actions"><button class="btn primary full" id="toReveal">الكشف</button></div></div>`;}
+  if(state.phase==="reveal"){const actions=Object.values(state.pendingActions);return`<h2>🔓 كشف الأفعال</h2><div class="reveal-grid">${actions.map(a=>{const p=state.players.find(x=>x.id===a.playerId);const c=a.card;let r="";if(a.cancelled)r="<span style='color:var(--danger)'>⛔</span>";else if(a.blocked)r="<span style='color:var(--good)'>🛡️</span>";else if(a.success===false)r="<span style='color:var(--danger)'>❌</span>";else if(a.success)r="<span style='color:var(--good)'>✅</span>";const si=a.sc?` <span style="color:var(--${a.sc>0?"sh":"sl"})">${a.sc>0?"+":""}${a.sc}🔍</span>`:"";return`<div class="reveal-item"><div class="icon">${c.icon}</div><div class="text"><strong>${esc(p?.name||"")} — ${esc(c.name)}</strong><small>${esc(c.desc)} ${r}${si}</small></div></div>`;}).join("")}</div><div class="actions"><button class="btn primary full" id="toAccuse">جولة الاتهام</button></div>`;}
+  if(state.phase==="accuse")return renderAccuse();
+  if(state.phase==="end")return renderEnd();
+}
+
+function renderAccuse(){
+  const a=alive();if(state.currentPlayerIndex>=a.length)return renderAccuseResults();
+  const my=a[state.currentPlayerIndex];if(!my||!my.alive){state.currentPlayerIndex++;return renderAccuse();}
+  const mode=state.accuseMode[state.currentPlayerIndex]||"normal";
+  const ms=my.suspicion;const canN=ms>=1||ms===0;const canS=ms>=3;
+  return`<h2>⚖️ جولة الاتهام</h2><p class="muted">${esc(my.name)}: اختر من يتهمك.</p><div class="susp-box">🔍 شبهتك: <strong>${ms}/${SCAP}</strong></div>${ms===0?`<div class="notice">⚠️ لا شبهة: الاتهام يكلفك 1❤️ بدل الشبهة</div>`:""}<div class="accuse-mode"><button class="accuse-mode-btn ${mode==="normal"?"selected":""}" data-mode="normal">⚖️ عادي<small>${ms>=1?"1 شبهة":ms===0?"1❤️ (بديل)":"يحتاج شبهة"}</small></button><button class="accuse-mode-btn ${mode==="strong"?"selected":""}" data-mode="strong" ${!canS?"disabled":""}>⚡ قوي<small>${canS?"3 شبهة → −2❤️ + كشف الدور":"يحتاج 3 شبهة"}</small></button></div><h3 style="margin-top:16px">اختر الهدف:</h3><div class="vote-grid">${a.filter(p=>p.id!==my.id).map(p=>`<button class="vote-btn ${state.accusationVotes[state.currentPlayerIndex]===p.id?"voted":""}" data-vote="${p.id}"><div>${esc(p.name)}</div><div class="vote-count">${Object.values(state.accusationVotes).filter(v=>v===p.id).length}</div><small>🔍 ${p.suspicion}</small></button>`).join("")}</div><div class="actions"><button class="btn" id="passVote">عدم اتهام</button><button class="btn primary full" id="submitVote" ${state.accusationVotes[state.currentPlayerIndex]?"":"disabled"}>تأكيد</button></div><div class="info-box">⏳ باقي ${a.length-state.currentPlayerIndex} لاعبين</div>`;
+}
+
+function renderAccuseResults(){
+  const a=alive(),votes={},strong={};
+  Object.entries(state.accusationVotes).forEach(([i,tid])=>{if(!tid)return;const v=a[+i];if(!v)return;const m=state.accuseMode[+i]||"normal";if(m==="strong")strong[tid]=(strong[tid]||0)+1;votes[tid]=(votes[tid]||0)+1;});
+  let mx=0,aid=null;Object.entries(votes).forEach(([id,c])=>{if(c>mx){mx=c;aid=+id;}});
+  const res=[];
+  if(aid&&mx>0){const ac=state.players.find(p=>p.id===aid);if(ac&&ac.alive){const isS=strong[aid]>0;const dmg=isS?2:1;ac.hp=Math.max(0,ac.hp-dmg);res.push(`⚖️ ${ac.name} متهم! (${mx} أصوات) −${dmg}❤️`);if(isS){state.revealedRoles[aid]=true;res.push(`🔍 دور ${ac.name}: ${ac.role.icon} ${ac.role.name}!`);}if(ac.hp===0){eliminate(ac);res.push(`☠️ ${ac.name} خرج!`);}Object.entries(state.accusationVotes).forEach(([i,tid])=>{if(+tid===aid){const v=a[+i];if(v&&v.id!==aid){v.influence++;res.push(`✅ ${v.name} صوّت صح! +1⭐`);}}});}}
+  return`<div class="event"><div class="event-icon">⚖️</div><h2>نتائج الاتهام</h2>${res.length?res.map(r=>`<div class="clue">${r}</div>`).join(""):`<p class="muted">لم يتم اتهام أحد.</p>`}<div class="actions"><button class="btn primary full" id="toEnd">نهاية الجولة</button></div></div>`;
+}
+
+function renderEnd(){
   const a=alive();
-  if(!a.length){state.screen="game";state.phase="end";return render();}
-  const p=a[state.currentPlayerIndex%a.length];
-  if(state.phase==="roles")return renderPrivateRole(p,a);
-  if(state.phase==="draw")return renderPrivateDraw(p,a);
+  for(const p of a){if(p.role?.winCheck(p,state)){state.winner=p;state.gameOver=true;break;}}
+  if(!state.gameOver&&a.length<=1){state.winner=a[0]||null;state.gameOver=true;}
+  if(state.round>=GRL&&!state.gameOver){const s=[...state.players].filter(p=>p.alive).sort((a,b)=>(b.suspicion+b.influence)-(a.suspicion+a.influence));state.winner=s[0]||null;state.gameOver=true;}
+  if(state.gameOver){return`<div class="event"><div class="event-icon">👑</div><h2>انتهت اللعبة</h2><p>${state.winner?`${state.winner.role.icon} <strong>${esc(state.winner.name)}</strong> — ${esc(state.winner.role.winText)}`:"لا فائز."}</p><div class="players" style="margin-top:20px">${state.players.map(p=>`<article class="player ${p.alive?"":"dead"} ${p.id===state.winner?.id?"winner":""}"><div class="player-name">${state.revealedRoles[p.id]?p.role.icon+" ":""}${esc(p.name)} ${state.revealedRoles[p.id]?`<span class="role-badge">${p.role.name}</span>`:`<span class="role-badge">؟</span>`}</div><div class="stats"><span class="stat hp">❤️ ${p.hp}</span><span class="stat gold">💰 ${p.gold}</span><span class="stat influence">⭐ ${p.influence}</span>${p.role?.id==="detective"?`<span class="stat">📜 ${p.clues}</span>`:""}</div><div class="susp-bar ${sCol(p.suspicion)}"><span>🔍</span><span>${p.suspicion} شبهة</span></div></article>`).join("")}</div><button class="btn primary full" id="newGame" style="margin-top:20px">لعبة جديدة</button></div>`;}
+  return`<div class="event"><div class="event-icon">🌙</div><h2>انتهت الجولة ${state.round}</h2><div class="info-box">${state.logs.slice(-8).map(l=>`<div>${l}</div>`).join("")}</div><button class="btn primary full" id="nextRound">الجولة التالية</button></div>`;
 }
 
-function renderPrivateRole(p,a){
-  const next=()=>{
-    state.currentPlayerIndex++;
-    if(state.currentPlayerIndex>=a.length){state.screen="game";state.phase="event";render();}
-    else render();
-  };
-  const wardName=p.wardId?state.players.find(x=>x.id===p.wardId)?.name:"";
-  app.innerHTML=`<main class="private-screen"><section class="private-box">
-    <div class="private-icon">🎭</div><div class="eyebrow">سري — لا تُظهر للآخرين!</div>
-    <div class="role-card">
-      <div class="role-icon">${p.role.icon}</div>
-      <h2>${p.role.name}</h2>
-      <div class="role-goal">🎯 ${p.role.goal}</div>
-      <div class="role-power">💡 ${p.role.power}</div>
-      ${p.wardId?`<div class="notice" style="margin-top:12px">🛡️ يجب حماية: ${esc(wardName)}</div>`:""}
-    </div>
-    <button class="btn primary full" id="nextRole" style="margin-top:16px">فهمت — أعطِ الهاتف للتالي</button>
-  </section></main>`;
+function renderPrivate(){const a=alive();if(!a.length){state.screen="game";state.phase="end";return render();}if(state.phase==="ghost")return renderGhostPriv();const p=a[state.currentPlayerIndex%a.length];if(state.phase==="roles")return renderPrivRole(p);if(state.phase==="draw")return renderPrivDraw(p,a);}
+
+function renderPrivRole(p){
+  const next=()=>{state.currentPlayerIndex++;if(state.currentPlayerIndex>=alive().length){state.screen="game";state.phase="event";render();}else render();};
+  const wn=p.wardId?state.players.find(x=>x.id===p.wardId)?.name:"";
+  app.innerHTML=`<main class="private-screen"><section class="private-box"><div class="private-icon">🎭</div><div class="eyebrow">سري!</div><div class="role-card"><div class="role-icon">${p.role.icon}</div><h2>${p.role.name}</h2><div class="role-goal">🎯 ${p.role.goal}</div><div class="role-power">💡 ${p.role.power}</div>${p.wardId?`<div class="notice" style="margin-top:12px">🛡️ حماية: ${esc(wn)}</div>`:""}</div><div class="susp-box">🔍 شبهتك: ${p.suspicion}/${SCAP}</div><button class="btn primary full" id="nextRole" style="margin-top:16px">فهمت — للتالي</button></section></main>`;
   document.getElementById("nextRole").onclick=next;
 }
 
-function renderPrivateDraw(p,a){
-  if(state.pendingActions[p.id]){nextDrawPlayer(a);return;}
-
-  // Check curse
-  if(p.cursed){
-    app.innerHTML=`<main class="private-screen"><section class="private-box">
-      <div class="private-icon">🔥</div><div class="eyebrow">سري — ${esc(p.name)}</div>
-      <div class="danger-box"><strong>أنت ملعون!</strong><br>لا يمكنك سحب البطاقات. يجب كسر اللعنة.</div>
-      <button class="btn curse full" id="breakCurse">كسر اللعنة (-1 ❤️)</button>
-    </section></main>`;
-    document.getElementById("breakCurse").onclick=()=>{
-      p.hp=Math.max(0,p.hp-1);p.cursed=false;
-      state.logs.push(`🔥 ${p.name} كسر لعنته! (-1 ❤️)`);
-      if(p.hp===0)eliminate(p);
-      nextDrawPlayer(a);
-    };
-    return;
-  }
-
-  // Draw card
-  let card;
-  if(state.deck.length===0){
-    if(state.discard.length===0){
-      app.innerHTML=`<main class="private-screen"><section class="private-box">
-        <div class="private-icon">📭</div><h2>انتهت البطاقات!</h2>
-        <p class="muted">لا يوجد بطاقات للسحب.</p>
-        <button class="btn primary full" id="skipDraw">تخطي</button>
-      </section></main>`;
-      document.getElementById("skipDraw").onclick=()=>nextDrawPlayer(a);
-      return;
-    }
-    state.deck=shuffle(state.discard);state.discard=[];
-  }
-  card=state.deck.pop();
-  state.currentDrawnCard=card;
-
-  const handFull=p.hand.length>=3;
-  const needsTarget=card.needsTarget;
-
-  app.innerHTML=`<main class="private-screen"><section class="private-box">
-    <div class="private-icon">${card.icon}</div><div class="eyebrow">سري — ${esc(p.name)}</div>
-    <h1 style="font-size:28px">سحبت: ${esc(card.name)}</h1>
-    <div class="info-box" style="text-align:right;font-size:16px">
-      <strong>${card.icon} ${esc(card.name)}</strong><br>
-      <span style="color:var(--muted)">${esc(card.desc)}</span>
-      ${card.type==="curse"?'<br><span style="color:var(--curse)">⚠️ بطاقة ملعونة!</span>':''}
-    </div>
-    ${handFull?`<div class="danger-box">⚠️ يدك ممتلئة (${p.hand.length}/3)! يجب استخدام هذه البطاقة!</div>`:""}
-    <div class="info-box" style="text-align:right">❤️ ${p.hp} | 💰 ${p.gold} | ⭐ ${p.influence}${p.role?.id==="detective"?` | 📜 ${p.clues}`:""}</div>
-    <div class="private-actions">
-      ${needsTarget?`<button class="private-action" id="useTarget"><strong>⚡ استخدم الآن</strong><small>اختر هدفاً</small></button>`:`<button class="private-action" id="useNow"><strong>⚡ استخدم الآن</strong><small>نفذ الفعل فوراً</small></button>`}
-      ${card.type==="resource"&&!handFull?`<button class="private-action" id="keepCard"><strong>💼 احتفظ بها</strong><small>أضفها ليدك (${p.hand.length}/3)</small></button>`:""}
-      ${card.type==="curse"&&!handFull?`<button class="private-action curse" id="keepCard"><strong>🎲 احتفظ بها (خطير!)</strong><small>قد تنفجر إذا امتلأت يدك!</small></button>`:""}
-      ${p.hand.length>0?`<button class="private-action" id="playHand"><strong>🎴 استخدم من يدك</strong><small>اختر بطاقة محفوظة</small></button>`:""}
-    </div>
-  </section></main>`;
-
-  document.getElementById("useNow")?.addEventListener("click",()=>{
-    applyCardEffect(p,card,null,a);
-    state.pendingActions[p.id]={playerId:p.id,card:{...card},action:"use",success:true};
-    state.discard.push(card);state.currentDrawnCard=null;
-    nextDrawPlayer(a);
-  });
-  document.getElementById("useTarget")?.addEventListener("click",()=>selectTarget(p,card,a));
-  document.getElementById("keepCard")?.addEventListener("click",()=>{
-    if(p.hand.length>=3){alert("يدك ممتلئة!");return;}
-    p.hand.push(card);
-    state.pendingActions[p.id]={playerId:p.id,card:{...card},action:"keep",success:true};
-    state.logs.push(`${p.name} احتفظ ببطاقة سراً.`);
-    state.currentDrawnCard=null;
-    nextDrawPlayer(a);
-  });
-  document.getElementById("playHand")?.addEventListener("click",()=>playFromHand(p,a));
+function renderPrivDraw(p,a){
+  if(state.pendingActions[p.id]){nextDraw(a);return;}
+  if(p.cursed){app.innerHTML=`<main class="private-screen"><section class="private-box"><div class="private-icon">🔥</div><div class="eyebrow">${esc(p.name)}</div><div class="danger-box"><strong>ملعون!</strong> لا سحب.</div><button class="btn curse full" id="breakC">كسر اللعنة (−1❤️)</button></section></main>`;document.getElementById("breakC").onclick=()=>{p.hp=Math.max(0,p.hp-1);p.cursed=false;addLog(`🔥 ${p.name} كسر لعنته!`);if(p.hp===0)eliminate(p);nextDraw(a);};return;}
+  let card;if(!state.deck.length){if(!state.discard.length){app.innerHTML=`<main class="private-screen"><section class="private-box"><div class="private-icon">📭</div><h2>لا بطاقات!</h2><button class="btn primary full" id="skipD">تخطي</button></section></main>`;document.getElementById("skipD").onclick=()=>nextDraw(a);return;}state.deck=shuf(state.discard);state.discard=[];}
+  card=state.deck.pop();state.currentDrawnCard=card;const hf=p.hand.length>=HL;
+  let ah="";if(card.needsTarget){ah+=`<button class="private-action" id="useT"><strong>⚡ استخدام (+${card.effect==="evidence"?"2🔍 للهدف":card.effect==="attack"||card.effect==="steal"?"1🔍":"0🔍"})</strong><small>${esc(card.desc)}</small></button>`;}else{ah+=`<button class="private-action" id="useN"><strong>⚡ استخدام</strong><small>${esc(card.desc)}</small></button>`;}
+  if(!hf&&(card.type==="resource"||card.type==="curse"))ah+=`<button class="private-action ${card.type==="curse"?"curse":""}" id="keepC"><strong>💼 احتفظ</strong><small>يدك (${p.hand.length}/${HL})</small></button>`;
+  if(p.hand.length)ah+=`<button class="private-action" id="playH"><strong>🎴 من اليد</strong></button>`;
+  if(!p.recycled&&p.hand.length)ah+=`<button class="private-action" id="recycle"><strong>♻️ إعادة تدوير (مرة)</strong></button>`;
+  app.innerHTML=`<main class="private-screen"><section class="private-box"><div class="private-icon">${card.icon}</div><div class="eyebrow">${esc(p.name)}</div><h1 style="font-size:28px">${esc(card.name)}</h1><div class="info-box" style="text-align:right"><strong>${card.icon} ${esc(card.name)}</strong><br><span style="color:var(--muted)">${esc(card.desc)}</span>${card.type==="curse"?`<br><span style="color:var(--curse)">⚠️ ملعونة!</span>`:""}</div>${hf?`<div class="danger-box">⚠️ يد ممتلئة (${p.hand.length}/${HL})!</div>`:""}<div class="info-box" style="text-align:right">❤️${p.hp} 💰${p.gold} ⭐${p.influence} 🔍${p.suspicion}ش${p.role?.id==="detective"?` 📜${p.clues}`:""}</div><div class="private-actions">${ah}</div></section></main>`;
+  document.getElementById("useN")?.addEventListener("click",()=>{const s=applyEffect(p,card,null,a);state.pendingActions[p.id]={playerId:p.id,card:{...card},action:"use",success:true,sc:s||0};state.roundActions[p.id]=true;state.discard.push(card);state.currentDrawnCard=null;nextDraw(a);});
+  document.getElementById("useT")?.addEventListener("click",()=>showTarget(p,card,a));
+  document.getElementById("keepC")?.addEventListener("click",()=>{if(p.hand.length>=HL)return;p.hand.push(card);state.pendingActions[p.id]={playerId:p.id,card:{...card},action:"keep",success:true,sc:0};state.roundActions[p.id]=true;addLog(`${p.name} احتفظ بطاقة.`);state.currentDrawnCard=null;nextDraw(a);});
+  document.getElementById("playH")?.addEventListener("click",()=>showPlayHand(p,a));
+  document.getElementById("recycle")?.addEventListener("click",()=>{showRecycle(p,a);});
 }
 
-function selectTarget(p,card,a){
-  const targets=a.filter(x=>x.id!==p.id);
-  app.innerHTML=`<main class="private-screen"><section class="private-box">
-    <div class="private-icon">${card.icon}</div><h1 style="font-size:28px">اختر هدفك</h1>
-    <p class="muted">${esc(card.name)} — ${esc(card.desc)}</p>
-    <div class="target-grid">${targets.map(t=>`<button class="target-btn" data-target="${t.id}"><strong>${esc(t.name)}</strong><small>❤️ ${t.hp} | 💰 ${t.gold} | ⭐ ${t.influence}</small></button>`).join("")}</div>
-    <button class="btn" id="backDraw" style="margin-top:10px">رجوع</button>
-  </section></main>`;
-  document.querySelectorAll("[data-target]").forEach(b=>b.onclick=()=>{
-    const targetId=+b.dataset.target;
-    applyCardEffect(p,card,targetId,a);
-    state.pendingActions[p.id]={playerId:p.id,card:{...card},action:"use",targetId,success:true};
-    state.discard.push(state.currentDrawnCard);state.currentDrawnCard=null;
-    nextDrawPlayer(a);
-  });
-  document.getElementById("backDraw").onclick=()=>renderPrivateDraw(p,a);
+function showTarget(p,card,a){
+  const tg=a.filter(x=>x.id!==p.id);
+  app.innerHTML=`<main class="private-screen"><section class="private-box"><div class="private-icon">${card.icon}</div><h1>اختر هدفك</h1><div class="target-grid">${tg.map(t=>`<button class="target-btn" data-tgt="${t.id}"><strong>${esc(t.name)}</strong><small>❤️${t.hp} 💰${t.gold} 🔍${t.suspicion}</small></button>`).join("")}</div><button class="btn" id="backD" style="margin-top:10px">رجوع</button></section></main>`;
+  document.querySelectorAll("[data-tgt]").forEach(b=>b.onclick=()=>{const tid=+b.dataset.tgt;const s=applyEffect(p,card,tid,a);state.pendingActions[p.id]={playerId:p.id,card:{...card},action:"use",targetId:tid,success:true,sc:s||0};state.roundActions[p.id]=true;state.discard.push(state.currentDrawnCard);state.currentDrawnCard=null;nextDraw(a);});
+  document.getElementById("backD").onclick=()=>renderPrivDraw(p,a);
 }
 
-function playFromHand(p,a){
-  if(p.hand.length===0)return;
-  app.innerHTML=`<main class="private-screen"><section class="private-box">
-    <div class="private-icon">🎴</div><h1 style="font-size:28px">اختر بطاقة من يدك</h1>
-    <div class="cards">${p.hand.map((c,i)=>`<button class="card ${c.type==="curse"?"curse":""}" data-hand="${i}"><strong>${c.icon}</strong><span>${esc(c.name)}</span><span class="type">${c.type==="curse"?"ملعونة":c.type==="resource"?"مورد":"فعل"}</span><small class="muted">${esc(c.desc)}</small></button>`).join("")}</div>
-    <button class="btn" id="backDraw" style="margin-top:10px">رجوع</button>
-  </section></main>`;
-  document.querySelectorAll("[data-hand]").forEach(b=>b.onclick=()=>{
-    const idx=+b.dataset.hand;
-    const card=p.hand.splice(idx,1)[0];
-    if(card.needsTarget){
-      // Need target - show target selection
-      const targets=a.filter(x=>x.id!==p.id);
-      app.innerHTML=`<main class="private-screen"><section class="private-box">
-        <div class="private-icon">${card.icon}</div><h1 style="font-size:28px">اختر هدفك</h1>
-        <div class="target-grid">${targets.map(t=>`<button class="target-btn" data-target2="${t.id}"><strong>${esc(t.name)}</strong><small>❤️ ${t.hp} | 💰 ${t.gold}</small></button>`).join("")}</div>
-      </section></main>`;
-      document.querySelectorAll("[data-target2]").forEach(b2=>b2.onclick=()=>{
-        const targetId=+b2.dataset.target2;
-        applyCardEffect(p,card,targetId,a);
-        state.pendingActions[p.id]={playerId:p.id,card:{...card},action:"hand",targetId,success:true};
-        state.discard.push(card);state.currentDrawnCard=null;
-        nextDrawPlayer(a);
-      });
-    }else{
-      applyCardEffect(p,card,null,a);
-      state.pendingActions[p.id]={playerId:p.id,card:{...card},action:"hand",success:true};
-      state.discard.push(card);state.currentDrawnCard=null;
-      nextDrawPlayer(a);
-    }
-  });
-  document.getElementById("backDraw").onclick=()=>renderPrivateDraw(p,a);
+function showPlayHand(p,a){
+  app.innerHTML=`<main class="private-screen"><section class="private-box"><div class="private-icon">🎴</div><h1>اختر من اليد</h1><div class="cards">${p.hand.map((c,i)=>`<button class="card ${c.type==="curse"?"curse":(c.id==="key"||c.id==="amnesty"||c.id==="pact")?"new-card":""}" data-hi="${i}"><strong>${c.icon}</strong><span>${esc(c.name)}</span><span class="type">${c.type==="curse"?"ملعونة":c.type==="resource"?"مورد":"فعل"}</span><small class="muted">${esc(c.desc)}</small></button>`).join("")}</div><button class="btn" id="backD" style="margin-top:10px">رجوع</button></section></main>`;
+  document.querySelectorAll("[data-hi]").forEach(b=>b.onclick=()=>{const idx=+b.dataset.hi;const card=p.hand.splice(idx,1)[0];if(card.needsTarget){const tg=a.filter(x=>x.id!==p.id);app.innerHTML=`<main class="private-screen"><section class="private-box"><div class="private-icon">${card.icon}</div><h1>اختر الهدف</h1><div class="target-grid">${tg.map(t=>`<button class="target-btn" data-t2="${t.id}"><strong>${esc(t.name)}</strong><small>❤️${t.hp}</small></button>`).join("")}</div></section></main>`;document.querySelectorAll("[data-t2]").forEach(b2=>b2.onclick=()=>{const tid=+b2.dataset.t2;const s=applyEffect(p,card,tid,a);state.pendingActions[p.id]={playerId:p.id,card:{...card},action:"hand",targetId:tid,success:true,sc:s||0};state.roundActions[p.id]=true;state.discard.push(card);state.currentDrawnCard=null;nextDraw(a);});}else{const s=applyEffect(p,card,null,a);state.pendingActions[p.id]={playerId:p.id,card:{...card},action:"hand",success:true,sc:s||0};state.roundActions[p.id]=true;state.discard.push(card);state.currentDrawnCard=null;nextDraw(a);}});
+  document.getElementById("backD").onclick=()=>renderPrivDraw(p,a);
 }
 
-function nextDrawPlayer(a){
-  state.currentPlayerIndex++;
-  if(state.currentPlayerIndex>=a.length){
-    state.screen="game";state.phase="reveal";resolveRound();render();
-  }else render();
+function showRecycle(p,a){
+  app.innerHTML=`<main class="private-screen"><section class="private-box"><div class="private-icon">♻️</div><h1>إعادة تدوير</h1><div class="cards">${p.hand.map((c,i)=>`<button class="card" data-ri="${i}"><strong>${c.icon}</strong><span>${esc(c.name)}</span></button>`).join("")}</div><button class="btn" id="backD" style="margin-top:10px">رجوع</button></section></main>`;
+  document.querySelectorAll("[data-ri]").forEach(b=>b.onclick=()=>{const idx=+b.dataset.ri;const card=p.hand.splice(idx,1)[0];state.discard.push(card);p.recycled=true;if(!state.deck.length&&state.discard.length){state.deck=shuf(state.discard);state.discard=[];}if(state.deck.length){p.hand.push(state.deck.pop());}addLog(`♻️ ${p.name} أدّر ورقة.`);state.pendingActions[p.id]={playerId:p.id,card:{icon:"♻️",name:"تدوير",type:"special"},action:"recycle",success:true,sc:0};state.roundActions[p.id]=true;nextDraw(a);});
+  document.getElementById("backD").onclick=()=>renderPrivDraw(p,a);
 }
 
-// ==================== CARD EFFECTS ====================
-function applyCardEffect(player,card,targetId,allPlayers){
-  const banAttack=state.event?.ban==="attack"||state.event?.ban==="attack_poison";
-  const target=targetId?state.players.find(p=>p.id===targetId):null;
+function renderGhostPriv(){
+  const d=dead(),a=alive();if(!d.length||!a.length){state.screen="game";state.phase="reveal";resolveRound();render();return;}
+  const w=d[state.currentPlayerIndex%d.length];
+  app.innerHTML=`<main class="private-screen"><section class="private-box"><div class="private-icon">👻</div><div class="eyebrow">همس — ${esc(w.name)}</div><h1>اختر من تهمس له (+1 شبهة)</h1><div class="target-grid">${a.map(t=>`<button class="target-btn" data-gt="${t.id}"><strong>👻 → ${esc(t.name)}</strong><small>🔍${t.suspicion}${isW(t)?" مُراقَب!":""}</small></button>`).join("")}</div><button class="btn ghost" id="skipG" style="margin-top:10px">عدم الهمس</button></section></main>`;
+  const finish=()=>{state.screen="game";state.phase="reveal";resolveRound();render();};
+  document.querySelectorAll("[data-gt]").forEach(b=>b.onclick=()=>{const tid=+b.dataset.gt;const t=state.players.find(p=>p.id===tid);if(t){const d=genS(t,1);addLog(`👻 ${w.name} همس لـ ${t.name} → +${d}🔍 (${t.suspicion}🔍)`);state.ghostWhispers[w.id]=tid;}state.currentPlayerIndex++;if(state.currentPlayerIndex>=d.length){finish();}else render();});
+  document.getElementById("skipG")?.addEventListener("click",()=>{state.currentPlayerIndex++;if(state.currentPlayerIndex>=d.length){finish();}else render();});
+}
 
+function nextDraw(a){state.currentPlayerIndex++;if(state.currentPlayerIndex>=a.length){state.screen="game";const d=dead();if(d.length>0&&!state.event?.noG){state.phase="ghost";state.currentPlayerIndex=0;state.ghostWhispers={};}else{state.phase="reveal";}render();}else render();}
+
+function applyEffect(player,card,targetId,allP){
+  const banA=state.event?.ban==="atk_pois";const tgt=targetId?state.players.find(p=>p.id===targetId):null;let sc=0;
   switch(card.effect){
-    case "attack":
-      if(banAttack){
-        state.logs.push(`⚔️ هجوم ${player.name} مُحظور هذه الجولة!`);
-        return false;
-      }
-      if(target&&target.alive){
-        if(state.protectedThisRound.includes(target.id)){
-          state.logs.push(`🛡️ ${target.name} حُمي من هجوم ${player.name}!`);
-          return false;
-        }
-        if(target.role?.id==="rebel"&&target.hp<=1){
-          state.logs.push(`🎭 ${target.name} (المنشق) نجا بأعجوبة!`);
-          return false;
-        }
-        const dmg=player.role?.id==="killer"?3:2;
-        target.hp=Math.max(0,target.hp-dmg);
-        state.logs.push(`⚔️ ${player.name} هاجم ${target.name}! (-${dmg} ❤️)`);
-        if(target.hp===0){
-          eliminate(target);
-          state.killsBy[player.id]=(state.killsBy[player.id]||0)+1;
-          state.logs.push(`☠️ ${player.name} قتل ${target.name}!`);
-        }
-        return true;
-      }
-      return false;
-    case "heal":
-      player.hp=Math.min(5,player.hp+2);
-      state.logs.push(`💊 ${player.name} عالج نفسه! (+2 ❤️)`);
-      return true;
-    case "steal":
-      if(target&&target.alive&&target.gold>0){
-        const amt=player.role?.id==="merchant"?3:2;
-        const stolen=Math.min(amt,target.gold);
-        target.gold-=stolen;player.gold+=stolen;
-        state.logs.push(`💰 ${player.name} سرق ${stolen}💰 من ${target.name}!`);
-        return true;
-      }
-      state.logs.push(`💰 ${player.name} فشل في السرقة!`);
-      return false;
-    case "shield":
-      state.protectedThisRound.push(player.id);
-      state.logs.push(`🛡️ ${player.name} جهز درعاً!`);
-      return true;
-    case "reveal":
-      if(target&&target.alive){
-        state.revealedRoles[target.id]=true;
-        state.logs.push(`🔍 ${player.name} كشف دور ${target.name}: ${target.role.icon} ${target.role.name}!`);
-        if(state.event?.revealBonus){
-          player.influence++;
-          state.logs.push(`⭐ ${player.name} حصل على +1 نفوذ لكشفه!`);
-        }
-        return true;
-      }
-      return false;
-    case "clue":
-      if(player.role?.id==="detective"){
-        player.clues++;
-        state.logs.push(`📜 ${player.name} وجد دليلاً! (${player.clues}/3)`);
-      }else{
-        player.gold+=1;
-        state.logs.push(`📜 ${player.name} باع الدليل بـ 1💰.`);
-      }
-      return true;
-    case "gold2":
-      player.gold+=2;
-      state.logs.push(`💎 ${player.name} حصل على 2💰!`);
-      // Treasure event bonus
-      if(state.event?.treasure&&state.currentDrawnCard?.effect==="gold2"){
-        player.gold+=3;
-        state.logs.push(`🏆 ${player.name} وجد الكنز! +3💰 إضافية!`);
-        state.event.treasure=false; // Only once
-      }
-      return true;
-    case "influence":
-      player.influence++;
-      state.logs.push(`🌟 ${player.name} حصل على 1⭐!`);
-      return true;
-    case "bomb":
-      player.hp=Math.max(0,player.hp-1);
-      state.logs.push(`💣 ${player.name} فجر القنبلة عن قصد! (-1 ❤️)`);
-      if(player.hp===0)eliminate(player);
-      return true;
-    case "poison":
-      player.hp=Math.max(0,player.hp-1);
-      state.logs.push(`☠️ ${player.name} شرب السم للتخلص منه! (-1 ❤️)`);
-      if(player.hp===0)eliminate(player);
-      return true;
-    case "curse":
-      player.cursed=true;
-      state.logs.push(`🔥 ${player.name} تحمل اللعنة! لا يمكنه السحب.`);
-      return true;
-  }
-  return false;
+    case"attack":{if(banA){addLog(`⚔️ هجوم مُحظور!`);return 0;}if(!tgt?.alive)return 0;if(state.protectedThisRound.includes(tgt.id)){addLog(`🛡️ ${tgt.name} حُمي!`);state.savedBy[tgt.id]=player.id;return 0;}if(tgt.role?.id==="rebel"&&tgt.hp<=1){addLog(`🎭 ${tgt.name} نجا!`);return 0;}const dmg=player.role?.id==="killer"?3:2;tgt.hp=Math.max(0,tgt.hp-dmg);addLog(`⚔️ ${player.name} هاجم ${tgt.name}! (−${dmg}❤️)`);const m=state.event?.eventMod?.atkMult||1;sc=genS(player,SGEN.attack*m);if(sc)addLog(`🔍 ${player.name} +${sc}🔍`);if(tgt.hp===0){eliminate(tgt);state.killsBy[player.id]=(state.killsBy[player.id]||0)+1;addLog(`☠️ ${player.name} قتل ${tgt.name}!`);genS(player,SGEN.kill);addLog(`🔍 ${player.name} +${SGEN.kill}🔍 (قتل)`);}return sc;}
+    case"heal":player.hp=Math.min(MHP,player.hp+2);addLog(`💊 ${player.name} عالج (+2❤️)`);sc=genS(player,SGEN.heal);if(sc)addLog(`🔍 ${player.name} ${sc}🔍`);return sc;
+    case"steal":{if(!tgt?.alive||tgt.gold<=0){addLog(`💰 فشل سرقة!`);return 0;}const amt=player.role?.id==="merchant"?3:2;const st=Math.min(amt,tgt.gold);tgt.gold-=st;player.gold+=st;addLog(`💰 ${player.name} سرق ${st}💰 من ${tgt.name}!`);sc=genS(player,SGEN.steal);if(sc)addLog(`🔍 ${player.name} +${sc}🔍`);return sc;}
+    case"shield":state.protectedThisRound.push(player.id);addLog(`🛡️ ${player.name} درع!`);sc=genS(player,SGEN.shield);if(sc)addLog(`🔍 ${player.name} ${sc}🔍`);return sc;
+    case"reveal":{if(!tgt?.alive)return 0;state.revealedRoles[tgt.id]=true;addLog(`🔍 ${player.name} كشف ${tgt.name}: ${tgt.role.icon} ${tgt.role.name}!`);if(state.event?.revealBonus){player.influence++;addLog(`⭐ +1 نفوذ`);}if(state.event?.revealSus){genS(tgt,state.event.revealSus);addLog(`🔍 ${tgt.name} +${state.event.revealSus}🔍 لكشف دوره`);}return 0;}
+    case"evidence":{if(!tgt?.alive)return 0;const d=genS(tgt,2);addLog(`📋 ${player.name} وجد دليلاً على ${tgt.name}! (+${d}🔍)`);if(player.role?.id==="detective"){player.clues++;addLog(`📜 دليل (${player.clues}/3)`);}return 0;}
+    case"clue":if(player.role?.id==="detective"){player.clues++;addLog(`📜 دليل (${player.clues}/3)`);}else{player.gold++;addLog(`📜 بيع بـ1💰`);}return 0;
+    case"gold2":player.gold+=2;addLog(`💎 +2💰`);if(state.event?.treasure&&state.currentDrawnCard?.effect==="gold2"){player.gold+=3;addLog(`🏆 كنز +3💰!`);genS(player,1);state.event.treasure=false;}return 0;
+    case"influence":player.influence++;addLog(`🌟 +1⭐`);return 0;
+    case"amnesty":{if(!tgt?.alive)return 0;state.savedBy[tgt.id]=player.id;addLog(`🎫 ${player.name} أعفى ${tgt.name}!`);sc=genS(player,2);addLog(`🔍 ${player.name} +${sc}🔍`);return sc;}
+    case"key":sc=genS(player,-2);addLog(`🔑 −2🔍 (${player.suspicion}🔍)`);return sc;
+    case"pact":{if(!tgt?.alive)return 0;const d1=genS(player,-1),d2=genS(tgt,-1);addLog(`🤝 تعاون! (${d1} و ${d2}🔍)`);state.revealedRoles[player.id]=true;state.revealedRoles[tgt.id]=true;return d1;}
+    case"bomb":player.hp=Math.max(0,player.hp-1);addLog(`💣 −1❤️`);if(player.hp===0)eliminate(player);return 0;
+    case"poison":if(state.event?.ban==="atk_pois"){addLog(`☠️ سم مُحظور!`);return 0;}player.hp=Math.max(0,player.hp-1);addLog(`☠️ ${player.name} شرب سم (−1❤️)`);if(player.hp===0)eliminate(player);return 0;
+    case"curse":player.cursed=true;addLog(`🔥 ${player.name} ملعون!`);return 0;
+  }return 0;
 }
 
-// ==================== ROUND RESOLUTION ====================
 function resolveRound(){
   const a=alive();
-
-  // Check kept curse cards
-  a.forEach(p=>{
-    const bombs=p.hand.filter(c=>c.effect==="bomb");
-    const poisons=p.hand.filter(c=>c.effect==="poison");
-
-    // Bomb explosion at 3 cards
-    if(bombs.length>0&&p.hand.length>=3){
-      const bomb=bombs[0];
-      p.hand=p.hand.filter(c=>c.uid!==bomb.uid);
-      state.discard.push(bomb);
-      p.hp=Math.max(0,p.hp-3);
-      state.logs.push(`💥💣 يد ${p.name} امتلأت والقنبلة انفجرت! (-3 ❤️)`);
-      if(p.hp===0)eliminate(p);
-    }
-
-    // Poison drain
-    poisons.forEach(()=>{
-      p.hp=Math.max(0,p.hp-1);
-      state.logs.push(`☠️ السم ينخر ${p.name}! (-1 ❤️)`);
-      if(p.hp===0)eliminate(p);
-    });
-  });
-
-  // Event effects
-  if(state.event?.plague){
-    a.forEach(p=>{
-      p.hp=Math.max(0,p.hp-1);
-      state.logs.push(`🦠 الوباء يضعف ${p.name}! (-1 ❤️)`);
-      if(p.hp===0)eliminate(p);
-    });
-  }
-  if(state.event?.auction){
-    const richest=a.filter(p=>p.gold>0).sort((x,y)=>y.gold-x.gold)[0];
-    if(richest&&richest.gold>=2){
-      richest.gold-=2;richest.influence+=2;
-      state.logs.push(`🏛️ ${richest.name} فاز بالمزاد! (-2💰, +2⭐)`);
-    }
-  }
-  if(state.event?.bonus){
-    a.forEach(p=>{
-      if(state.event.bonus.gold)p.gold+=state.event.bonus.gold;
-      if(state.event.bonus.influence)p.influence+=state.event.bonus.influence;
-    });
-    state.logs.push(`🎁 الجميع حصل على مكافآت من الحدث!`);
-  }
-
+  a.forEach(p=>{if(p.hand.filter(c=>c.effect==="bomb").length>0&&p.hand.length>=HL){const b=p.hand.find(c=>c.effect==="bomb");if(b){p.hand=p.hand.filter(c=>c.uid!==b.uid);state.discard.push(b);p.hp=Math.max(0,p.hp-3);addLog(`💥💣 قنبلة ${p.name} انفجرت! (−3❤️)`);if(p.hp===0)eliminate(p);}}p.hand.filter(c=>c.effect==="poison").forEach(()=>{p.hp=Math.max(0,p.hp-1);addLog(`☠️ سم ${p.name} (−1❤️)`);if(p.hp===0)eliminate(p);});});
+  // Suspicion from state
+  a.forEach(p=>{if(p.hand.length>=HL){const d=genS(p,1);if(d>0)addLog(`🃏 ${p.name} يد ممتلئة (+${d}🔍)`);}});
+  // Richest
+  const rich=a.filter(p=>p.gold>0).sort((x,y)=>y.gold-x.gold);
+  if(rich.length){const top=rich[0].gold;rich.filter(p=>p.gold===top).forEach(p=>{const d=genS(p,1);if(d>0)addLog(`💎 ${p.name} أغنى (+${d}🔍)`);});}
+  // Most influence
+  const inf=a.filter(p=>p.influence>0).sort((x,y)=>y.influence-x.influence);
+  if(inf.length){const top=inf[0].influence;inf.filter(p=>p.influence===top).forEach(p=>{const d=genS(p,1);if(d>0)addLog(`⭐ ${p.name} الأعلى نفوذ (+${d}🔍)`);});}
+  // Event bonuses
+  if(state.event?.bonus){a.forEach(p=>{if(state.event.bonus.gold)p.gold+=state.event.bonus.gold;});addLog(`🎁 مكافآت الحدث!`);}
+  if(state.event?.plague){a.forEach(p=>{p.hp=Math.max(0,p.hp-1);addLog(`🦠 وباء: ${p.name} (−1❤️)`);if(p.hp===0)eliminate(p);});}
+  if(state.event?.auction){const r=a.filter(p=>p.gold>0).sort((x,y)=>y.gold-x.gold)[0];if(r&&r.gold>=2){r.gold-=2;r.influence+=2;r.suspicion=Math.min(SCAP,r.suspicion+2);addLog(`🏛️ ${r.name} فاز بالمزاد (−2💰 +2⭐ +2🔍)`);}}
+  if(state.event?.susA){a.forEach(p=>{const d=genS(p,state.event.susA);addLog(`🔍 ${p.name} +${d}🔍 (الحدث)`);});}
+  if(state.event?.susR){a.forEach(p=>{const d=genS(p,-state.event.susR);addLog(`🔍 ${p.name} ${d}🔍 (الحدث)`);});}
+  if(state.event?.panic){a.forEach(p=>{if(p.hand.length>=HL){p.hp=Math.max(0,p.hp-1);const d=genS(p,2);addLog(`😱 ذعر: ${p.name} (−1❤️ +${d}🔍)`);if(p.hp===0)eliminate(p);}});}
+  // Decay, wealth tax, inactivity
+  a.forEach(p=>{if(p.suspicion>0){const o=p.suspicion;p.suspicion=Math.max(0,p.suspicion-1);if(o!==p.suspicion)addLog(`🔮 ${p.name} −1🔍 (טבעي)`);}});
+  a.forEach(p=>{if(p.gold>=WTAX){p.gold--;addLog(`💸 ضريبة: ${p.name} −1💰`);}});
+  a.forEach(p=>{if(!state.roundActions[p.id]){p.inactivityCount=(p.inactivityCount||0)+1;if(p.inactivityCount>=IATH){const d=genS(p,1);if(d)addLog(`🔒 خمول: ${p.name} +${d}🔍`);p.inactivityCount=0;}}else{p.inactivityCount=0;}});
   state.protectedThisRound=[];
 }
 
-function eliminate(p){
-  p.alive=false;p.hp=0;
-  state.logs.push(`☠️ ${p.name} خرج من اللعبة!`);
-  state.discard.push(...p.hand);
-  p.hand=[];
-}
-
-// ==================== ACCUSATION ====================
-function castVote(targetId){
-  state.accusationVotes[state.currentPlayerIndex]=targetId;
-  render();
-}
+function eliminate(p){p.alive=false;p.hp=0;addLog(`☠️ ${p.name} خرج من اللعبة!`);state.discard.push(...p.hand);p.hand=[];}
 
 function submitVote(){
-  const a=alive();
-  state.currentPlayerIndex++;
-  if(state.currentPlayerIndex>=a.length){
-    const votes={};
-    Object.values(state.accusationVotes).forEach(v=>{votes[v]=(votes[v]||0)+1;});
-    // Politician double vote
-    a.forEach((p,i)=>{
-      if(p.role?.id==="politician"){
-        const v=state.accusationVotes[i];
-        if(v)votes[v]=(votes[v]||0)+1;
-      }
-    });
-    let max=0,accusedId=null;
-    Object.entries(votes).forEach(([id,c])=>{if(c>max){max=c;accusedId=+id;}});
-
-    if(accusedId){
-      const accused=state.players.find(p=>p.id===accusedId);
-      if(accused&&accused.alive){
-        accused.influence=Math.max(0,accused.influence-1);
-        state.logs.push(`⚖️ ${accused.name} متهم! خسر 1⭐.`);
-        a.forEach((p,i)=>{
-          if(state.accusationVotes[i]===accusedId&&p.id!==accusedId){
-            p.influence++;
-            state.logs.push(`✅ ${p.name} صوّت صح! +1⭐.`);
-          }
-        });
-      }
-    }
-    state.phase="end";render();
-  }else render();
+  state.currentPlayerIndex++;render();
 }
+function passVote(){state.accusationVotes[state.currentPlayerIndex]=null;state.currentPlayerIndex++;render();}
 
-// ==================== NEXT ROUND ====================
 function nextRound(){
-  state.round++;
-  state.phase="event";
-  state.currentPlayerIndex=0;
-  state.pendingActions={};
-  state.accusationVotes={};
-  state.protectedThisRound=[];
-  state.event=rand(EVENTS);
-  render();
+  state.round++;state.phase="event";state.currentPlayerIndex=0;state.pendingActions={};state.accusationVotes={};state.accuseMode={};state.protectedThisRound=[];state.roundActions={};state.ghostWhispers={};state.savedBy={};state.event=rand(EVENTS);render();
 }
 
 render();
