@@ -1,340 +1,921 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>المحكمة السرية: مصالح متعارضة</title>
-  <style>
-    :root{--bg:#090b12;--panel:#121724;--panel2:#171c2b;--border:#2a3245;--text:#f5f7fb;--muted:#9aa4b8;--accent:#8b5cf6;--danger:#b91c1c;--good:#15803d;--warn:#b45309;--info:#2563eb}
-    *{box-sizing:border-box} body{margin:0;min-height:100vh;background:radial-gradient(circle at 10% 0%,rgba(139,92,246,.18),transparent 28%),radial-gradient(circle at 100% 100%,rgba(185,28,28,.1),transparent 28%),var(--bg);color:var(--text);font-family:Arial,Tahoma,sans-serif}
-    button{font:inherit;cursor:pointer}.shell{width:min(960px,calc(100% - 24px));margin:auto;padding:22px 0 50px}.center{min-height:100vh;display:grid;place-items:center}
-    .hero{text-align:center;margin-bottom:22px}.eyebrow{display:inline-block;border:1px solid var(--border);background:#101421;color:#c4b5fd;border-radius:999px;padding:7px 12px;font-size:13px;margin-bottom:12px}
-    h1{margin:0;font-size:clamp(34px,7vw,60px)}h2,h3{margin-top:0}.hero p,.muted,.hint{color:var(--muted);line-height:1.8}
-    .panel,.private-box{background:rgba(18,23,36,.95);border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.24)}
-    .setup{width:min(620px,100%);margin:auto}.count-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:14px 0 18px}
-    .count-btn,.btn{border:1px solid var(--border);color:var(--text);background:var(--panel2);border-radius:13px;padding:13px 15px}.count-btn.active,.btn.primary{background:var(--accent);border-color:var(--accent)}
-    .btn.danger{background:var(--danger);border-color:var(--danger)}.btn.good{background:var(--good);border-color:var(--good)}.btn.warn{background:var(--warn);border-color:var(--warn)}.btn.info{background:var(--info);border-color:var(--info)}.btn.full{width:100%}
-    .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px}.round{color:#a78bfa;font-size:13px;font-weight:700}.topbar h1{font-size:30px;margin:3px 0 0}
-    .players{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;margin-bottom:15px}.player{background:#111625;border:1px solid var(--border);border-radius:15px;padding:11px}.player.dead{opacity:.34;filter:grayscale(1)}
-    .player-name{font-weight:700;font-size:13px}.stats{color:#cbd5e1;font-size:12px;margin-top:6px;display:grid;gap:3px}
-    .event{text-align:center;border:1px solid #343b52;background:#111624;border-radius:18px;padding:20px}.event-icon{font-size:42px}.event h2{font-size:28px;margin:7px 0}
-    .clues{display:grid;gap:8px;margin-top:14px}.clue{border:1px solid var(--border);background:#111624;border-radius:13px;padding:11px 13px;color:#dbeafe}
-    .actions,.private-actions{display:grid;gap:10px;margin-top:15px}
-    .private-screen{min-height:100vh;display:grid;place-items:center;padding:20px}.private-box{width:min(620px,100%);text-align:center}.private-icon{font-size:52px}
-    .private-action{display:block;width:100%;text-align:right;color:var(--text);background:#171c2b;border:1px solid var(--border);border-radius:15px;padding:14px}.private-action strong{display:block;margin-bottom:4px}.private-action small{color:var(--muted);line-height:1.7}
-    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.card{min-height:140px;display:grid;place-items:center;align-content:center;gap:7px;text-align:center;border:1px solid var(--border);border-radius:16px;background:#151a28;color:var(--text);padding:12px;cursor:pointer}
-    .card:hover{border-color:var(--accent)}.card .type{font-size:11px;padding:3px 8px;border-radius:999px;background:var(--panel2)}
-    .log{margin-top:15px}.log-item{padding:9px 0;border-bottom:1px solid #202638;color:#cbd5e1;font-size:13px}.loading{display:grid;place-items:center;min-height:250px;text-align:center}
-    .dots{display:flex;gap:6px;margin-bottom:10px}.dots i{width:8px;height:8px;border-radius:50%;background:#a78bfa;animation:b .75s infinite alternate}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
-    @keyframes b{to{transform:translateY(-7px);opacity:.4}}.error{border:1px solid #7f1d1d;background:#2a1114;color:#fecaca;padding:13px;border-radius:13px;margin-top:12px}.notice{border:1px solid #4c3a0d;background:#241d0b;color:#fde68a;padding:12px;border-radius:13px;margin-top:12px}.success{border:1px solid #14532d;background:#0f2917;color:#bbf7d0;padding:12px;border-radius:13px;margin-top:12px}
-    .vote-bar{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px}.vote-bar .name{min-width:80px;font-weight:700}.vote-bar .bar{flex:1;height:18px;background:var(--panel2);border-radius:9px;overflow:hidden}.vote-bar .fill{height:100%;background:var(--accent);border-radius:9px;transition:width .6s}
-    .phase-indicator{display:flex;gap:6px;justify-content:center;margin-bottom:15px}.phase-dot{width:10px;height:10px;border-radius:50%;background:var(--panel2)}.phase-dot.active{background:var(--accent)}
-    select{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px;margin-top:6px}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a0e1a">
+<title>المحكمة السرية ٢.٠</title>
+<style>
+:root{
+  --bg:#0a0e1a;--panel:#111827;--panel2:#1a2236;--border:#2d3748;--text:#f7fafc;--muted:#a0aec0;
+  --gold:#ecc94b;--intel:#4299e1;--influence:#9f7aea;--danger:#f56565;--good:#48bb78;--accent:#ed8936;
+}
+*{box-sizing:border-box} body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 0%,rgba(159,122,234,.12),transparent 30%),radial-gradient(circle at 95% 100%,rgba(237,137,54,.08),transparent 30%),var(--bg);color:var(--text);font-family:Tahoma,Arial,sans-serif;line-height:1.7}
+button{font:inherit;cursor:pointer;transition:.15s}
+.shell{width:min(980px,calc(100% - 24px));margin:auto;padding:22px 0 50px}
+.center{min-height:100vh;display:grid;place-items:center}
+
+.hero{text-align:center;margin-bottom:26px}
+.eyebrow{display:inline-block;border:1px solid var(--border);background:#0f1525;color:var(--influence);border-radius:999px;padding:8px 16px;font-size:13px;margin-bottom:14px;font-weight:700}
+h1{margin:0;font-size:clamp(32px,6vw,56px);letter-spacing:-1px}
+h2,h3{margin-top:0;font-weight:700}
+.muted,.hint{color:var(--muted)}
+.hint{font-size:13px;margin-top:8px}
+
+.panel,.private-box{background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.35)}
+.setup{width:min(640px,100%);margin:auto}
+
+.count-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:14px 0 18px}
+.count-btn,.btn{border:1px solid var(--border);color:var(--text);background:var(--panel2);border-radius:14px;padding:14px 16px;font-weight:600}
+.count-btn.active,.btn.primary{background:linear-gradient(135deg,var(--influence),#805ad5);border-color:transparent}
+.btn.danger{background:linear-gradient(135deg,var(--danger),#c53030);border-color:transparent}
+.btn.good{background:linear-gradient(135deg,var(--good),#2f855a);border-color:transparent}
+.btn.gold{background:linear-gradient(135deg,var(--gold),#d69e2e);border-color:transparent;color:#1a202c}
+.btn.full{width:100%}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.1)}
+
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.round{color:var(--influence);font-size:13px;font-weight:800;background:rgba(159,122,234,.1);padding:6px 12px;border-radius:999px}
+.topbar h1{font-size:28px;margin:4px 0 0}
+
+.players{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px}
+.player{background:var(--panel2);border:1px solid var(--border);border-radius:16px;padding:14px;position:relative;transition:.2s}
+.player.dead{opacity:.25;filter:grayscale(1)}
+.player.winner{border-color:var(--gold);box-shadow:0 0 20px rgba(236,201,75,.15)}
+.player-name{font-weight:800;font-size:14px;display:flex;align-items:center;gap:6px}
+.role-badge{font-size:11px;background:rgba(159,122,234,.15);color:var(--influence);padding:2px 8px;border-radius:999px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;font-size:12px}
+.stat{display:flex;align-items:center;gap:4px;background:rgba(0,0,0,.2);padding:6px 8px;border-radius:8px}
+.stat.gold{color:var(--gold)}.stat.intel{color:var(--intel)}.stat.influence{color:var(--influence)}
+.agenda-bar{font-size:11px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+
+.event{text-align:center;border:1px solid var(--border);background:var(--panel2);border-radius:20px;padding:24px}
+.event-icon{font-size:44px;margin-bottom:8px}
+.event h2{font-size:26px;margin:8px 0}
+.clues{display:grid;gap:8px;margin-top:16px}
+.clue{border:1px solid var(--border);background:rgba(66,153,225,.08);border-radius:12px;padding:12px 14px;color:#bee3f8;font-size:14px}
+.twist{border:1px solid rgba(237,137,54,.3);background:rgba(237,137,54,.08);color:#fbd38d;padding:12px 14px;border-radius:12px;margin-top:12px;font-size:14px}
+
+.actions,.private-actions,.targets{display:grid;gap:10px;margin-top:16px}
+.target{width:100%;display:flex;justify-content:space-between;align-items:center;text-align:right;background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:16px;padding:16px;font-weight:600}
+.target:hover:not(:disabled){border-color:var(--influence);background:rgba(159,122,234,.08)}
+.target small{color:var(--muted);font-weight:400}
+
+.private-screen{min-height:100vh;display:grid;place-items:center;padding:20px}
+.private-box{width:min(640px,100%);text-align:center}
+.private-icon{font-size:56px;margin-bottom:10px}
+.private-action{display:block;width:100%;text-align:right;color:var(--text);background:var(--panel2);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;position:relative}
+.private-action strong{display:block;margin-bottom:6px;font-size:16px}
+.private-action small{color:var(--muted);line-height:1.6;display:block}
+.private-action .cost{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:20px;opacity:.6}
+.private-action:hover{border-color:var(--influence);background:rgba(159,122,234,.06)}
+.private-action:disabled{opacity:.35;cursor:not-allowed}
+
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.card{min-height:130px;display:grid;place-items:center;align-content:center;gap:8px;text-align:center;border:1px solid var(--border);border-radius:18px;background:var(--panel2);color:var(--text);padding:14px;transition:.15s}
+.card:hover:not(:disabled){border-color:var(--accent);transform:translateY(-2px)}
+.card:disabled{opacity:.35}
+.card strong{font-size:32px}
+.card .type{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+
+.log{margin-top:18px}
+.log-item{padding:10px 0;border-bottom:1px solid var(--border);color:#cbd5e1;font-size:13px}
+.log-item .tag{font-size:11px;padding:2px 8px;border-radius:999px;margin-left:8px;font-weight:700}
+.tag-gold{background:rgba(236,201,75,.15);color:var(--gold)}.tag-danger{background:rgba(245,101,101,.15);color:var(--danger)}
+.tag-good{background:rgba(72,187,120,.15);color:var(--good)}.tag-intel{background:rgba(66,153,225,.15);color:var(--intel)}
+
+.loading{display:grid;place-items:center;min-height:220px;text-align:center}
+.dots{display:flex;gap:7px;justify-content:center;margin-bottom:12px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--influence);animation:b .8s infinite alternate}
+.dots i:nth-child(2){animation-delay:.18s}.dots i:nth-child(3){animation-delay:.36s}
+@keyframes b{to{transform:translateY(-8px);opacity:.35}}
+
+.error{border:1px solid rgba(245,101,101,.4);background:rgba(245,101,101,.08);color:#feb2b2;padding:14px;border-radius:14px;margin-top:14px}
+.notice{border:1px solid rgba(237,137,54,.3);background:rgba(237,137,54,.08);color:#fbd38d;padding:14px;border-radius:14px;margin-top:14px}
+.info-box{border:1px solid rgba(66,153,225,.3);background:rgba(66,153,225,.08);color:#bee3f8;padding:14px;border-radius:14px;margin:14px 0;font-size:14px}
+
+.reveal-grid{display:grid;gap:10px;margin-top:16px}
+.reveal-item{background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px}
+.reveal-item .icon{font-size:28px}
+.reveal-item .text{flex:1}
+.reveal-item .text strong{display:block;font-size:15px}
+.reveal-item .text small{color:var(--muted);font-size:12px}
+
+.vote-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:14px}
+.vote-btn{background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;color:var(--text);font-weight:700}
+.vote-btn:hover{border-color:var(--danger);background:rgba(245,101,101,.08)}
+.vote-btn.voted{border-color:var(--danger);background:rgba(245,101,101,.12)}
+.vote-count{font-size:24px;font-weight:800;color:var(--danger);margin-top:6px}
+
+.defense-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:14px}
+.verdict-box{text-align:center;padding:24px;border-radius:20px;margin-top:16px}
+.verdict-guilty{background:rgba(245,101,101,.1);border:1px solid rgba(245,101,101,.3)}
+.verdict-innocent{background:rgba(72,187,120,.1);border:1px solid rgba(72,187,120,.3)}
+
+.phase-indicator{display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.phase-dot{width:10px;height:10px;border-radius:50%;background:var(--border)}
+.phase-dot.active{background:var(--influence);box-shadow:0 0 8px var(--influence)}
+.phase-dot.done{background:var(--good)}
+
+@media(max-width:650px){
+  .count-grid{grid-template-columns:repeat(3,1fr)}
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .players{grid-template-columns:repeat(2,1fr)}
+}
+</style>
 </head>
 <body>
 <div id="app"></div>
 
 <script>
-const state = {
-  screen: "setup", playerCount: 4, players: [], round: 1, phase: "event", event: null,
-  currentPlayerIndex: 0, secretActions: [], votes: [], logs: [], loading: false, error: "",
-  trialResult: null, cardChoices: [], gameOver: false
-};
-const app = document.getElementById("app");
-const esc = s => String(s ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
-const alive = () => state.players.filter(p => p.alive);
-const phases = ["event", "plan", "reveal", "trial", "card", "end"];
+// ==================== GAME DATA ====================
+const AGENDAS=[
+  {id:"a1",text:"أضرر بلاعب آخر (خفض حياته)",check:(p,g)=>g.roundDamageDealtBy?.[p.id]},
+  {id:"a2",text:"اكتشف سر لاعب (استخدم تجسس)",check:(p,g)=>g.roundSpied?.[p.id]},
+  {id:"a3",text:"امتلك ٤ ذهب أو أكثر",check:(p)=>p.gold>=4},
+  {id:"a4",text:"نجِ من اتهام هذه الجولة",check:(p,g)=>g.roundAccused===p.id&&g.roundVerdict==="innocent"},
+  {id:"a5",text:"شكّل تحالف (تبادل موارد)",check:(p,g)=>g.roundTraded?.[p.id]},
+  {id:"a6",text:"كن القاضي أو الشاهد",check:(p)=>["القاضي","الشاهد"].includes(p.role?.name)},
+  {id:"a7",text:"أدِّن متهماً (كن القاضي وادنه)",check:(p,g)=>p.role?.name==="القاضي"&&g.roundVerdict==="guilty"},
+  {id:"a8",text:"احمِ لاعباً من الإيذاء",check:(p,g)=>Object.values(g.roundProtectedBy||{}).includes(p.id)},
+  {id:"a9",text:"امتلك بطاقتين أو أكثر",check:(p)=>p.cards.length>=2},
+  {id:"a10",text:"لا تخسر أي موارد",check:(p,g)=>(g.roundResourcesLost?.[p.id]||0)===0}
+];
 
-function render() {
-  if (state.screen === "setup") return setup();
-  if (state.screen === "private") return privateScreen();
-  game();
+const ROLES=[
+  {name:"القاضي",desc:"أنت تقرر مصير المتهم في المحاكمة. إذا أدنته تحصل على +١ نفوذ.",power:"verdict"},
+  {name:"الشاهد",desc:"تعرف فعلاً سرياً واحداً حدث هذه الجولة (يُعلن في نهاية الجولة).",power:"witness"},
+  {name:"المدعي",desc:"أنت تختار من يُتهم أولاً. إذا أدين تحصل على +١ نفوذ.",power:"accuse"},
+  {name:"المحامي",desc:"يمكنك الدفاع عن المتهم: إذا برئ يحصل كليكما على +١ نفوذ.",power:"defend"},
+  {name:"الجاسوس",desc:"تعرف موارد لاعب عشوائي حي في بداية الجولة.",power:"spy"},
+  {name:"الوسيط",desc:"يمكنك إلغاء فعل سري ضدك مرة واحدة (تلقائياً).",power:"block"}
+];
+
+const EVENTS=[
+  {title:"سرقة الليل",story:"اختفت خزينة المحكمة ليلاً. الأبواب لم تُكسر، والحراس لم يرَ أحداً.",clues:["الباب مفتوح من الداخل.","آثار أحذية متعددة في الردهة."],twist:"القاضي يحصل على +١ ذهب هذه الجولة.",effect:{type:"judge_gold",value:1}},
+  {title:"الرسالة المسمومة",story:"وصلت رسالة إلى أحد الأعضاء. من قرأها أصيب بدوار. لكن المرسل مجهول.",clues:["الختم على الرسالة من الداخل.","الحبر نوع نادر يملكه عضو واحد فقط."],twist:"كل لاعب يخسر ١ معلومة (إن وجدت).",effect:{type:"all_intel",value:-1}},
+  {title:"التحالف المشبوه",story:"شُوهد عضوان يتجادلان خلف الأبواب المغلقة. عندما دخلنا، كانا يضحكان.",clues:["أحدهما يخفي شيئاً في جيبه.","الآخر كان يرتعد."],twist:"من يتحالف هذه الجولة يحصل على +١ نفوذ إضافي.",effect:{type:"alliance_bonus",value:1}},
+  {title:"الشاهد المفقود",story:"اختفى الشاهد الوحيد على جريمة سابقة. ترك خلفه دفتراً ممزقاً.",clues:["الدفتر يحتوي على ثلاثة أسماء فقط.","أحدهم لم يكن حاضراً ذلك اليوم."],twist:"الشاهد يعرف فعلين بدلاً من واحد.",effect:{type:"witness_extra",value:1}},
+  {title:"المزاد الملغي",story:"أُلغي مزاد النفوذ فجأة. التبرعات اختفت، والمنافسة تصاعدت.",clues:["المزيد كان يعرف التبرعات مسبقاً.","الباب الخلفي مفتوح."],twist:"كل لاعب يحصل على +١ ذهب.",effect:{type:"all_gold",value:1}},
+  {title:"العاصفة",story:"عاصفة أغلقت الأبواب. لا أحد يدخل ولا يخرج. والتوتر يزداد.",clues:["النوافذ سليمة لكن الريح تدخل.","أحد الأقفال مكسور من قبل."],twist:"لا يمكن استخدام 🗡️ اغتيال هذه الجولة.",effect:{type:"ban_attack",value:1}},
+  {title:"الوصية المشفرة",story:"عُثر على وصية قديمة. من يفك شيفرتها يملك مفتاحاً لسر المحكمة.",clues:["الشفرة تحتاج إلى ثلاثة أذهان.","الوصية مؤرخة قبل تأسيس المحكمة."],twist:"من يستخدم 🕵️ تجسس يحصل على +١ نفوذ.",effect:{type:"spy_bonus",value:1}},
+  {title:"الخيانة الصامتة",story:"انقلبت الموازين. صديق الأمس قد يكون عدو اليوم. والجميع يشك في الجميع.",clues:["الرسائل المتبادلة كانت مزيفة.","الختم على العقود مُزور."],twist:"من يخون تحالفاً (يؤذي من تحالف معه) يحصل على +٢ نفوذ.",effect:{type:"betray_bonus",value:2}}
+];
+
+const CARDS=[
+  {name:"دليل قاطع",icon:"📜",type:"evidence",desc:"أدلة دامغة ضد المتهم. تزيد فرص الإدانة.",effect:"strong_evidence"},
+  {name:"درع سياسي",icon:"🛡️",type:"defense",desc:"يحمي من الإدانة. إذا برئت تحصل على +١ نفوذ.",effect:"shield"},
+  {name:"شهادة زور",icon:"🎭",type:"trick",desc:"تقلب الاتهام على المدعي. نتيجة عكسية.",effect:"reverse"},
+  {name:"معلومة سرية",icon:"🔮",type:"intel",desc:"اكتشف موارد لاعب عشوائي.",effect:"reveal_intel"},
+  {name:"رشوة",icon:"💰",type:"gold",desc:"احصل على ٢ ذهب فوراً.",effect:"gold2"},
+  {name:"سم",icon:"☠️",type:"attack",desc:"أضرر بلاعب عشوائي حي بـ ١ نقطة.",effect:"random_dmg"},
+  {name:"عفو",icon:"✨",type:"utility",desc:"ألغِ فعلاً سرياً ضدك هذه الجولة.",effect:"cancel"},
+  {name:"تمويه",icon:"👤",type:"trick",desc:"اختر من يبدو أنه فعل الفعل السري بدلاً عنك.",effect:"frame"}
+];
+
+const ACTIONS={
+  attack:{name:"اغتيال",icon:"🗡️",cost:{influence:1},desc:"أضرر بهدفك بـ ٢ نقاط.",effect:"dmg2"},
+  protect:{name:"حماية",icon:"🛡️",cost:{intel:1},desc:"احمِ هدفك من الإيذاء هذه الجولة.",effect:"shield"},
+  spy:{name:"تجسس",icon:"🕵️",cost:{intel:1},desc:"اكتشف أجندة ودور هدفك.",effect:"reveal"},
+  steal:{name:"سرقة",icon:"💰",cost:{influence:1},desc:"سرق ١ ذهب من هدفك.",effect:"steal1"},
+  trade:{name:"مقايضة",icon:"🤝",cost:{gold:1},desc:"تبادل ١ ذهب مع هدفك. كليكما يختار ما يعطيه.",effect:"trade"},
+  bluff:{name:"خداع",icon:"🎭",cost:{gold:1},desc:"قلد فعل لاعب آخر دون أن تدفع تكلفته.",effect:"mirror"},
+  save:{name:"انتظار",icon:"🌙",cost:{},desc:"لا تفعل شيئاً. احتفظ بمواردك.",effect:"none"}
+};
+
+// ==================== STATE ====================
+const state={
+  screen:"setup",playerCount:4,players:[],round:1,phase:"setup",event:null,
+  currentPlayerIndex:0,logs:[],loading:false,error:"",winner:null,
+  pendingActions:{},roundAccused:null,roundVerdict:null,
+  roundDamageDealtBy:{},roundSpied:{},roundTraded:{},roundProtectedBy:{},
+  roundResourcesLost:{},revealedActions:[],judgeId:null,accuserId:null,
+  useAI:false,cardDraft:[],defenseCard:null,accusationVotes:{},
+  evidenceSubmitted:[],gameOver:false
+};
+const app=document.getElementById("app");
+const esc=s=>String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+const alive=()=>state.players.filter(p=>p.alive);
+const rand=(arr)=>arr[Math.floor(Math.random()*arr.length)];
+const shuffle=(arr)=>[...arr].sort(()=>Math.random()-.5);
+
+// ==================== RENDER ====================
+function render(){
+  if(state.screen==="setup") return renderSetup();
+  if(state.screen==="private") return renderPrivate();
+  if(state.screen==="game") return renderGame();
 }
 
-function setup() {
-  app.innerHTML = `
-  <main class="center"><div class="shell">
+function renderSetup(){
+  app.innerHTML=`<main class="center"><div class="shell">
     <section class="hero">
-      <div class="eyebrow">لعبة تفاوض ومصالح متعارضة</div>
-      <h1>المحكمة السرية</h1>
-      <p>اجمع النفوذ، استغل الحلفاء، ولا تثق بأحد.<br>الطريق إلى السيادة يتطلب تضحيات.</p>
+      <div class="eyebrow">لعبة اجتماعية متجددة — لا جاسوس ثابت</div>
+      <h1>المحكمة السرية ٢.٠</h1>
+      <p>أجندات سرية متغيرة. أدوار ديناميكية. أفعال متزامنة.<br>اتهامات قائمة على الأدلة. وفوز بأكثر من طريق.</p>
     </section>
     <section class="panel setup">
-      <h2>عدد اللاعبين</h2>
-      <div class="count-grid">${[3,4,5,6,7,8].map(n => `<button class="count-btn ${state.playerCount === n ? "active" : ""}" data-count="${n}">${n}</button>`).join("")}</div>
-      <button class="btn primary full" id="start">بدء المعركة السياسية</button>
-      <div style="margin-top:14px">
-        <p class="hint">❤️ حياة (10) · ◆ نفوذ (3) · ⭐ سمعة (50)</p>
-        <p class="hint">الفوز: الوصول إلى 25 نفوذ، 100 سمعة، أو البقاء أخيراً.</p>
+      <h2>⚙️ إعداد اللعبة</h2>
+      <label class="hint">عدد اللاعبين</label>
+      <div class="count-grid">${[3,4,5,6,7,8].map(n=>`<button class="count-btn ${state.playerCount===n?"active":""}" data-count="${n}">${n}</button>`).join("")}</div>
+      <div style="margin:14px 0">
+        <label class="hint">أسماء اللاعبين (اختياري)</label>
+        <div id="nameInputs" style="display:grid;gap:8px;margin-top:10px">${Array.from({length:state.playerCount},(_,i)=>`<input type="text" data-name="${i}" placeholder="اللاعب ${i+1}" style="background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:12px 14px;border-radius:12px;width:100%;font:inherit" value="${esc(state.players[i]?.name||'')}">`).join("")}</div>
+      </div>
+      <div style="display:flex;gap:10px;margin:14px 0">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px">
+          <input type="checkbox" id="useAI" ${state.useAI?"checked":""} style="width:18px;height:18px;accent-color:var(--influence)">
+          <span>استخدم الذكاء الاصطناعي للأحداث (يتطلب خادماً)</span>
+        </label>
+      </div>
+      <button class="btn primary full" id="start">🚀 بدء اللعبة</button>
+      ${state.error?`<div class="error">${esc(state.error)}</div>`:""}
+      <div class="info-box">
+        <strong>🎯 كيف تُلعب:</strong><br>
+        ١. كل جولة: أجندة سرية + دور سري + حدث.<br>
+        ٢. أفعال متزامنة: اختر فعلاً وهدفاً سراً.<br>
+        ٣. كشف + اتهام بالأدلة + محاكمة.<br>
+        ٤. الفوز: ٧ نفوذ، أو البقاء أخيراً، أو ٣ أجندات.
       </div>
     </section>
   </div></main>`;
-  document.querySelectorAll("[data-count]").forEach(b => b.onclick = () => { state.playerCount = +b.dataset.count; render(); });
-  document.getElementById("start").onclick = start;
+  document.querySelectorAll("[data-count]").forEach(b=>b.onclick=()=>{state.playerCount=+b.dataset.count;renderSetupInputs()});
+  document.getElementById("start").onclick=start;
+  document.getElementById("useAI").onchange=(e)=>{state.useAI=e.target.checked};
+  renderSetupInputs();
 }
 
-async function start() {
-  state.screen = "game"; state.round = 1; state.phase = "event"; state.logs = []; state.error = "";
-  state.secretActions = []; state.votes = {}; state.trialResult = null; state.cardChoices = []; state.gameOver = false;
-  state.players = Array.from({ length: state.playerCount }, (_, i) => ({
-    id: i + 1, name: "اللاعب " + (i + 1), hp: 10, influence: 3, reputation: 50, alive: true, shield: false
+function renderSetupInputs(){
+  const container=document.getElementById("nameInputs");
+  if(!container)return;
+  container.innerHTML=Array.from({length:state.playerCount},(_,i)=>`<input type="text" data-name="${i}" placeholder="اللاعب ${i+1}" style="background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:12px 14px;border-radius:12px;width:100%;font:inherit" value="${esc(state.players[i]?.name||'')}">`).join("");
+}
+
+async function start(){
+  const inputs=document.querySelectorAll("[data-name]");
+  const names=Array.from(inputs).map((inp,i)=>inp.value.trim()||"اللاعب "+(i+1));
+  state.players=names.map((name,i)=>({
+    id:i+1,name,hp:5,gold:2,intel:1,influence:0,cards:[],agenda:null,role:null,
+    alive:true,agendaDone:false,blocked:false,framed:null
   }));
-  await fetchEvent();
+  state.round=1;state.phase="agenda";state.logs=[];state.error="";state.winner=null;
+  state.pendingActions={};state.gameOver=false;
+  state.screen="game";
+  resetRoundVars();
+  assignAgendasAndRoles();
+  await newEvent();
 }
 
-async function fetchEvent() {
-  state.loading = true; render();
-  try {
-    const res = await fetch('/api/game', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'event', payload: { round: state.round } })
-    });
-    state.event = await res.json();
-  } catch (e) {
-    state.event = { title: "جلسة طارئة", story: "تبدأ الجولة وسط توتر شديد بين أعضاء المحكمة.", rule: "الجميع في خطر.", publicClues: ["شوهد أحدهم يخطط سراً"] };
-  }
-  state.loading = false; render();
+function resetRoundVars(){
+  state.roundAccused=null;state.roundVerdict=null;
+  state.roundDamageDealtBy={};state.roundSpied={};state.roundTraded={};state.roundProtectedBy={};
+  state.roundResourcesLost={};state.revealedActions=[];state.judgeId=null;state.accuserId=null;
+  state.pendingActions={};state.defenseCard=null;state.accusationVotes={};state.evidenceSubmitted=[];
+  state.players.forEach(p=>{p.agendaDone=false;p.blocked=false;p.framed=null;});
 }
 
-function game() {
-  const titles = { event: "حدث الجولة", plan: "التخطيط السري والاستغلال", reveal: "نتائج التصويت", trial: "المحكمة الكبرى", card: "البطاقة الاستراتيجية", end: "نهاية الجولة" };
-  const title = titles[state.phase] || "";
-  const phaseIdx = phases.indexOf(state.phase);
-  
-  app.innerHTML = `
-  <main class="shell">
-    <header class="topbar"><div><div class="round">الجولة ${state.round}</div><h1>${title}</h1></div><button class="btn" id="restart">إعادة</button></header>
-    <div class="phase-indicator">${phases.map((p, i) => `<div class="phase-dot ${i === phaseIdx ? "active" : ""}"></div>`).join("")}</div>
-    <section class="players">${state.players.map(p => `<article class="player ${p.alive ? "" : "dead"}"><div class="player-name">${esc(p.name)}</div><div class="stats"><span>❤️ ${p.hp}</span><span>◆ ${p.influence}</span><span>⭐ ${p.reputation}</span></div></article>`).join("")}</section>
-    <section class="panel">${state.loading ? loading() : phaseContent()}</section>
-    ${state.logs.length ? `<section class="panel log"><h3>سجل الأحداث</h3>${state.logs.slice(-10).reverse().map(x => `<div class="log-item">${esc(x)}</div>`).join("")}</section>` : ""}
+function assignAgendasAndRoles(){
+  const a=alive();
+  const shuffledAgendas=shuffle(AGENDAS);
+  a.forEach((p,i)=>{p.agenda=shuffledAgendas[i%shuffledAgendas.length];p.agendaDone=false;});
+  const shuffledRoles=shuffle(ROLES);
+  a.forEach((p,i)=>{
+    p.role=shuffledRoles[i%shuffledRoles.length];
+    if(p.role.power==="verdict") state.judgeId=p.id;
+    if(p.role.power==="accuse") state.accuserId=p.id;
+    if(p.role.power==="spy"){
+      const target=a.find(x=>x.id!==p.id);
+      if(target) state.logs.push(`🔮 ${p.name} (الجاسوس) يعرف أن ${target.name} يملك ${target.gold}💰 و${target.intel}🔮.`);
+    }
+  });
+}
+
+// ==================== GAME RENDER ====================
+function renderGame(){
+  const phaseNames={agenda:"الأجندات",event:"حدث الجولة",secret:"الأفعال السرية",reveal:"كشف الأفعال",
+    cards:"جمع الأدلة",investigate:"التحقيق",defense:"الدفاع",verdict:"الحكم",end:"نهاية الجولة"};
+  const phaseOrder=["agenda","event","secret","reveal","cards","investigate","defense","verdict","end"];
+  const phaseIndex=phaseOrder.indexOf(state.phase);
+
+  app.innerHTML=`<main class="shell">
+    <header class="topbar">
+      <div>
+        <div class="round">الجولة ${state.round} — ${phaseNames[state.phase]||""}</div>
+        <h1>المحكمة السرية ٢.٠</h1>
+      </div>
+      <button class="btn" id="restart">إعادة</button>
+    </header>
+    <div class="phase-indicator">${phaseOrder.map((ph,i)=>`<div class="phase-dot ${i===phaseIndex?"active":i<phaseIndex?"done":""}" title="${phaseNames[ph]}"></div>`).join("")}</div>
+    <section class="players">${state.players.map(p=>{
+      const isJudge=p.id===state.judgeId;
+      const isAccuser=p.id===state.accuserId;
+      return `<article class="player ${p.alive?"":"dead"} ${p.influence>=7?"winner":""}">
+        <div class="player-name">${isJudge?"⚖️":""}${isAccuser?"⚡":""}${esc(p.name)} ${p.role?`<span class="role-badge">${p.role.name}</span>`:""}</div>
+        <div class="stats">
+          <span class="stat">❤️ ${p.hp}</span>
+          <span class="stat gold">💰 ${p.gold}</span>
+          <span class="stat intel">🔮 ${p.intel}</span>
+          <span class="stat influence">⭐ ${p.influence}</span>
+          <span class="stat">🎴 ${p.cards.length}</span>
+        </div>
+        ${p.agenda?`<div class="agenda-bar">🎯 ${esc(p.agenda.text)} ${p.agendaDone?"✅":"⏳"}</div>`:""}
+      </article>`;
+    }).join("")}</section>
+    <section class="panel">${state.loading?renderLoading():renderPhase()}</section>
+    ${state.logs.length?`<section class="panel log"><h3>📜 سجل اللعبة</h3>${state.logs.slice(-12).reverse().map(x=>`<div class="log-item">${x}</div>`).join("")}</section>`:""}
   </main>`;
-  document.getElementById("restart").onclick = () => { state.screen = "setup"; render(); };
-  bindGameEvents();
+  document.getElementById("restart").onclick=()=>{state.screen="setup";state.players=[];state.logs=[];state.error="";render()};
+  bindPhase();
 }
 
-function loading() { return `<div class="loading"><div><div class="dots"><i></i><i></i><i></i></div><div class="muted">الخادم يعالج الطلب...</div></div></div>`; }
+function renderLoading(){return `<div class="loading"><div><div class="dots"><i></i><i></i><i></i></div><div class="muted">جارِ التحضير...</div></div></div>`}
 
-function phaseContent() {
-  if (state.phase === "event") {
-    const e = state.event || {};
-    return `<div class="event"><div class="event-icon">⚡</div><h2>${esc(e.title)}</h2><p>${esc(e.story)}</p></div>
-    ${e.rule ? `<div class="notice">📜 ${esc(e.rule)}</div>` : ""}
-    <div class="clues">${(e.publicClues || []).map(c => `<div class="clue">🔎 ${esc(c)}</div>`).join("")}</div>
-    <div class="actions"><button class="btn primary full" id="beginPlan">بدء التخطيط والاستغلال السري</button></div>`;
-  }
-  if (state.phase === "plan") {
-    return `<div class="event"><div class="event-icon">🔒</div><h2>تمرير الهاتف للأسرار</h2><p>كل لاعب يختار فعله، استغلاله، وصوته سراً.</p><p class="muted">الدور الحالي: <strong>${esc(alive()[state.currentPlayerIndex]?.name || "")}</strong></p><button class="btn primary full" id="nextPrivate">فتح شاشة اللاعب</button></div>`;
-  }
-  if (state.phase === "reveal") {
-    const counts = {};
-    alive().forEach(p => counts[p.id] = 0);
-    Object.values(state.votes).forEach(id => counts[id] = (counts[id] || 0) + 1);
-    const max = Math.max(...Object.values(counts));
-    const accused = alive().find(p => counts[p.id] === max);
-    
-    let html = `<h2>🗳️ نتائج التصويت والاشتباه</h2>`;
-    alive().forEach(p => {
-      const c = counts[p.id] || 0;
-      html += `<div class="vote-bar"><span class="name">${esc(p.name)}</span><div class="bar"><div class="fill" style="width:${Math.round((c / Math.max(1, alive().length)) * 100)}%"></div></div><span>${c} صوت</span></div>`;
-    });
-    if (accused) html += `<div class="notice">⚖️ المتهم المعروض على المنصة: <strong>${esc(accused.name)}</strong></div>`;
-    html += `<div class="actions"><button class="btn primary full" id="runTrial">إصدار حكم المحكمة</button></div>`;
-    return html;
-  }
-  if (state.phase === "trial") {
-    const tr = state.trialResult || {};
-    return `<div class="event"><div class="event-icon">⚖️</div><h2>محكمة الظلال</h2><p>${esc(tr.story || "")}</p></div>
-    <div class="notice">${esc(tr.message || "")}</div>
-    <div class="actions"><button class="btn primary full" id="toCards">مرحلة البطاقات الاستراتيجية</button></div>`;
-  }
-  if (state.phase === "card") {
-    return `<h2>🎴 بطاقة السيادة الجماعية</h2><p class="muted">اختر البطاقات المؤثرة على مسار المحكمة.</p>
-    <div class="cards">${state.cardChoices.map((c, i) => `<button class="card" data-card="${i}"><span class="type">${c.type}</span><strong>${esc(c.name)}</strong><p style="font-size:12px;margin:0">${esc(c.description)}</p></button>`).join("")}</div>`;
-  }
-  if (state.phase === "end") {
-    const a = alive();
-    const winner = a.find(p => p.influence >= 25 || p.reputation >= 100) || (a.length === 1 ? a[0] : null);
-    if (winner || a.length <= 1) {
-      return `<div class="event"><div class="event-icon">👑</div><h2>نهاية اللعبة والسيادة</h2><p>الفائز بالسيادة المطلقة هو: <strong>${esc(winner?.name || a[0]?.name || "لا أحد")}</strong></p></div><button class="btn primary full" id="newGame">لعبة جديدة</button>`;
-    }
-    return `<div class="event"><div class="event-icon">🌙</div><h2>انتهت الجولة ${state.round}</h2><p>تحسنت الموارد واستعد الجميع لجولة جديدة من الصراع.</p></div><button class="btn primary full" id="nextRound">بدء الجولة التالية</button>`;
-  }
+function renderPhase(){
+  if(state.phase==="agenda") return renderAgendaPhase();
+  if(state.phase==="event") return renderEventPhase();
+  if(state.phase==="secret") return renderSecretPhase();
+  if(state.phase==="reveal") return renderRevealPhase();
+  if(state.phase==="cards") return renderCardsPhase();
+  if(state.phase==="investigate") return renderInvestigatePhase();
+  if(state.phase==="defense") return renderDefensePhase();
+  if(state.phase==="verdict") return renderVerdictPhase();
+  if(state.phase==="end") return renderEndPhase();
 }
 
-function bindGameEvents() {
-  document.getElementById("beginPlan")?.onclick = () => { state.phase = "plan"; state.currentPlayerIndex = 0; render(); };
-  document.getElementById("nextPrivate")?.onclick = () => { state.screen = "private"; render(); };
-  document.getElementById("runTrial")?.onclick = runTrial;
-  document.querySelectorAll("[data-card]").forEach(b => b.onclick = () => applyCard(+b.dataset.card));
-  document.getElementById("toCards")?.onclick = fetchCards;
-  document.getElementById("nextRound")?.onclick = () => { state.round++; state.phase = "event"; fetchEvent(); };
-  document.getElementById("newGame")?.onclick = () => { state.screen = "setup"; render(); };
+function renderAgendaPhase(){
+  return `<div class="event"><div class="event-icon">🎯</div><h2>توزيع الأجندات والأدوار</h2>
+  <p class="muted">تم توزيع الأدوار السرية والأجندات. مرروا الهاتف ليرى كل لاعب أجندته.</p>
+  <div class="info-box">⚖️ القاضي هذه الجولة: ${esc(state.players.find(p=>p.id===state.judgeId)?.name||"غير معروف")}<br>⚡ المدعي: ${esc(state.players.find(p=>p.id===state.accuserId)?.name||"غير معروف")}</div>
+  <div class="actions"><button class="btn primary full" id="viewAgendas">عرض الأجندات (تمرير الهاتف)</button></div>`;
 }
 
-function privateScreen() {
-  const a = alive();
-  if (state.currentPlayerIndex >= a.length) {
-    state.screen = "game"; state.phase = "reveal";
-    applySecretActions();
-    return render();
+function renderEventPhase(){
+  const e=state.event||{};
+  const banAttack=e.effect?.type==="ban_attack";
+  return `<div class="event"><div class="event-icon">⚡</div><h2>${esc(e.title||"حدث غامض")}</h2><p>${esc(e.story||"")}</p></div>
+  <div class="clues">${(e.clues||[]).map(c=>`<div class="clue">🔎 ${esc(c)}</div>`).join("")}</div>
+  ${e.twist?`<div class="twist">🎭 ${esc(e.twist)}</div>`:""}
+  ${banAttack?`<div class="notice">🚫 الاغتيال محظور هذه الجولة!</div>`:""}
+  <div class="actions"><button class="btn primary full" id="beginSecret">بدء الأفعال السرية</button></div>`;
+}
+
+function renderSecretPhase(){
+  const remaining=alive().filter(p=>!state.pendingActions[p.id]).length;
+  return `<div class="event"><div class="event-icon">🔒</div><h2>الأفعال السرية</h2>
+  <p class="muted">كل لاعب يختار فعلاً وهدفاً سراً. لا تُكشف إلا بعد اختيار الجميع.</p>
+  <div class="info-box">⏳ باقي ${remaining} لاعب${remaining===1?"":"ين"} لم يختاروا بعد.</div>
+  <div class="actions"><button class="btn primary full" id="nextPrivate">تمرير الهاتف — اختيار الفعل</button></div>`;
+}
+
+function renderRevealPhase(){
+  const actions=state.revealedActions;
+  const banAttack=state.event?.effect?.type==="ban_attack";
+  return `<h2>🔓 كشف الأفعال السرية</h2>
+  <div class="reveal-grid">${actions.map(a=>{
+    const actor=state.players.find(p=>p.id===a.actorId);
+    const target=state.players.find(p=>p.id===a.targetId);
+    const action=ACTIONS[a.action];
+    let result="";
+    if(a.cancelled) result="<span style='color:var(--danger)'>⛔ أُلغي!</span>";
+    else if(a.blocked) result="<span style='color:var(--good)'>🛡️ حُمي!</span>";
+    else if(a.action==="attack" && banAttack) result="<span style='color:var(--danger)'>🚫 محظور!</span>";
+    else if(a.success===false) result="<span style='color:var(--danger)'>❌ فشل</span>";
+    else if(a.success) result="<span style='color:var(--good)'>✅ نجح</span>";
+    return `<div class="reveal-item">
+      <div class="icon">${action.icon}</div>
+      <div class="text"><strong>${esc(actor?.name||"???")} → ${esc(target?.name||"???")}</strong><small>${esc(action.name)} — ${esc(action.desc)} ${result}</small></div>
+    </div>`;
+  }).join("")}</div>
+  <div class="actions"><button class="btn primary full" id="toCards">جمع الأدلة</button></div>`;
+}
+
+function renderCardsPhase(){
+  const draft=state.cardDraft;
+  return `<h2>🎴 جمع الأدلة</h2>
+  <p class="muted">اختر بطاقة واحدة تضيفها إلى يدك. الباقي يُعاد.</p>
+  <div class="cards">${draft.map((c,i)=>`<button class="card" data-card="${i}"><strong>${c.icon}</strong><span>${esc(c.name)}</span><span class="type">${esc(c.type)}</span><small class="muted">${esc(c.desc)}</small></button>`).join("")}</div>`;
+}
+
+function renderInvestigatePhase(){
+  const a=alive();
+  const accuser=state.players.find(p=>p.id===state.accuserId);
+  return `<h2>⚖️ جولة الاتهام</h2>
+  <p class="muted">${accuser?esc(accuser.name):"اللاعبون"} يختارون من سيتم اتهامه. الأصوات سرية.</p>
+  <div class="vote-grid">${a.map(p=>`<button class="vote-btn ${state.accusationVotes[state.currentPlayerIndex]===p.id?'voted':''}" data-vote="${p.id}">
+    <div>${esc(p.name)}</div>
+    <div class="vote-count">${Object.values(state.accusationVotes).filter(v=>v===p.id).length} صوت</div>
+  </button>`).join("")}</div>
+  <div class="info-box">صوتك: ${state.accusationVotes[state.currentPlayerIndex]?esc(state.players.find(p=>p.id===state.accusationVotes[state.currentPlayerIndex])?.name):"لم تختار بعد"}</div>
+  <div class="actions"><button class="btn primary full" id="submitVote" ${state.accusationVotes[state.currentPlayerIndex]?"":"disabled"}>تأكيد الاتهام</button></div>`;
+}
+
+function renderDefensePhase(){
+  const accused=state.players.find(p=>p.id===state.roundAccused);
+  if(!accused || !accused.alive){
+    state.phase="verdict";return renderGame();
   }
-  const p = a[state.currentPlayerIndex];
-  app.innerHTML = `<main class="private-screen"><section class="private-box">
-    <div class="private-icon">🔒</div><div class="eyebrow">سري للغاية — ${esc(p.name)}</div>
-    <h1>${esc(p.name)}</h1>
-    <p class="muted">❤️ ${p.hp} | ◆ ${p.influence} | ⭐ ${p.reputation}</p>
-    
-    <h3 style="margin-top:15px">اختر فعلك السري أو استغلالك للسيادة</h3>
-    <div class="private-actions">
-      <button class="private-action" data-act="conspiracy" style="border-color:var(--accent)"><strong>🗡️ مؤامرة تكتيكية (تكلفة: 2 نفوذ)</strong><small>تستهدف خصماً وتلحق به الضرر.</small></button>
-      <button class="private-action" data-act="exploit"><strong>🔥 استغلال دموي مظلم</strong><small>اسحب 2 نفوذ من ضحية محددة قسراً لترفع نفوذك، تفقد 20 نقطة سمعة!</small></button>
-      <button class="private-action" data-act="protect"><strong>🛡️ درع الحماية (تكلفة: 1 نفوذ)</strong><small>تحصين نفسك من الأضرار.</small></button>
-      <button class="private-action" data-act="monopoly"><strong>💰 احتكار السوق</strong><small>+2 نفوذ فوري على حساب نزاهتك (-5 سمعة).</small></button>
-    </div>
+  return `<h2>🛡️ دفاع ${esc(accused.name)}</h2>
+  <p class="muted">المتهم يختار بطاقة للدفاع. إذا لم يكن لديه بطاقات، يدفع بدون دفاع.</p>
+  <div class="info-box">📜 بطاقات ${esc(accused.name)}: ${accused.cards.map(c=>c.icon).join(" ")||"لا يوجد"}</div>
+  ${accused.cards.length?`<div class="defense-grid">${accused.cards.map((c,i)=>`<button class="card" data-defense="${i}"><strong>${c.icon}</strong><span>${esc(c.name)}</span><small class="muted">${esc(c.desc)}</small></button>`).join("")}</div>`:`<div class="actions"><button class="btn danger full" id="noDefense">لا يوجد دفاع</button></div>`}`;
+}
 
-    <div id="target-selector-box" style="margin-top:15px;">
-      <label class="muted">اختر الضحية المستهدفة لهذا الفعل:</label>
-      <select id="action-target">${alive().filter(t => t.id !== p.id).map(target => `<option value="${target.id}">${esc(target.name)}</option>`).join("")}</select>
-    </div>
+function renderVerdictPhase(){
+  const accused=state.players.find(p=>p.id===state.roundAccused);
+  const judge=state.players.find(p=>p.id===state.judgeId);
+  const votes=Object.values(state.accusationVotes);
+  const voteCount=votes.filter(v=>v===state.roundAccused).length;
+  const defense=state.defenseCard;
 
-    <h3 style="margin-top:15px">صوت على المشتبه به للمحكمة</h3>
-    <select id="vote-target">${alive().map(target => `<option value="${target.id}">${esc(target.name)}</option>`).join("")}</select>
-    <button class="btn primary full" style="margin-top:15px" id="confirmAction">تأكيد وانتقال للهاتف التالي</button>
-  </section></main>`;
-
-  let selectedAction = "conspiracy";
-  const targetBox = document.getElementById("target-selector-box");
-
-  document.querySelectorAll("[data-act]").forEach(btn => btn.onclick = (e) => {
-    document.querySelectorAll("[data-act]").forEach(b => b.style.borderColor = "var(--border)");
-    btn.style.borderColor = "var(--accent)";
-    selectedAction = btn.dataset.act;
-    if (selectedAction === "conspiracy" || selectedAction === "exploit") {
-      targetBox.style.display = "block";
-    } else {
-      targetBox.style.display = "none";
+  let guilty=false;
+  if(defense?.effect==="shield") guilty=false;
+  else if(defense?.effect==="reverse"){
+    const accuser=state.players.find(p=>p.id===state.accuserId);
+    if(accuser){
+      state.roundAccused=accuser.id;
+      guilty=true;
     }
-  });
+  }else{
+    guilty=voteCount>=Math.ceil(alive().length/2);
+    const evidenceCount=state.evidenceSubmitted.length;
+    if(evidenceCount>=2) guilty=true;
+    if(evidenceCount===0 && voteCount<=1) guilty=false;
+  }
 
-  document.getElementById("confirmAction").onclick = () => {
-    if (selectedAction === "conspiracy" && p.influence < 2) {
-      alert("عذراً، لا تمتلك رصيد نفوذ كافي لتنفيذ المؤامرة (تحتاج 2 نفوذ).");
-      return;
-    }
-    if (selectedAction === "protect" && p.influence < 1) {
-      alert("عذراً، لا تمتلك نفوذاً كافياً للحماية (تحتاج 1 نفوذ).");
-      return;
-    }
+  state.roundVerdict=guilty?"guilty":"innocent";
 
-    const targetId = document.getElementById("action-target") && targetBox.style.display !== "none" ? +document.getElementById("action-target").value : null;
-    const voteId = +document.getElementById("vote-target").value;
+  return `<div class="verdict-box ${guilty?"verdict-guilty":"verdict-innocent"}">
+    <div style="font-size:48px;margin-bottom:10px">${guilty?"⚖️":"✨"}</div>
+    <h2>${guilty?"إدانة!":"براءة!"}</h2>
+    <p>${esc(accused?.name||"")} ${guilty?"أُدين بالتهم الموجهة إليه.":"برئ من التهمة."}</p>
+    ${defense?`<p style="font-size:13px;color:var(--muted)">الدفاع المستخدم: ${defense.icon} ${esc(defense.name)}</p>`:""}
+    ${judge?`<p style="font-size:13px;color:var(--muted)">القاضي: ${esc(judge.name)}</p>`:""}
+  </div>
+  <div class="actions"><button class="btn primary full" id="applyVerdict">تطبيق الحكم</button></div>`;
+}
 
-    state.secretActions.push({ actorId: p.id, action: selectedAction, targetId: targetId });
-    state.votes[p.id] = voteId;
+function renderEndPhase(){
+  const a=alive();
+  const influenceWinner=a.find(p=>p.influence>=7);
+  if(influenceWinner){
+    state.winner=influenceWinner;
+    state.gameOver=true;
+  }else if(a.length<=1){
+    state.winner=a[0]||null;
+    state.gameOver=true;
+  }
+
+  if(state.gameOver){
+    return `<div class="event"><div class="event-icon">👑</div><h2>انتهت اللعبة</h2>
+    <p>${state.winner?`الفائز هو ${esc(state.winner.name)} بـ ${state.winner.influence} نفوذ!`:"لا يوجد فائز."}</p>
+    <div class="players" style="margin-top:20px">${state.players.map(p=>`<article class="player ${p.alive?"":"dead"} ${p.id===state.winner?.id?"winner":""}"><div class="player-name">${esc(p.name)}</div><div class="stats"><span class="stat influence">⭐ ${p.influence}</span><span class="stat">❤️ ${p.hp}</span></div></article>`).join("")}</div>
+    <button class="btn primary full" id="newGame" style="margin-top:20px">لعبة جديدة</button></div>`;
+  }
+
+  return `<div class="event"><div class="event-icon">🌙</div><h2>انتهت الجولة ${state.round}</h2>
+  <p class="muted">تم حساب الأجندات وتوزيع المكافآت.</p>
+  <div class="info-box">${state.logs.slice(-5).map(l=>`<div>${l}</div>`).join("")}</div>
+  <button class="btn primary full" id="nextRound">الجولة التالية</button></div>`;
+}
+
+// ==================== BINDINGS ====================
+function bindPhase(){
+  document.getElementById("viewAgendas")?.addEventListener("click",()=>{state.screen="private";state.currentPlayerIndex=0;state.phase="agenda";render();});
+  document.getElementById("beginSecret")?.addEventListener("click",()=>{state.phase="secret";state.currentPlayerIndex=0;state.pendingActions={};render();});
+  document.getElementById("nextPrivate")?.addEventListener("click",()=>{state.screen="private";render();});
+  document.getElementById("toCards")?.addEventListener("click",()=>{state.phase="cards";draftCards();render();});
+  document.querySelectorAll("[data-card]").forEach(b=>b.onclick=()=>pickCard(+b.dataset.card));
+  document.querySelectorAll("[data-vote]").forEach(b=>b.onclick=()=>castVote(+b.dataset.vote));
+  document.getElementById("submitVote")?.addEventListener("click",submitVote);
+  document.querySelectorAll("[data-defense]").forEach(b=>b.onclick=()=>pickDefense(+b.dataset.defense));
+  document.getElementById("noDefense")?.addEventListener("click",()=>{state.defenseCard=null;state.phase="verdict";render();});
+  document.getElementById("applyVerdict")?.addEventListener("click",applyVerdict);
+  document.getElementById("nextRound")?.addEventListener("click",nextRound);
+  document.getElementById("newGame")?.addEventListener("click",()=>{state.screen="setup";state.players=[];render();});
+}
+
+// ==================== PRIVATE SCREENS ====================
+function renderPrivate(){
+  const a=alive();
+  if(!a.length){state.screen="game";state.phase="end";return render();}
+  const p=a[state.currentPlayerIndex%a.length];
+
+  if(state.phase==="agenda") return renderPrivateAgenda(p,a);
+  if(state.phase==="secret") return renderPrivateSecret(p,a);
+}
+
+function renderPrivateAgenda(p,a){
+  const next=()=>{
     state.currentPlayerIndex++;
-    render();
+    if(state.currentPlayerIndex>=a.length){state.screen="game";state.phase="event";render();}
+    else render();
   };
+  app.innerHTML=`<main class="private-screen"><section class="private-box">
+    <div class="private-icon">🎯</div><div class="eyebrow">سري — ${esc(p.name)}</div>
+    <h1 style="font-size:32px">أجندتك السرية</h1>
+    <div class="info-box" style="text-align:right;font-size:16px">
+      <div style="margin-bottom:10px"><strong>🎯 المهمة:</strong> ${esc(p.agenda?.text||"لا توجد")}</div>
+      <div style="margin-bottom:10px"><strong>🎭 دورك:</strong> ${esc(p.role?.name||"لا يوجد")}</div>
+      <div style="font-size:13px;color:var(--muted)">${esc(p.role?.desc||"")}</div>
+    </div>
+    <div class="info-box" style="text-align:right">
+      <strong>💰 ذهب:</strong> ${p.gold} &nbsp;|&nbsp; <strong>🔮 معلومات:</strong> ${p.intel} &nbsp;|&nbsp; <strong>⭐ نفوذ:</strong> ${p.influence}
+    </div>
+    ${p.role?.power==="spy"?`<div class="notice">🔮 كجاسوس، تعرف موارد لاعب عشوائي.</div>`:""}
+    <button class="btn primary full" id="nextAgenda" style="margin-top:16px">فهمت — التالي</button>
+  </section></main>`;
+  document.getElementById("nextAgenda").onclick=next;
 }
 
-function applySecretActions() {
-  state.secretActions.forEach(sa => {
-    const actor = state.players.find(p => p.id === sa.actorId);
-    const target = state.players.find(p => p.id === sa.targetId);
-    if (!actor || !actor.alive) return;
+function renderPrivateSecret(p,a){
+  const banAttack=state.event?.effect?.type==="ban_attack";
+  const canAfford=(cost)=>{
+    if(cost.gold && p.gold<cost.gold) return false;
+    if(cost.intel && p.intel<cost.intel) return false;
+    if(cost.influence && p.influence<cost.influence) return false;
+    return true;
+  };
 
-    if (sa.action === "conspiracy" && target && target.alive) {
-      actor.influence -= 2;
-      if (!target.shield) {
-        target.hp -= 2;
-        state.logs.push(`🗡️ دبر ${actor.name} مؤامرة ناجحة ضد ${target.name} فخصم 2 من صحته!`);
-      } else {
-        state.logs.push(`🛡️ تصدى درع ${target.name} لمؤامرة ${actor.name}!`);
-        target.shield = false;
-      }
-    } else if (sa.action === "exploit" && target && target.alive) {
-      const drainAmount = Math.min(2, target.influence);
-      target.influence -= drainAmount;
-      actor.influence += drainAmount;
-      actor.reputation -= 20;
-      state.logs.push(`🔥 استغل ${actor.name} اللاعب ${target.name} وسحب منه ${drainAmount} نفوذ قسراً وسط استياء المحكمة!`);
-    } else if (sa.action === "protect") {
-      actor.influence -= 1;
-      actor.shield = true;
-      state.logs.push(`🛡️ قام ${actor.name} بتحصين نفسه بدرع سري.`);
-    } else if (sa.action === "monopoly") {
-      actor.influence += 2;
-      actor.reputation -= 5;
-      state.logs.push(`💰 احتكر ${actor.name} السوق لرفع نفوذه.`);
-    }
-    if (target && target.hp <= 0) target.alive = false;
+  app.innerHTML=`<main class="private-screen"><section class="private-box">
+    <div class="private-icon">🔒</div><div class="eyebrow">سري — ${esc(p.name)}</div>
+    <h1 style="font-size:32px">اختر فعلك السري</h1>
+    <div class="info-box" style="text-align:right">
+      💰 ${p.gold} &nbsp;|&nbsp; 🔮 ${p.intel} &nbsp;|&nbsp; ⭐ ${p.influence}
+    </div>
+    <div class="private-actions">${Object.entries(ACTIONS).map(([key,action])=>{
+      const disabled=!canAfford(action.cost) || (key==="attack" && banAttack);
+      const costText=[];
+      if(action.cost.gold) costText.push(action.cost.gold+"💰");
+      if(action.cost.intel) costText.push(action.cost.intel+"🔮");
+      if(action.cost.influence) costText.push(action.cost.influence+"⭐");
+      return `<button class="private-action" data-action="${key}" ${disabled?"disabled":""}>
+        <span class="cost">${costText.join(" ")||"مجاني"}</span>
+        <strong>${action.icon} ${esc(action.name)}</strong>
+        <small>${esc(action.desc)}</small>
+      </button>`;
+    }).join("")}</div>
+  </section></main>`;
+  document.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>chooseAction(p,b.dataset.action,a));
+}
+
+function chooseAction(p,actionKey,a){
+  const action=ACTIONS[actionKey];
+  if(actionKey==="save"){
+    state.pendingActions[p.id]={actorId:p.id,action:actionKey,targetId:null,spent:{}};
+    nextSecretPlayer(a);
+    return;
+  }
+  if(actionKey==="bluff"){
+    const targets=a.filter(x=>x.id!==p.id);
+    app.innerHTML=`<main class="private-screen"><section class="private-box">
+      <div class="private-icon">🎭</div><h1 style="font-size:28px">اختر من تقلده</h1>
+      <div class="private-actions">${targets.map(t=>`<button class="private-action" data-mirror="${t.id}"><strong>${esc(t.name)}</strong><small>سنقلد فعله إذا اختار</small></button>`).join("")}</div>
+    </section></main>`;
+    document.querySelectorAll("[data-mirror]").forEach(b=>b.onclick=()=>{
+      p.gold-=action.cost.gold||0;
+      state.pendingActions[p.id]={actorId:p.id,action:actionKey,targetId:+b.dataset.mirror,spent:{...action.cost}};
+      nextSecretPlayer(a);
+    });
+    return;
+  }
+
+  const targets=a.filter(x=>x.id!==p.id);
+  app.innerHTML=`<main class="private-screen"><section class="private-box">
+    <div class="private-icon">${action.icon}</div><h1 style="font-size:28px">اختر هدفك</h1>
+    <p class="muted">${esc(action.name)} — ${esc(action.desc)}</p>
+    <div class="private-actions">${targets.map(t=>`<button class="private-action" data-target="${t.id}"><strong>${esc(t.name)}</strong><small>❤️ ${t.hp} · 💰 ${t.gold} · ⭐ ${t.influence}</small></button>`).join("")}</div>
+  </section></main>`;
+  document.querySelectorAll("[data-target]").forEach(b=>b.onclick=()=>{
+    const targetId=+b.dataset.target;
+    p.gold-=action.cost.gold||0;
+    p.intel-=action.cost.intel||0;
+    p.influence-=action.cost.influence||0;
+    state.pendingActions[p.id]={actorId:p.id,action:actionKey,targetId,spent:{...action.cost}};
+    nextSecretPlayer(a);
   });
 }
 
-async function runTrial() {
-  state.loading = true; render();
-  const counts = {};
-  alive().forEach(p => counts[p.id] = 0);
-  Object.values(state.votes).forEach(id => counts[id] = (counts[id] || 0) + 1);
-  const max = Math.max(...Object.values(counts));
-  const accused = alive().find(p => counts[p.id] === max);
-
-  try {
-    const res = await fetch('/api/game', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        type: 'trial', 
-        payload: { 
-          accusedName: accused?.name || "لا أحد", 
-          votesCount: max,
-          secretActions: state.secretActions
-        } 
-      })
-    });
-    state.trialResult = await res.json();
-    if (accused && state.trialResult.effects) {
-      accused.hp += (state.trialResult.effects.hp || 0);
-      accused.influence += (state.trialResult.effects.influence || 0);
-      accused.reputation += (state.trialResult.effects.reputation || 0);
-      if (accused.hp <= 0) accused.alive = false;
-    }
-  } catch (e) {
-    state.trialResult = { verdict: "light", story: "محاكمة سريعة بناءً على المعطيات", message: "تم تمرير الجلسة وعقاب المتهم.", effects: {} };
+function nextSecretPlayer(a){
+  state.currentPlayerIndex++;
+  if(state.currentPlayerIndex>=a.length){
+    state.screen="game";state.phase="reveal";resolveActions();render();
+  }else{
+    render();
   }
-  state.loading = false; state.phase = "trial"; render();
 }
 
-async function fetchCards() {
-  state.loading = true; render();
-  try {
-    const res = await fetch('/api/game', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'cards' })
-    });
-    const data = await res.json();
-    state.cardChoices = data.cards || [];
-  } catch (e) {
-    state.cardChoices = [{ name: "عفو عام", type: "good", description: "استعادة صحة", effect: { hp: 1 } }];
-  }
-  state.loading = false; state.phase = "card"; render();
-}
+// ==================== ACTION RESOLUTION ====================
+function resolveActions(){
+  const actions=Object.values(state.pendingActions);
+  const a=alive();
+  const banAttack=state.event?.effect?.type==="ban_attack";
+  state.revealedActions=[];
 
-function applyCard(idx) {
-  const card = state.cardChoices[idx];
-  if (card && card.effect) {
-    state.players.forEach(p => {
-      if (p.alive) {
-        if (card.effect.hp) p.hp += card.effect.hp;
-        if (card.effect.influence) p.influence += card.effect.influence;
+  // Step 1: Protections first
+  const protectedTargets=new Set();
+  actions.forEach(act=>{
+    if(act.action==="protect"){
+      protectedTargets.add(act.targetId);
+      const protector=state.players.find(p=>p.id===act.actorId);
+      const target=state.players.find(p=>p.id===act.targetId);
+      if(protector && target){
+        state.roundProtectedBy[act.targetId]=act.actorId;
+        state.logs.push(`🛡️ ${protector.name} حمى ${target.name} سراً.`);
       }
+    }
+  });
+
+  // Step 2: Spy
+  actions.forEach(act=>{
+    if(act.action==="spy"){
+      const spy=state.players.find(p=>p.id===act.actorId);
+      const target=state.players.find(p=>p.id===act.targetId);
+      if(spy && target){
+        state.roundSpied[spy.id]=true;
+        state.logs.push(`🕵️ ${spy.name} تجسس على ${target.name}.`);
+        state.logs.push(`   ↳ ${target.name}: 💰${target.gold} 🔮${target.intel} ⭐${target.influence} 🎯${target.agenda?.text?.substring(0,20)||"???"}`);
+      }
+    }
+  });
+
+  // Step 3: Steal & Trade
+  actions.forEach(act=>{
+    if(act.action==="steal"){
+      const thief=state.players.find(p=>p.id===act.actorId);
+      const target=state.players.find(p=>p.id===act.targetId);
+      if(thief && target && target.gold>0){
+        target.gold--;thief.gold++;
+        state.logs.push(`💰 ${thief.name} سرق من ${target.name}.`);
+      }
+    }
+    if(act.action==="trade"){
+      const trader=state.players.find(p=>p.id===act.actorId);
+      const target=state.players.find(p=>p.id===act.targetId);
+      if(trader && target){
+        state.roundTraded[trader.id]=true;
+        state.roundTraded[target.id]=true;
+        if(trader.gold>=1 && target.gold>=1){
+          trader.gold--;target.gold--;
+          trader.intel++;target.intel++;
+          state.logs.push(`🤝 ${trader.name} و${target.name} تبادلا موارد.`);
+        }
+      }
+    }
+  });
+
+  // Step 4: Bluff (mirror another action)
+  actions.forEach(act=>{
+    if(act.action==="bluff"){
+      const bluffer=state.players.find(p=>p.id===act.actorId);
+      const targetAction=actions.find(x=>x.actorId===act.targetId && x.action!=="bluff");
+      if(bluffer && targetAction){
+        state.logs.push(`🎭 ${bluffer.name} قلد فعل ${state.players.find(p=>p.id===targetAction.actorId)?.name||"???"}.`);
+        if(targetAction.action==="attack"){
+          const target=state.players.find(p=>p.id===targetAction.targetId);
+          if(target && !protectedTargets.has(target.id) && !banAttack){
+            target.hp=Math.max(0,target.hp-2);
+            state.roundDamageDealtBy[bluffer.id]=true;
+            if(target.hp===0) eliminate(target);
+          }
+        }
+        if(targetAction.action==="steal"){
+          const target=state.players.find(p=>p.id===targetAction.targetId);
+          if(target && target.gold>0){target.gold--;bluffer.gold++;state.logs.push(`💰 ${bluffer.name} سرق (تقليد) من ${target.name}.`);}
+        }
+      }
+    }
+  });
+
+  // Step 5: Attacks
+  const attackTargets={};
+  actions.forEach(act=>{
+    if(act.action==="attack"){
+      if(!attackTargets[act.targetId]) attackTargets[act.targetId]=[];
+      attackTargets[act.targetId].push(act.actorId);
+    }
+  });
+
+  Object.entries(attackTargets).forEach(([targetId,attackers])=>{
+    const target=state.players.find(p=>p.id===+targetId);
+    if(!target || !target.alive) return;
+    if(protectedTargets.has(target.id)){
+      state.logs.push(`🛡️ ${target.name} حُمي من ${attackers.length} هجوم${attackers.length>1?"ات":""}.`);
+      return;
+    }
+    if(banAttack){
+      state.logs.push(`🚫 هجمات على ${target.name} مُحظرة هذه الجولة.`);
+      return;
+    }
+    const dmg=attackers.length>=2?3:2;
+    target.hp=Math.max(0,target.hp-dmg);
+    state.logs.push(`🗡️ ${target.name} تضرر بـ ${dmg} من ${attackers.length} مهاجم${attackers.length>1?"ين":""}.`);
+    attackers.forEach(aid=>state.roundDamageDealtBy[aid]=true);
+    if(target.hp===0) eliminate(target);
+  });
+
+  // Build reveal list
+  actions.forEach(act=>{
+    const isProtected=act.action==="attack" && protectedTargets.has(act.targetId);
+    const isBanned=act.action==="attack" && banAttack;
+    state.revealedActions.push({
+      ...act,
+      blocked:isProtected,
+      cancelled:isBanned,
+      success:!(isProtected||isBanned)
     });
-    state.logs.push(`🎴 تم تفعيل بطاقة "${card.name}": ${card.description}`);
+  });
+}
+
+// ==================== CARDS ====================
+function draftCards(){
+  state.cardDraft=shuffle(CARDS).slice(0,3);
+  state.currentPlayerIndex=0;
+}
+
+function pickCard(idx){
+  const card=state.cardDraft[idx];
+  if(!card) return;
+  const a=alive();
+  const p=a[state.currentPlayerIndex%a.length];
+  if(!p) return;
+
+  p.cards.push(card);
+  state.logs.push(`🎴 ${p.name} حصل على ${card.icon} ${card.name}.`);
+
+  if(card.effect==="gold2"){p.gold+=2;state.logs.push(`💰 ${p.name} حصل على ٢ ذهب.`);}
+  if(card.effect==="intel1"){p.intel+=1;state.logs.push(`🔮 ${p.name} حصل على معلومة.`);}
+  if(card.effect==="random_dmg"){
+    const targets=a.filter(x=>x.id!==p.id);
+    if(targets.length){
+      const t=rand(targets);
+      t.hp=Math.max(0,t.hp-1);
+      state.logs.push(`☠️ ${card.name} أضرت ${t.name}.`);
+      if(t.hp===0) eliminate(t);
+    }
   }
-  state.phase = "end"; render();
+  if(card.effect==="reveal_intel"){
+    const targets=a.filter(x=>x.id!==p.id);
+    if(targets.length){
+      const t=rand(targets);
+      state.logs.push(`🔮 ${p.name} اكتشف: ${t.name} يملك ${t.gold}💰 ${t.intel}🔮.`);
+    }
+  }
+
+  state.currentPlayerIndex++;
+  if(state.currentPlayerIndex>=a.length){
+    state.currentPlayerIndex=0;
+    state.phase="investigate";
+  }
+  render();
+}
+
+// ==================== INVESTIGATION & VOTE ====================
+function castVote(targetId){
+  state.accusationVotes[state.currentPlayerIndex]=targetId;
+  render();
+}
+
+function submitVote(){
+  const a=alive();
+  state.currentPlayerIndex++;
+  if(state.currentPlayerIndex>=a.length){
+    const votes={};
+    Object.values(state.accusationVotes).forEach(v=>{votes[v]=(votes[v]||0)+1;});
+    let max=0,accusedId=null;
+    Object.entries(votes).forEach(([id,count])=>{if(count>max){max=count;accusedId=+id;}});
+    state.roundAccused=accusedId;
+    state.currentPlayerIndex=0;
+    state.phase="defense";
+    const accused=state.players.find(p=>p.id===accusedId);
+    state.logs.push(`⚖️ ${accused?.name||"???"} متهم بـ ${max} صوت${max>1?"ات":""}.`);
+  }
+  render();
+}
+
+// ==================== DEFENSE ====================
+function pickDefense(idx){
+  const accused=state.players.find(p=>p.id===state.roundAccused);
+  if(!accused || idx>=accused.cards.length) return;
+  state.defenseCard=accused.cards[idx];
+  accused.cards.splice(idx,1);
+  state.phase="verdict";
+  render();
+}
+
+// ==================== VERDICT ====================
+function applyVerdict(){
+  const accused=state.players.find(p=>p.id===state.roundAccused);
+  const judge=state.players.find(p=>p.id===state.judgeId);
+  const accuser=state.players.find(p=>p.id===state.accuserId);
+  const guilty=state.roundVerdict==="guilty";
+
+  if(guilty){
+    if(accused){
+      accused.hp=Math.max(0,accused.hp-2);
+      accused.influence=Math.max(0,accused.influence-1);
+      state.logs.push(`⚖️ ${accused.name} أُدين! خسر ٢ ❤️ و ١ ⭐.`);
+      if(accused.hp===0) eliminate(accused);
+    }
+    if(judge){
+      judge.influence++;
+      state.logs.push(`⚖️ ${judge.name} (القاضي) حصل على +١ ⭐.`);
+    }
+    if(accuser){
+      accuser.influence++;
+      state.logs.push(`⚡ ${accuser.name} (المدعي) حصل على +١ ⭐.`);
+    }
+  }else{
+    if(accused){
+      accused.influence++;
+      state.logs.push(`✨ ${accused.name} برئ! حصل على +١ ⭐.`);
+    }
+    if(accuser){
+      accuser.influence=Math.max(0,accuser.influence-1);
+      state.logs.push(`⚡ ${accuser.name} (المدعي) خسر ١ ⭐ لاتهامه الخاطئ.`);
+    }
+  }
+
+  state.phase="end";
+  checkAgendas();
+  render();
+}
+
+function checkAgendas(){
+  alive().forEach(p=>{
+    if(p.agenda && !p.agendaDone && p.agenda.check(p,state)){
+      p.agendaDone=true;
+      p.influence+=2;
+      state.logs.push(`🎯 ${p.name} حقق أجندته! +٢ ⭐.`);
+    }
+  });
+}
+
+// ==================== END ROUND ====================
+function nextRound(){
+  state.round++;
+  state.phase="agenda";
+  state.currentPlayerIndex=0;
+  resetRoundVars();
+
+  alive().forEach(p=>{
+    p.gold+=1;
+    p.intel+=1;
+  });
+  state.logs.push(`🌙 بداية الجولة ${state.round}. كل لاعب حي حصل على +١ 💰 و +١ 🔮.`);
+
+  assignAgendasAndRoles();
+  newEvent();
+}
+
+function eliminate(p){
+  p.alive=false;p.hp=0;
+  state.logs.push(`☠️ ${p.name} خرج من اللعبة.`);
+  const a=alive();
+  if(a.length<=1){
+    state.gameOver=true;
+    state.winner=a[0]||null;
+  }
+}
+
+// ==================== EVENTS ====================
+async function newEvent(){
+  state.loading=true;state.error="";render();
+
+  if(state.useAI){
+    try{
+      const r=await fetch("/api/game",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({task:"new_event",game:{round:state.round,players:state.players.map(p=>({id:p.id,hp:p.hp,gold:p.gold,intel:p.intel,influence:p.influence,alive:p.alive})),recentLog:state.logs.slice(-6)}})});
+      const d=await r.json();
+      if(r.ok && d.result){
+        state.event=d.result;
+        state.loading=false;render();return;
+      }
+    }catch(e){console.error(e);}
+  }
+
+  const e=rand(EVENTS);
+  state.event={...e};
+
+  if(e.effect?.type==="judge_gold"){
+    const judge=state.players.find(p=>p.id===state.judgeId);
+    if(judge){judge.gold+=e.effect.value;state.logs.push(`⚖️ ${judge.name} (القاضي) حصل على +${e.effect.value} ذهب.`);}
+  }
+  if(e.effect?.type==="all_intel"){
+    alive().forEach(p=>{if(p.intel>0){p.intel=Math.max(0,p.intel+e.effect.value);state.logs.push(`🔮 ${p.name} خسر معلومة.`);}});
+  }
+  if(e.effect?.type==="all_gold"){
+    alive().forEach(p=>{p.gold+=e.effect.value;state.logs.push(`💰 ${p.name} حصل على +${e.effect.value} ذهب.`);});
+  }
+  if(e.effect?.type==="spy_bonus"){
+    state.logs.push(`🕵️ مكافأة التجسس: من يتجسس يحصل على +١ ⭐.`);
+  }
+  if(e.effect?.type==="alliance_bonus"){
+    state.logs.push(`🤝 مكافأة التحالف: من يتبادل الموارد يحصل على +١ ⭐.`);
+  }
+  if(e.effect?.type==="betray_bonus"){
+    state.logs.push(`🎭 مكافأة الخيانة: من يؤذي حليفه يحصل على +٢ ⭐.`);
+  }
+
+  state.loading=false;render();
 }
 
 render();
