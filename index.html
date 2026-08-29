@@ -3,63 +3,257 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>المحكمة السرية</title>
-  <link rel="stylesheet" href="style.css">
+  <title>المحكمة السرية - Secret Court</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #8b5cf6;
+      --danger: #ef4444;
+      --text: #f8fafc;
+    }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .panel {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 10px;
+    }
+    .card-item {
+      background: #334155;
+      padding: 15px;
+      border-radius: 8px;
+      border-right: 4px solid var(--accent);
+    }
+    button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.9; }
+    button.danger { background: var(--danger); }
+    .evidence-box {
+      background: #2e1065;
+      border: 1px solid var(--accent);
+      padding: 15px;
+      border-radius: 8px;
+      font-style: italic;
+    }
+    .actions-list {
+      font-size: 0.9em;
+      color: #94a3b8;
+    }
+  </style>
 </head>
 <body>
-  <div class="game-container">
-    <header>
-      <h1>⚖️ المحكمة السرية</h1>
-      <div id="player-status">
-        <span id="player-name">اللاعب: جاري التحميل...</span> | 
-        <span>العملات: <strong id="coin-count">0</strong> 🪙</span>
-      </div>
-    </header>
 
-    <main>
-      <!-- قسم الدليل الذكي -->
-      <section class="card-panel evidence-section">
-        <h2>📜 دليل الجولة (AI)</h2>
-        <p id="evidence-text">بانتظار وقوع الأحداث لتوليد الدليل...</p>
-        <button id="btn-generate-evidence" onclick="triggerAIEvidence()">كشف دليل الجولة</button>
-      </section>
+<div class="container">
+  <h2>⚖️ لعبة المحكمة السرية</h2>
 
-      <!-- قسم متجر البطاقات والمخزون -->
-      <section class="card-panel">
-        <h2>🃏 بطاقاتك الحالية</h2>
-        <div id="inventory-list" class="cards-grid"></div>
-        
-        <div class="shop-actions">
-          <h3>شراء بطاقة عشوائية</h3>
-          <button onclick="buyCard(1)">شراء فئة عادية (1 عملة)</button>
-          <button onclick="buyCard(4)">شراء فئة قوية (4 عملات)</button>
-        </div>
-      </section>
-
-      <!-- قسم التحالفات -->
-      <section class="card-panel">
-        <h2>🤝 نظام التحالفات</h2>
-        <div id="alliance-status">حالة التحالف: مستقل</div>
-        <select id="alliance-target-select"></select>
-        <button onclick="sendAllianceRequest()">إرسال طلب تحالف</button>
-      </section>
-
-      <!-- قسم التصويت الجماعي -->
-      <section class="card-panel">
-        <h2>🗳️ التصويت الجماعي</h2>
-        <select id="vote-target-select"></select>
-        <button class="danger-btn" onclick="submitVote()">تصويت ضد المشتبه به</button>
-        <div id="vote-results"></div>
-      </section>
-    </main>
-
-    <!-- سجل الأحداث السري للجولة -->
-    <aside class="log-panel">
-      <h3>📋 تحركات الجولة الحالية</h3>
-      <ul id="round-log"></ul>
-    </aside>
+  <!-- رصيد اللاعب والتحالف -->
+  <div class="panel">
+    <h3>حالة اللاعب (<span id="player-name">اللاعب 1</span>)</h3>
+    <p>العملات: <strong id="coins-count">5</strong> 🪙</p>
+    <div id="alliance-status">الحالة: لا يوجد تحالف نشط</div>
+    <br>
+    <button onclick="requestAlliance('اللاعب 2')">تفعيل تحالف مع (اللاعب 2)</button>
   </div>
 
-  <script src="script.js"></script>
+  <!-- مخزن البطاقات -->
+  <div class="panel">
+    <h3>بطاقتك (البداية بـ 2 عشوائية)</h3>
+    <div class="cards-grid" id="inventory"></div>
+    <br>
+    <h4>شراء بطاقة جديدة (عشوائية):</h4>
+    <button onclick="buyCard(1)">شراء بطاقة عادية (1 عملة)</button>
+    <button onclick="buyCard(4)">شراء بطاقة قوية (4 عملات)</button>
+  </div>
+
+  <!-- سجل تحركات الجولة والدليل -->
+  <div class="panel">
+    <h3>سجل أحداث الجولة الحالية</h3>
+    <ul class="actions-list" id="actions-log"></ul>
+    <button onclick="generateEvidence()">توليد دليل الجولة (AI)</button>
+    <div style="margin-top: 15px;">
+      <h4>الدليل القضائي:</h4>
+      <div class="evidence-box" id="evidence-text">في انتظار انتهاء تحركات الجولة...</div>
+    </div>
+  </div>
+
+  <!-- التصويت الجماعي -->
+  <div class="panel">
+    <h3>مرحلة التصويت الجماعي</h3>
+    <p>اختر اللاعب الذي تتهمه بناءً على الدليل:</p>
+    <select id="vote-target">
+      <option value="اللاعب 2">اللاعب 2</option>
+      <option value="اللاعب 3">اللاعب 3</option>
+      <option value="اللاعب 4">اللاعب 4</option>
+    </select>
+    <button class="danger" onclick="submitVote()">إرسال الصوت</button>
+    <div id="vote-result" style="margin-top: 15px; font-weight: bold;"></div>
+  </div>
+</div>
+
+<script>
+  let state = {
+    playerName: "اللاعب 1",
+    coins: 5,
+    inventory: [],
+    alliances: [],
+    roundActions: [],
+    roundNumber: 1,
+    votes: {}
+  };
+
+  // تهيئة اللعبة وسحب بطاقتين عشوائيتين
+  async function initGame() {
+    const res = await fetch('/api/game', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'DEAL_INITIAL_CARDS' })
+    });
+    const data = await res.json();
+    state.inventory = data.cards;
+    state.roundActions.push(`${state.playerName} حصل على 2 بطاقات عشوائية للبدء.`);
+    render();
+  }
+
+  // شراء بطاقة
+  async function buyCard(cost) {
+    if (state.coins < cost) return alert("لا تملك رصيداً كافياً!");
+
+    const res = await fetch('/api/game', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'BUY_CARD',
+        payload: { coins: state.coins, tierCost: cost }
+      })
+    });
+    const data = await res.json();
+    if (data.error) return alert(data.error);
+
+    state.coins = data.newCoins;
+    state.inventory.push(data.card);
+    state.roundActions.push(`${state.playerName} أنفق ${cost} عملات وسحب بطاقة جديدة.`);
+    render();
+  }
+
+  // تفعيل تحالف
+  function requestAlliance(targetPlayer) {
+    state.alliances.push({ p1: state.playerName, p2: targetPlayer });
+    state.roundActions.push(`${state.playerName} عقد حلفاً رسمياً مع ${targetPlayer}.`);
+    render();
+  }
+
+  // توليد الدليل عبر الذكاء الاصطناعي
+  async function generateEvidence() {
+    document.getElementById('evidence-text').innerText = "جاري تحليل تحركات الجولة واستخراج الدليل...";
+    const res = await fetch('/api/game', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'GENERATE_EVIDENCE',
+        payload: {
+          roundNumber: state.roundNumber,
+          roundActionsLog: state.roundActions
+        }
+      })
+    });
+    const data = await res.json();
+    document.getElementById('evidence-text').innerText = data.evidence;
+  }
+
+  // التصويت الجماعي وفحص الخيانة
+  async function submitVote() {
+    const target = document.getElementById('vote-target').value;
+    
+    // فحص الخيانة أولاً
+    const betrayalRes = await fetch('/api/game', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'CHECK_BETRAYAL',
+        payload: { voterId: state.playerName, targetId: target, alliances: state.alliances }
+      })
+    });
+    const betrayalData = await betrayalRes.json();
+    if (betrayalData.betrayed) {
+      state.coins = Math.max(0, state.coins - betrayalData.penaltyCoins);
+      alert(betrayalData.message);
+    }
+
+    // محاكاة تصويت بقية اللاعبين عشوائياً
+    state.votes = {
+      [state.playerName]: target,
+      "اللاعب 2": "اللاعب 3",
+      "اللاعب 3": target,
+      "اللاعب 4": state.playerName
+    };
+
+    const res = await fetch('/api/game', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'PROCESS_VOTES',
+        payload: { votes: state.votes }
+      })
+    });
+    const data = await res.json();
+    document.getElementById('vote-result').innerText = `نتيجة التصويت الجماعي: المتهم الرئيسي هو (${data.accusedPlayer}) بأغلبية ${data.totalVotes} أصوات.`;
+    render();
+  }
+
+  function render() {
+    document.getElementById('coins-count').innerText = state.coins;
+    
+    // عرض التحالفات
+    const allianceDiv = document.getElementById('alliance-status');
+    if (state.alliances.length > 0) {
+      allianceDiv.innerText = `الحالة: متحالف مع ${state.alliances.map(a => a.p2).join(', ')}`;
+    } else {
+      allianceDiv.innerText = "الحالة: لا يوجد تحالف نشط";
+    }
+
+    // عرض البطاقات
+    const invDiv = document.getElementById('inventory');
+    invDiv.innerHTML = state.inventory.map(c => `
+      <div class="card-item">
+        <strong>${c.name}</strong>
+        <p style="font-size:0.8em; margin: 5px 0 0 0;">${c.desc}</p>
+      </div>
+    `).join('');
+
+    // عرض سجل الأحداث
+    const logUl = document.getElementById('actions-log');
+    logUl.innerHTML = state.roundActions.map(act => `<li>${act}</li>`).join('');
+  }
+
+  window.onload = initGame;
+</script>
 </body>
 </html>
