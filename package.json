@@ -1,6 +1,12 @@
 {
-  "name":"bara-suspicion-game",
-  "version":"1.0.0",
-  "private":true,
-  "scripts":{"start":"node server.js"}
+  "name": "secret-court-game",
+  "version": "1.0.0",
+  "description": "لعبة المحكمة السرية - لعبة خداع اجتماعي وإدارة سمعة باستخدام الذكاء الاصطناعي",
+  "main": "api/game.js",
+  "scripts": {
+    "start": "serve ."
+  },
+  "keywords": ["game", "social-deduction", "ai", "openrouter", "vercel"],
+  "author": "Eva",
+  "license": "MIT"
 }
