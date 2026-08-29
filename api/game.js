@@ -11,18 +11,24 @@ const CARDS_DATABASE = {
   ]
 };
 
-export default async function handler(req, res) {
-  // استخدام معيار WHATWG URL الحديث لتفادي تحذير DeprecationWarning (DEP0169)
-  const protocol = req.headers['x-forwarded-proto'] || 'https';
-  const currentUrl = new URL(req.url, `${protocol}://${req.headers.host}`);
+module.exports = async function handler(req, res) {
+  // ضبط ترويسات الاستجابة لتفادي أخطاء CORS و JSON
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { action, payload } = req.body || {};
-
   try {
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
+    const { action, payload } = body;
+
     switch (action) {
       case 'DEAL_INITIAL_CARDS': {
         const allCards = [...CARDS_DATABASE.tier1, ...CARDS_DATABASE.tier4];
@@ -42,7 +48,7 @@ export default async function handler(req, res) {
       }
 
       case 'PROCESS_VOTES': {
-        const { votes } = payload || {}; // { voterId: targetId }
+        const { votes } = payload || {};
         const voteCounts = {};
         if (votes) {
           Object.values(votes).forEach(targetId => {
@@ -82,7 +88,7 @@ export default async function handler(req, res) {
 
         if (!apiKey) {
           return res.status(200).json({
-            evidence: `[دليل افتراضي للجولة ${roundNumber}]: شوهد تحرك مشبوه في الخفاء وتم استخدام قدرات خفية تؤثر على المجريات.`
+            evidence: `[دليل افتراضي للجولة ${roundNumber}]: تحركات سرية جرت في الكواليس، وتحالفات غير معلنة أربكت خطط المحكمة.`
           });
         }
 
@@ -118,4 +124,4 @@ export default async function handler(req, res) {
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
-}
+};
