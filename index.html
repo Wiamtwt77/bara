@@ -74,7 +74,7 @@
 <div class="container">
   <h2>⚖️ لعبة المحكمة السرية</h2>
 
-  <!-- رصيد اللاعب والتحالف -->
+  <!-- حالة اللاعب والتحالف -->
   <div class="panel">
     <h3>حالة اللاعب (<span id="player-name">اللاعب 1</span>)</h3>
     <p>العملات: <strong id="coins-count">5</strong> 🪙</p>
@@ -129,38 +129,45 @@
     votes: {}
   };
 
+  async function apiCall(action, payload = {}) {
+    try {
+      const res = await fetch('/api/game', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, payload })
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({ error: 'خطأ في الاتصال بالخادم' }));
+        throw new Error(errData.error || `Error ${res.status}`);
+      }
+      return await res.json();
+    } catch (err) {
+      alert(err.message);
+      return null;
+    }
+  }
+
   // تهيئة اللعبة وسحب بطاقتين عشوائيتين
   async function initGame() {
-    const res = await fetch('/api/game', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'DEAL_INITIAL_CARDS' })
-    });
-    const data = await res.json();
-    state.inventory = data.cards;
-    state.roundActions.push(`${state.playerName} حصل على 2 بطاقات عشوائية للبدء.`);
-    render();
+    const data = await apiCall('DEAL_INITIAL_CARDS');
+    if (data && data.cards) {
+      state.inventory = data.cards;
+      state.roundActions.push(`${state.playerName} حصل على بطاقتين عشوائيتين للبدء.`);
+      render();
+    }
   }
 
   // شراء بطاقة
   async function buyCard(cost) {
     if (state.coins < cost) return alert("لا تملك رصيداً كافياً!");
 
-    const res = await fetch('/api/game', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'BUY_CARD',
-        payload: { coins: state.coins, tierCost: cost }
-      })
-    });
-    const data = await res.json();
-    if (data.error) return alert(data.error);
-
-    state.coins = data.newCoins;
-    state.inventory.push(data.card);
-    state.roundActions.push(`${state.playerName} أنفق ${cost} عملات وسحب بطاقة جديدة.`);
-    render();
+    const data = await apiCall('BUY_CARD', { coins: state.coins, tierCost: cost });
+    if (data && data.card) {
+      state.coins = data.newCoins;
+      state.inventory.push(data.card);
+      state.roundActions.push(`${state.playerName} أنفق ${cost} عملات وسحب بطاقة جديدة.`);
+      render();
+    }
   }
 
   // تفعيل تحالف
@@ -173,41 +180,32 @@
   // توليد الدليل عبر الذكاء الاصطناعي
   async function generateEvidence() {
     document.getElementById('evidence-text').innerText = "جاري تحليل تحركات الجولة واستخراج الدليل...";
-    const res = await fetch('/api/game', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'GENERATE_EVIDENCE',
-        payload: {
-          roundNumber: state.roundNumber,
-          roundActionsLog: state.roundActions
-        }
-      })
+    const data = await apiCall('GENERATE_EVIDENCE', {
+      roundNumber: state.roundNumber,
+      roundActionsLog: state.roundActions
     });
-    const data = await res.json();
-    document.getElementById('evidence-text').innerText = data.evidence;
+    if (data && data.evidence) {
+      document.getElementById('evidence-text').innerText = data.evidence;
+    }
   }
 
   // التصويت الجماعي وفحص الخيانة
   async function submitVote() {
     const target = document.getElementById('vote-target').value;
     
-    // فحص الخيانة أولاً
-    const betrayalRes = await fetch('/api/game', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'CHECK_BETRAYAL',
-        payload: { voterId: state.playerName, targetId: target, alliances: state.alliances }
-      })
+    // فحص الخيانة
+    const betrayalData = await apiCall('CHECK_BETRAYAL', {
+      voterId: state.playerName,
+      targetId: target,
+      alliances: state.alliances
     });
-    const betrayalData = await betrayalRes.json();
-    if (betrayalData.betrayed) {
+    
+    if (betrayalData && betrayalData.betrayed) {
       state.coins = Math.max(0, state.coins - betrayalData.penaltyCoins);
       alert(betrayalData.message);
     }
 
-    // محاكاة تصويت بقية اللاعبين عشوائياً
+    // محاكاة تصويت بقية اللاعبين
     state.votes = {
       [state.playerName]: target,
       "اللاعب 2": "اللاعب 3",
@@ -215,17 +213,11 @@
       "اللاعب 4": state.playerName
     };
 
-    const res = await fetch('/api/game', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'PROCESS_VOTES',
-        payload: { votes: state.votes }
-      })
-    });
-    const data = await res.json();
-    document.getElementById('vote-result').innerText = `نتيجة التصويت الجماعي: المتهم الرئيسي هو (${data.accusedPlayer}) بأغلبية ${data.totalVotes} أصوات.`;
-    render();
+    const data = await apiCall('PROCESS_VOTES', { votes: state.votes });
+    if (data && data.accusedPlayer) {
+      document.getElementById('vote-result').innerText = `نتيجة التصويت الجماعي: المتهم الرئيسي هو (${data.accusedPlayer}) بأغلبية ${data.totalVotes} أصوات.`;
+      render();
+    }
   }
 
   function render() {
