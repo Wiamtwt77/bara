@@ -32,18 +32,10 @@
     }
     header {
       text-align: center;
-      padding: 10px;
+      padding: 12px;
       background: var(--panel-bg);
       border-radius: 12px;
       border: 1px solid var(--border);
-    }
-    .grid-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
-    @media (max-width: 768px) {
-      .grid-layout { grid-template-columns: 1fr; }
     }
     .panel {
       background: var(--panel-bg);
@@ -51,6 +43,12 @@
       padding: 18px;
       border: 1px solid var(--border);
     }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
     .status-bar {
       display: flex;
       justify-content: space-between;
@@ -68,13 +66,24 @@
     }
     .card-item {
       background: #1e293b;
-      border: 1px solid var(--accent);
+      border-right: 4px solid var(--accent);
       padding: 12px;
       border-radius: 8px;
       font-size: 0.9em;
     }
     .card-item strong { color: var(--gold); display: block; margin-bottom: 4px; }
-    .btn-group { display: flex; gap: 8px; margin-top: 10px; }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      background: #1e293b;
+      color: white;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-sizing: border-box;
+      margin-top: 6px;
+      margin-bottom: 12px;
+    }
+    .btn-group { display: flex; gap: 8px; }
     button {
       background: var(--accent);
       color: white;
@@ -95,10 +104,12 @@
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 10px;
-      max-height: 180px;
+      max-height: 160px;
       overflow-y: auto;
       font-size: 0.85em;
       color: var(--text-muted);
+      list-style: none;
+      margin: 0;
     }
     .log-box li { margin-bottom: 6px; }
     .evidence-box {
@@ -110,16 +121,6 @@
       line-height: 1.5;
       font-size: 0.95em;
     }
-    select {
-      width: 100%;
-      padding: 10px;
-      background: #1e293b;
-      color: white;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      margin-top: 8px;
-      margin-bottom: 12px;
-    }
   </style>
 </head>
 <body>
@@ -127,84 +128,80 @@
 <div class="container">
   <header>
     <h2>⚖️ المحكمة السرية - Secret Court</h2>
-    <p style="margin: 0; color: var(--text-muted); font-size: 0.9em;">الجولة الحالية: <span id="round-num">1</span></p>
+    <p style="margin:0; color: var(--text-muted);">الجولة الحالية: <span id="round-num">1</span></p>
   </header>
 
-  <!-- حالة اللاعب وبطاقاته -->
+  <!-- معرف اللاعب والرصيد -->
   <div class="panel">
     <div class="status-bar">
-      <div>اللاعب: <strong>أنت (اللاعب 1)</strong></div>
+      <div>اسمك في اللعبة: <strong id="display-name">-</strong></div>
       <div>العملات: <strong id="coins-count" style="color: var(--gold);">5</strong> 🪙</div>
     </div>
+    <div id="setup-section">
+      <label>أدخل اسمك للانضمام للجلسة:</label>
+      <input type="text" id="player-input" placeholder="اسمك أو لقبك...">
+      <button onclick="registerPlayer()">تأكيد واستلام البطاقات البدائية</button>
+    </div>
+  </div>
 
-    <h3>🎒 بطاقاتك (بداية بـ 2 عشوائية)</h3>
+  <!-- مخزن البطاقات والشراء العشوائي -->
+  <div class="panel" id="game-section" style="display: none;">
+    <h3>🎒 بطاقاتك الحالية (بداية بـ 2 عشوائية)</h3>
     <div class="cards-container" id="inventory"></div>
 
-    <h4 style="margin-top: 15px;">🛒 شراء بطاقة جديدة (عشوائية بالكامل):</h4>
+    <h4 style="margin-top: 15px;">🛒 شراء بطاقة عشوائية بالكامل:</h4>
     <div class="btn-group">
       <button onclick="buyCard(1)">شراء بطاقة عادية (1 عملة)</button>
       <button class="gold" onclick="buyCard(4)">شراء بطاقة قوية (4 عملات)</button>
     </div>
   </div>
 
-  <div class="grid-layout">
-    <!-- نظام التحالفات النشط -->
+  <div class="grid" id="main-grid" style="display: none;">
+    <!-- إدارة التحالف الحقيقي -->
     <div class="panel">
       <h3>🤝 التحالفات النشطة</h3>
-      <div id="alliance-status" style="margin-bottom: 10px; font-weight: bold; color: var(--gold);">
-        لا يوجد تحالف نشط حالياً
-      </div>
-      <p style="font-size: 0.8em; color: var(--text-muted);">
-        * تنبيه: التصويت ضد حليفك في مرحلة التصويت الجماعي يعتبر خيانة ويفعل عقوبة (-2 عملات) وفض الحلف.
-      </p>
-      <select id="alliance-target">
-        <option value="سارة">سارة</option>
-        <option value="محمد">محمد</option>
-        <option value="ياسمين">ياسمين</option>
-      </select>
-      <button onclick="requestAlliance()">طلب وتفعيل حلف</button>
+      <div id="alliance-status" style="margin-bottom: 8px; font-weight: bold; color: var(--gold);">لا يوجد تحالف active</div>
+      <label>أدخل اسم اللاعب لتشكيل تحالف معه:</label>
+      <input type="text" id="alliance-target-input" placeholder="اسم الحليف...">
+      <button onclick="createAlliance()">تفعيل تحالف نشط</button>
     </div>
 
     <!-- توليد الدليل بالذكاء الاصطناعي -->
     <div class="panel">
-      <h3>🔎 دليل الجولة (AI)</h3>
-      <p style="font-size: 0.8em; color: var(--text-muted);">يصوغ AI دليلاً ديناميكياً يحلل كل تحركات الجولة بدون قوالب جاهزة.</p>
-      <button onclick="generateEvidence()">توليد الدليل القضائي</button>
-      <div class="evidence-box" id="evidence-text">
-        في انتظار اكتمال تحركات الجولة واستدعاء المحقق...
-      </div>
+      <h3>🔎 دليل الجولة (AI Dynamic)</h3>
+      <p style="font-size:0.8em; color: var(--text-muted);">تحليل تحركات الجولة الحقيقية وصياغة دليل بدون قالب ثابت.</p>
+      <button onclick="generateEvidence()">توليد التقرير القضائي</button>
+      <div class="evidence-box" id="evidence-text">في انتظار تحركات الجولة...</div>
     </div>
   </div>
 
-  <!-- سجل تحركات الجولة والتصويت الجماعي -->
-  <div class="grid-layout">
+  <div class="grid" id="voting-grid" style="display: none;">
+    <!-- سجل التحركات -->
     <div class="panel">
-      <h3>📜 سجل تحركات الجولة (Log)</h3>
+      <h3>📜 سجل أحداث الجولة (Round Log)</h3>
       <ul class="log-box" id="actions-log"></ul>
     </div>
 
+    <!-- التصويت الجماعي -->
     <div class="panel">
-      <h3>🗳️ التصويت الجماعي (Collective Vote)</h3>
-      <p style="font-size: 0.85em; color: var(--text-muted);">يصوت جميع اللاعبين معاً في نفس الوقت بضغطة زر بناءً على الدليل:</p>
-      <select id="vote-target">
-        <option value="سارة">سارة</option>
-        <option value="محمد">محمد</option>
-        <option value="ياسمين">ياسمين</option>
-      </select>
-      <button class="danger" onclick="submitCollectiveVote()">إرسال التصويت الجماعي</button>
-      <div id="vote-result" style="margin-top: 10px; font-size: 0.9em; font-weight: bold;"></div>
+      <h3>🗳️ مرحلة التصويت الجماعي</h3>
+      <label>صوّت ضد المتهم بناءً على الدليل:</label>
+      <input type="text" id="vote-target-input" placeholder="اسم اللاعب المتهم...">
+      <button class="danger" onclick="castVote()">تسجيل صوتك في المحكمة</button>
+      <div id="vote-result" style="margin-top: 10px; font-size: 0.9em;"></div>
     </div>
   </div>
 </div>
 
 <script>
   let state = {
-    playerName: "أنت (اللاعب 1)",
+    playerName: "",
     coins: 5,
     inventory: [],
     alliances: [],
     roundActions: [],
-    roundNumber: 1
+    roundNumber: 1,
+    currentVotes: {}
   };
 
   async function apiCall(action, payload = {}) {
@@ -215,7 +212,7 @@
         body: JSON.stringify({ action, payload })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'خطأ في الاتصال');
+      if (!res.ok) throw new Error(data.error || 'خطأ في الاتصال بالخادم');
       return data;
     } catch (err) {
       alert(err.message);
@@ -223,46 +220,54 @@
     }
   }
 
-  // 1. بدء اللعبة وسحب بطاقتين عشوائيتين كلياً
-  async function initGame() {
+  // تسجيل اللاعب وتخصيص بطاقتين عشوائيتين
+  async function registerPlayer() {
+    const input = document.getElementById('player-input').value.trim();
+    if (!input) return alert("يرجى إدخال اسمك أولاً!");
+
+    state.playerName = input;
+    document.getElementById('display-name').innerText = state.playerName;
+    document.getElementById('setup-section').style.display = 'none';
+    document.getElementById('game-section').style.display = 'block';
+    document.getElementById('main-grid').style.display = 'grid';
+    document.getElementById('voting-grid').style.display = 'grid';
+
     const data = await apiCall('DEAL_INITIAL_CARDS');
     if (data && data.cards) {
       state.inventory = data.cards;
-      logAction(`${state.playerName} دخل المحكمة وحصل على بطاقتين عشوائيتين للبدء.`);
+      logAction(`انضم [${state.playerName}] للجلسة وحصل على بطاقتين عشوائيتين للبدء.`);
       render();
     }
   }
 
-  // 2. شراء عشوائي بـ 1 أو 4 عملات
+  // شراء عشوائي بـ 1 أو 4 عملات
   async function buyCard(cost) {
-    if (state.coins < cost) return alert("لا تملك رصيداً كافياً من العملات!");
+    if (state.coins < cost) return alert("رصيدك غير كافٍ!");
 
     const data = await apiCall('BUY_CARD', { coins: state.coins, tierCost: cost });
     if (data && data.card) {
       state.coins = data.newCoins;
       state.inventory.push(data.card);
-      logAction(`${state.playerName} أنفق ${cost} عملات وسحب بطاقة عشوائية من فئة (${cost} عملة).`);
-      
-      // محاكاة شراء عشوائي للخصوم لإثراء سجل التحركات للـ AI
-      simulateNPCAction();
+      logAction(`قام [${state.playerName}] بإنفاق ${cost} عملات وسحب بطاقة عشوائية.`);
       render();
     }
   }
 
-  // 3. تفعيل تحالف
-  function requestAlliance() {
-    const target = document.getElementById('alliance-target').value;
-    const exists = state.alliances.some(a => a.p2 === target);
-    if (exists) return alert(`أنت متحالف بالفعل مع ${target}!`);
+  // إنشاء تحالف نشط
+  function createAlliance() {
+    const target = document.getElementById('alliance-target-input').value.trim();
+    if (!target) return alert("أدخل اسم اللاعب للتحالف معه!");
+    if (target === state.playerName) return alert("لا يمكنك التحالف مع نفسك!");
 
     state.alliances.push({ p1: state.playerName, p2: target });
-    logAction(`عقد ${state.playerName} حلفاً رسمياً ومباشراً مع [${target}].`);
+    logAction(`تم عقد حلف رسمي بين [${state.playerName}] و [${target}].`);
+    document.getElementById('alliance-target-input').value = "";
     render();
   }
 
-  // 4. توليد الدليل عبر الذكاء الاصطناعي
+  // توليد الدليل بالذكاء الاصطناعي
   async function generateEvidence() {
-    document.getElementById('evidence-text').innerText = "🔍 المحقق يراجع سجلات الجولة ويصوغ التقرير...";
+    document.getElementById('evidence-text').innerText = "🔍 المحقق يعالج تحركات الجولة ويصوغ التقرير...";
     const data = await apiCall('GENERATE_EVIDENCE', {
       roundNumber: state.roundNumber,
       roundActionsLog: state.roundActions
@@ -272,70 +277,48 @@
     }
   }
 
-  // 5. التصويت الجماعي وفحص الخيانة
-  async function submitCollectiveVote() {
-    const myTarget = document.getElementById('vote-target').value;
+  // إرسال التصويت وتطبيق فحص الخيانة
+  async function castVote() {
+    const target = document.getElementById('vote-target-input').value.trim();
+    if (!target) return alert("حدد اسم اللاعب الذي تتهمه!");
 
-    // محاكاة أصوات باقي اللاعبين
-    const npcs = ["سارة", "محمد", "ياسمين"];
-    const allVotes = {
-      [state.playerName]: myTarget,
-      "سارة": npcs[Math.floor(Math.random() * npcs.length)],
-      "محمد": state.playerName,
-      "ياسمين": myTarget
-    };
+    state.currentVotes[state.playerName] = target;
 
     const data = await apiCall('PROCESS_COLLECTIVE_VOTES', {
-      votes: allVotes,
+      votes: state.currentVotes,
       alliances: state.alliances
     });
 
     if (data) {
-      // التعامل مع نتائج الخيانة إن وجدت
       if (data.betrayals && data.betrayals.length > 0) {
         data.betrayals.forEach(b => {
           alert(b.message);
           if (b.betrayer === state.playerName) {
             state.coins = Math.max(0, state.coins - b.penaltyCoins);
           }
-          // كسر التحالف
           state.alliances = state.alliances.filter(a => !(a.p1 === b.betrayer && a.p2 === b.victim));
         });
       }
 
       document.getElementById('vote-result').innerHTML = `
-        ⚖️ <strong>نتيجة التصويت الجماعي:</strong><br>
-        المتهم الأبرز: <span style="color:var(--danger);">${data.accusedPlayer}</span> (${data.totalVotes} أصوات).
+        ⚖️ <strong>نتيجة التصويت الجماعي:</strong> المتهم الرئيسي هو <span style="color:var(--danger);">${data.accusedPlayer || target}</span>.
       `;
-      logAction(`انتهت مرحلة التصويت الجماعي. المتهم الرئيسي: ${data.accusedPlayer}.`);
+      logAction(`سجل [${state.playerName}] صوته ضد [${target}] في مرحلة التصويت الجماعي.`);
       render();
     }
   }
 
-  function simulateNPCAction() {
-    const npcs = ["سارة", "محمد", "ياسمين"];
-    const randomNPC = npcs[Math.floor(Math.random() * npcs.length)];
-    const actions = [
-      `أنفق 1 عملة وجمع بطاقة عادية.`,
-      `أنفق 4 عملات وادخر قدرة قوية للجولة القادمة.`,
-      `قام باستكشاف رصيد أحد المنافسين في الخفاء.`
-    ];
-    const act = actions[Math.floor(Math.random() * actions.length)];
-    logAction(`اللاعب [${randomNPC}] ${act}`);
-  }
-
-  function logAction(text) {
-    state.roundActions.push(text);
+  function logAction(msg) {
+    state.roundActions.push(msg);
   }
 
   function render() {
     document.getElementById('coins-count').innerText = state.coins;
-    document.getElementById('round-num').innerText = state.roundNumber;
 
     // عرض التحالفات
     const allianceDiv = document.getElementById('alliance-status');
     if (state.alliances.length > 0) {
-      allianceDiv.innerText = `حليف حالي: ${state.alliances.map(a => a.p2).join(', ')}`;
+      allianceDiv.innerText = `متحالف مع: ${state.alliances.map(a => a.p2).join(', ')}`;
     } else {
       allianceDiv.innerText = "لا يوجد تحالف نشط حالياً";
     }
@@ -354,8 +337,6 @@
     logUl.innerHTML = state.roundActions.map(act => `<li>• ${act}</li>`).join('');
     logUl.scrollTop = logUl.scrollHeight;
   }
-
-  window.onload = initGame;
 </script>
 </body>
 </html>
