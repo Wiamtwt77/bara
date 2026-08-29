@@ -12,11 +12,15 @@ const CARDS_DATABASE = {
 };
 
 export default async function handler(req, res) {
+  // استخدام معيار WHATWG URL الحديث لتفادي تحذير DeprecationWarning (DEP0169)
+  const protocol = req.headers['x-forwarded-proto'] || 'https';
+  const currentUrl = new URL(req.url, `${protocol}://${req.headers.host}`);
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { action, payload } = req.body;
+  const { action, payload } = req.body || {};
 
   try {
     switch (action) {
@@ -28,8 +32,8 @@ export default async function handler(req, res) {
       }
 
       case 'BUY_CARD': {
-        const { coins, tierCost } = payload;
-        if (coins < tierCost) {
+        const { coins, tierCost } = payload || {};
+        if (typeof coins !== 'number' || coins < tierCost) {
           return res.status(400).json({ error: 'رصيد العملات غير كافٍ!' });
         }
         const pool = tierCost === 1 ? CARDS_DATABASE.tier1 : CARDS_DATABASE.tier4;
@@ -38,11 +42,13 @@ export default async function handler(req, res) {
       }
 
       case 'PROCESS_VOTES': {
-        const { votes } = payload; // { voterId: targetId }
+        const { votes } = payload || {}; // { voterId: targetId }
         const voteCounts = {};
-        Object.values(votes).forEach(targetId => {
-          voteCounts[targetId] = (voteCounts[targetId] || 0) + 1;
-        });
+        if (votes) {
+          Object.values(votes).forEach(targetId => {
+            voteCounts[targetId] = (voteCounts[targetId] || 0) + 1;
+          });
+        }
 
         let maxVotes = 0;
         let accusedPlayer = null;
@@ -56,8 +62,8 @@ export default async function handler(req, res) {
       }
 
       case 'CHECK_BETRAYAL': {
-        const { voterId, targetId, alliances } = payload;
-        const isAllied = alliances.some(
+        const { voterId, targetId, alliances } = payload || {};
+        const isAllied = Array.isArray(alliances) && alliances.some(
           a => (a.p1 === voterId && a.p2 === targetId) || (a.p1 === targetId && a.p2 === voterId)
         );
         if (isAllied) {
@@ -71,7 +77,7 @@ export default async function handler(req, res) {
       }
 
       case 'GENERATE_EVIDENCE': {
-        const { roundNumber, roundActionsLog } = payload;
+        const { roundNumber, roundActionsLog } = payload || {};
         const apiKey = process.env.OPENROUTER_API_KEY;
 
         if (!apiKey) {
@@ -96,7 +102,7 @@ export default async function handler(req, res) {
             model: 'google/gemini-2.5-flash',
             messages: [
               { role: 'system', content: systemPrompt },
-              { role: 'user', content: `سجل أحداث الجولة:\n${roundActionsLog.join('\n')}` }
+              { role: 'user', content: `سجل أحداث الجولة:\n${(roundActionsLog || []).join('\n')}` }
             ]
           })
         });
