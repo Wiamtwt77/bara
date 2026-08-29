@@ -1,12 +1,9 @@
 {
   "name": "secret-court-game",
   "version": "1.0.0",
-  "description": "لعبة المحكمة السرية - لعبة خداع اجتماعي وإدارة سمعة باستخدام الذكاء الاصطناعي",
-  "main": "api/game.js",
+  "private": true,
   "scripts": {
-    "start": "serve ."
+    "dev": "vercel dev"
   },
-  "keywords": ["game", "social-deduction", "ai", "openrouter", "vercel"],
-  "author": "Eva",
-  "license": "MIT"
+  "dependencies": {}
 }
