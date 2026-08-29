@@ -1,152 +1,923 @@
-<!doctype html> 
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#080b14"><title>أثر الشبهة — رصيد وبطاقات</title>
-<style>
-:root{--bg:#080b14;--panel:#111827;--panel2:#172033;--border:#29364f;--text:#f8fafc;--muted:#94a3b8;--gold:#facc15;--red:#fb7185;--green:#4ade80;--purple:#a78bfa;--orange:#fb923c;--blue:#60a5fa;--curse:#ef4444}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0%,rgba(167,139,250,.12),transparent 28%),radial-gradient(circle at 90% 100%,rgba(251,146,60,.08),transparent 28%),var(--bg);color:var(--text);font-family:Tahoma,Arial,sans-serif;line-height:1.65}
-button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.38;cursor:not-allowed}.shell{width:min(1120px,calc(100% - 24px));margin:auto;padding:22px 0 56px}.center{min-height:100vh;display:grid;place-items:center;padding:20px}.panel{background:rgba(17,24,39,.94);border:1px solid var(--border);border-radius:22px;padding:24px;box-shadow:0 25px 80px rgba(0,0,0,.35)}
-.hero{text-align:center;margin-bottom:22px}.eyebrow{display:inline-block;padding:7px 12px;border-radius:999px;background:rgba(167,139,250,.12);color:var(--purple);font-weight:700;font-size:13px}.hero h1{font-size:clamp(34px,6vw,62px);margin:10px 0 3px}.muted{color:var(--muted)}
-.btn{border:1px solid var(--border);border-radius:13px;padding:11px 15px;background:var(--panel2);color:var(--text);font-weight:700}.btn:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.08)}.primary{background:linear-gradient(135deg,#8b5cf6,#6d28d9);border-color:transparent}.gold{background:linear-gradient(135deg,#facc15,#d97706);color:#171717;border-color:transparent}.danger{background:linear-gradient(135deg,#fb7185,#be123c);border-color:transparent}.good{background:linear-gradient(135deg,#4ade80,#15803d);color:#06240f;border-color:transparent}.blue{background:linear-gradient(135deg,#60a5fa,#2563eb);border-color:transparent}.full{width:100%}
-.grid{display:grid;gap:12px}.players{grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin:14px 0}.player{background:var(--panel2);border:1px solid var(--border);border-radius:17px;padding:14px;position:relative}.player.watcher{border-color:var(--orange);box-shadow:0 0 18px rgba(251,146,60,.16)}.player.dead{opacity:.34;filter:grayscale(1)}.player.current{outline:2px solid rgba(167,139,250,.45)}.name{font-weight:800;display:flex;justify-content:space-between;gap:8px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;font-size:12px}.stat{background:rgba(0,0,0,.18);padding:6px 8px;border-radius:9px}.hp{color:var(--red)}.coin{color:var(--gold)}.sus{color:var(--purple)}
-.bar{height:7px;background:#0c1220;border-radius:999px;overflow:hidden;margin-top:10px}.bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#4ade80,#facc15,#fb923c,#fb7185)}
-.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:15px}.round{padding:7px 11px;border-radius:999px;background:rgba(167,139,250,.1);color:var(--purple);font-size:13px;font-weight:800}.event{padding:18px;border:1px solid rgba(96,165,250,.22);background:rgba(96,165,250,.07);border-radius:18px;text-align:center}.event h2{margin:3px 0 5px}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.card{background:var(--panel2);border:1px solid var(--border);border-radius:17px;padding:14px;text-align:right;color:var(--text);min-height:165px}.card:hover:not(:disabled){border-color:var(--purple);transform:translateY(-2px)}.card.curse{border-color:#7f1d1d;background:rgba(127,29,29,.16)}.card .icon{font-size:31px}.card small{display:block;color:var(--muted);margin-top:7px}.price{color:var(--gold);font-weight:800}.scost{color:var(--purple);font-weight:800}
-.market{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.market-card{background:linear-gradient(180deg,rgba(250,204,21,.06),transparent),var(--panel2);border:1px solid rgba(250,204,21,.24);border-radius:17px;padding:14px}.market-card .title{display:flex;justify-content:space-between;align-items:center;gap:8px}.tag{font-size:11px;padding:2px 7px;border-radius:999px;background:rgba(250,204,21,.12);color:var(--gold)}
-.log{max-height:240px;overflow:auto;border:1px solid var(--border);border-radius:14px;padding:10px;background:#0d1422}.log div{padding:7px 3px;border-bottom:1px solid rgba(41,54,79,.55);font-size:13px}.log div:last-child{border-bottom:0}.notice{padding:12px 14px;border-radius:14px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);margin-top:12px}.danger-box{padding:12px 14px;border-radius:14px;background:rgba(239,68,68,.09);border:1px solid rgba(239,68,68,.25);margin-top:12px}.private{min-height:100vh;display:grid;place-items:center;padding:20px}.private .panel{width:min(720px,100%)}.target-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}.target{border:1px solid var(--border);background:var(--panel2);padding:14px;border-radius:14px;color:var(--text);text-align:right}.target:hover{border-color:var(--purple)}.choice-grid{display:grid;gap:10px}.choice{border:1px solid var(--border);background:var(--panel2);color:var(--text);padding:15px;border-radius:15px;text-align:right}.choice:hover{border-color:var(--purple)}.setup{width:min(700px,100%)}input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--panel2);color:var(--text);outline:none}.count{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.count button{border:1px solid var(--border);background:var(--panel2);color:var(--text);padding:12px;border-radius:12px}.count button.active{background:#6d28d9;border-color:transparent}.section{margin-top:18px}.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.legend div{background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:12px;font-size:13px}
-@media(max-width:720px){.market{grid-template-columns:1fr}.players{grid-template-columns:repeat(2,1fr)}.stats{grid-template-columns:1fr 1fr 1fr}.count{grid-template-columns:repeat(2,1fr)}}
-</style>
-</head>
-<body><div id="app"></div>
-<script>
-const MAX_HAND=3, MAX_SUS=10, WATCH=7, START_HP=3, START_COINS=5, MAX_ROUNDS=20;
-const CARDS=[
-{id:'attack',icon:'⚔️',name:'هجوم',sc:2,buy:3,target:true,desc:'تسبب −2❤️ لهدف حي.'},
-{id:'execute',icon:'💥',name:'ضربة قاضية',sc:4,buy:5,target:true,desc:'تسبب −3❤️. إذا أصبح الهدف 0 يموت.'},
-{id:'shield',icon:'🛡️',name:'درع',sc:-1,buy:2,desc:'تمنع أول هجوم يستهدفك هذا الدور.'},
-{id:'spy',icon:'👁️',name:'تجسس',sc:1,buy:2,target:true,desc:'ترى يد الهدف ورصيده.'},
-{id:'heal',icon:'💊',name:'شفاء',sc:-2,buy:3,desc:'تستعيد +2❤️ (حتى 3).'},
-{id:'bribe',icon:'💰',name:'رشوة',sc:3,buy:4,target:true,desc:'تنقل 3 شبهة بينك وبين الهدف: اختر رفعك أو رفعه.'},
-{id:'bomb',icon:'💣',name:'قنبلة ملعونة',curse:true,sc:0,buy:1,desc:'إذا بقيت في يدك حتى نهاية الجولة، +1🔍. إذا كانت يدك 3: −3❤️.'},
-{id:'poison',icon:'☠️',name:'سم ملعون',curse:true,sc:0,buy:1,desc:'أثناء الاحتفاظ بها: −1❤️ في نهاية كل جولة حتى تُلعب.'},
-{id:'mask',icon:'🎭',name:'قناع',sc:0,buy:4,desc:'يلغي تكلفة الشبهة لبطاقة خطيرة واحدة لعبتها هذا الدور. يُلعب بعد البطاقة داخل نفس الدور.'}
-];
-const EVENTS=[
-['سوق سوداء','الهجوم أرخص','attack',-1,'⚔️'],['هدوء مؤقت','الدرع أرخص','shield',-1,'🛡️'],['معلومات مسربة','التجسس أرخص','spy',-1,'👁️'],['أزمة طبية','الشفاء أرخص','heal',-1,'💊'],['فوضى الشوارع','ضربة قاضية أغلى','execute',2,'💥'],['فساد علني','الرشوة أرخص','bribe',-1,'💰']
-];
-let state={screen:'setup',playerCount:4,players:[],deck:[],discard:[],market:[],round:1,event:null,phase:'event',turnIndex:0,drawn:null,turnPlays:0,turnPaidSusp:[],shielded:false,maskAvailable:false,pendingBid:null,ghostIndex:0,logs:[],winner:null,error:''};
-const $=s=>document.querySelector(s); const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a}
-function alive(){return state.players.filter(p=>p.alive)} function dead(){return state.players.filter(p=>!p.alive)}
-function addLog(x){state.logs.push(x);if(state.logs.length>60)state.logs.shift()}
-function cardTemplate(c){return {...c,uid:c.id+'_'+Math.random().toString(36).slice(2,9)}}
-function buildDeck(){let d=[];for(const c of CARDS){const n=c.id==='attack'?6:c.id==='shield'?5:c.id==='heal'?4:c.id==='spy'?4:c.id==='bribe'?3:c.id==='mask'?2:c.id==='bomb'?3:c.id==='poison'?3:2;for(let i=0;i<n;i++)d.push(cardTemplate(c));}return shuffle(d)}
-function getCard(id){return CARDS.find(c=>c.id===id)}
-function startGame(){
- const inputs=[...document.querySelectorAll('[data-name]')]; const names=inputs.map((x,i)=>x.value.trim()||`اللاعب ${i+1}`);
- state.players=names.map((name,i)=>({id:i,name,hp:START_HP,coins:START_COINS,susp:0,hand:[],alive:true,shield:false,maskedCard:null,spyReveal:null}));
- state.deck=buildDeck();state.discard=[];state.market=shuffle(CARDS.map(cardTemplate)).slice(0,3);state.round=1;state.turnIndex=0;state.turnPlays=0;state.phase='event';state.logs=[];state.winner=null;state.error='';state.event=randomEvent();addLog(`🌅 بدأَت اللعبة: ${state.event[0]}.`);state.screen='game';render();}
-function randomEvent(){const e=EVENTS[Math.floor(Math.random()*EVENTS.length)];return {name:e[0],text:e[1],cardId:e[2],delta:e[3],icon:e[4]}}
-function price(c){let p=c.buy;if(state.event?.cardId===c.id)p+=state.event.delta;return Math.max(0,p)}
-function addSusp(p,delta){const before=p.susp;p.susp=Math.max(0,Math.min(MAX_SUS,p.susp+delta));return p.susp-before}
-function current(){return state.players[state.turnIndex]}
-function watcher(p){return p.susp>=WATCH}
-function removeCardFromHand(p,uid){const i=p.hand.findIndex(c=>c.uid===uid);return i<0?null:p.hand.splice(i,1)[0]}
-function drawFor(p){if(!state.deck.length&&state.discard.length){state.deck=shuffle(state.discard);state.discard=[]}return state.deck.pop()}
-function refillMarket(){while(state.market.length<3){if(!state.deck.length&&state.discard.length){state.deck=shuffle(state.discard);state.discard=[]}const c=state.deck.pop();if(!c)break;state.market.push(c)}}
-function beginTurn(){
- const a=alive();if(!a.length)return endGame(null);if(state.turnIndex>=state.players.length||!state.players[state.turnIndex].alive){state.turnIndex=state.players.findIndex(p=>p.alive)}
- const p=current();state.turnPlays=0;state.shielded=false;state.maskAvailable=false;state.drawn=null;p.spyReveal=null;
- const c=drawFor(p);if(c)state.drawn=c;state.phase='turn';state.screen='private';render();
-}
-function beginRound(){state.round++;if(state.round>MAX_ROUNDS){endByScore();return}state.event=randomEvent();state.protectedRound=new Set();state.logs.push(`🌅 الجولة ${state.round}: ${state.event.icon} ${state.event.name} — ${state.event.text}.`);state.turnsThisRound=0;state.turnIndex=state.players.findIndex(p=>p.alive);state.phase='market';state.screen='game';render()}
-function endByScore(){const a=alive().sort((x,y)=>(y.hp+y.susp+y.coins)-(x.hp+x.susp+x.coins));endGame(a[0]||null)}
-function eliminate(p,reason){if(!p.alive)return;p.alive=false;p.hp=0;state.discard.push(...p.hand);p.hand=[];addLog(`☠️ ${p.name} خرج من اللعبة${reason?` — ${reason}`:''}.`);if(alive().length<=1)endGame(alive()[0]||null)}
-function endGame(w){state.winner=w;state.phase='end';state.screen='game'}
-function paySusp(p,c,override){const cost=override??c.sc;const actual=watcher(p)&&cost>0?cost+1:cost;const before=p.susp;p.susp=Math.max(0,Math.min(MAX_SUS,p.susp+actual));return p.susp-before}
-function useCard(p,c,targetId,opts={}){
- const t=targetId==null?null:state.players.find(x=>x.id===Number(targetId));let extra=0;
- if(c.id==='mask'){state.maskAvailable=true;addLog(`🎭 ${p.name} يستعد لإخفاء بطاقة.`);return {ok:true,spent:0}}
- const cost=state.maskAvailable&&c.sc>0?0:c.sc; const delta=paySusp(p,c,cost); if(delta!==cost && cost>0) extra=delta; // cap can reduce actual cost at max
- switch(c.id){
- case'attack':if(!t||!t.alive)return fail(p,c,'هدف غير صالح');if(state.protectedRound?.has(t.id))return fail(p,c,'🛡️ الهدف محمي');if(t.shield){t.shield=false;addLog(`🛡️ درع ${t.name} صد هجوم ${p.name}.`);return {ok:true,spent:delta}}t.hp=Math.max(0,t.hp-2);addLog(`⚔️ ${p.name} هاجم ${t.name} (−2❤️).`);if(t.hp<=0)eliminate(t,'هجوم');break;
- case'execute':if(!t||!t.alive)return fail(p,c,'هدف غير صالح');if(state.protectedRound?.has(t.id))return fail(p,c,'🛡️ الهدف محمي');if(t.shield){t.shield=false;addLog(`🛡️ درع ${t.name} صد الضربة القاضية.`);return {ok:true,spent:delta}}t.hp=Math.max(0,t.hp-3);addLog(`💥 ${p.name} استخدم ضربة قاضية على ${t.name} (−3❤️).`);if(t.hp<=0)eliminate(t,'ضربة قاضية');break;
- case'shield':p.shield=true;state.protectedRound=state.protectedRound||new Set();state.protectedRound.add(p.id);addLog(`🛡️ ${p.name} فعّل درعًا.`);break;
- case'spy':if(!t||!t.alive)return fail(p,c,'هدف غير صالح');p.spyReveal={target:t.id,hand:t.hand.map(x=>x.id),coins:t.coins};addLog(`👁️ ${p.name} تجسس على ${t.name}.`);break;
- case'heal':p.hp=Math.min(START_HP,p.hp+2);addLog(`💊 ${p.name} استعاد ❤️.`);break;
- case'bribe':if(!t||!t.alive)return fail(p,c,'هدف غير صالح');showBribeDecision(p,t);return {ok:true,spent:delta,delayed:true};
- case'bomb':addLog(`💣 ${p.name} لعب القنبلة وأفلت من لعنتها.`);break;
- case'poison':addLog(`☠️ ${p.name} تخلّص من السم قبل أن يؤذيه.`);break;
- }
- if(state.maskAvailable&&c.sc>0){state.maskAvailable=false;addLog(`🎭 القناع أخفى شبهة ${c.name}.`)}
- return {ok:true,spent:delta};
-}
-function fail(p,c,why){addLog(`⚠️ ${p.name}: لم تُنفذ ${c.name} (${why}).`);return {ok:false,spent:0}}
-function finalizeTurn(){
- const p=current();
- if(state.drawn){state.discard.push(state.drawn);state.drawn=null}
- if(p.hand.length>MAX_HAND){const over=p.hand.splice(MAX_HAND);state.discard.push(...over)}
- if(state.turnPlays===0 && p.hand.length===MAX_HAND){const d=addSusp(p,1);if(d)addLog(`🃏 ${p.name} يحتفظ بيد ممتلئة (+${d}🔍).`)}
- state.turnsThisRound=(state.turnsThisRound||0)+1;
- if(alive().length<=1){endGame(alive()[0]||null);return}
- if(state.turnsThisRound>=alive().length){state.turnsThisRound=0;afterRound();return}
- let next=state.players.findIndex((x,i)=>i>state.turnIndex&&x.alive);if(next<0)next=state.players.findIndex(x=>x.alive);
- state.turnIndex=next;beginTurn();
-}
-function playDrawn(uid){const p=current();if(!state.drawn)return;const c=state.drawn;if(c.target){chooseTarget(c,'drawn');return}if(c.id==='bribe'){chooseTarget(c,'drawn');return}useAndContinue(c,'drawn',null)}
-function useAndContinue(c,source,target){const p=current();const original=source==='drawn'?state.drawn:removeCardFromHand(p,c.uid);if(!original)return;const r=useCard(p,original,target);if(r.delayed)return;state.turnPlays++;if(source==='drawn')state.drawn=null;state.discard.push(original);afterPlay()} 
-function afterPlay(){if(state.turnPlays>=2){finalizeTurn();return}render()}
-function chooseTarget(c,source){const p=current();const targets=alive().filter(x=>x.id!==p.id);state.screen='private';state.phase='target';state.targetContext={card:c,source};render(targets)}
-function completeTarget(targetId){const p=current(),ctx=state.targetContext;const c=ctx.card;const original=ctx.source==='drawn'?state.drawn:removeCardFromHand(p,c.uid);if(!original)return;const r=useCard(p,original,targetId);if(r.delayed){state.pendingBribe={pId:p.id,c:original,targetId};return}state.turnPlays++;if(ctx.source==='drawn')state.drawn=null;state.discard.push(original);state.targetContext=null;afterPlay()}
-function buyMarket(index){const p=current(),c=state.market[index];if(!c)return;if(p.coins<price(c)||p.hand.length>=MAX_HAND){render();return}const paid=price(c);p.coins-=paid;p.hand.push(c);state.market.splice(index,1);refillMarket();addLog(`🛒 ${p.name} اشترى ${c.name} مقابل ${paid}💰.`);render()}
-function keepDrawn(){const p=current();if(!state.drawn||p.hand.length>=MAX_HAND)return;const c=state.drawn;p.hand.push(c);state.drawn=null;addLog(`🎴 ${p.name} احتفظ ببطاقة.`);render()}
-function discardDrawn(){const p=current();if(!state.drawn)return;state.discard.push(state.drawn);state.drawn=null;p.hp=Math.max(0,p.hp-1);addLog(`🗑️ ${p.name} رمى بطاقة وخسر −1❤️.`);if(p.hp<=0)eliminate(p,'الرمي');render()}
-function playHand(uid){const p=current(),c=p.hand.find(x=>x.uid===uid);if(!c)return;if(c.target||c.id==='bribe'){chooseTarget(c,'hand');return}useAndContinue(c,'hand',null)}
-function showBribeDecision(p,t){state.phase='bribe';state.pendingBribe={pId:p.id,targetId:t.id};render()}
-function resolveBribe(mode){const p=state.players.find(x=>x.id===state.pendingBribe.pId),t=state.players.find(x=>x.id===state.pendingBribe.targetId);if(mode==='self'){addSusp(p,3);addSusp(t,-3);addLog(`💰 ${p.name} حوّل 3🔍 لنفسه من ${t.name}.`)}else{addSusp(p,-3);addSusp(t,3);addLog(`💰 ${p.name} حوّل 3🔍 إلى ${t.name}.`)}state.pendingBribe=null;state.turnPlays++;state.targetContext=null;afterPlay()}
-function afterRound(){
- const a=alive();
- // 👻 الأشباح أولًا: كل ميت يغير شبهة لاعب حي بمقدار ±1.
- for(const d of dead()){const living=alive();if(!living.length)break;const w=living[Math.floor(Math.random()*living.length)];const delta=Math.random()<.5?-1:1;addSusp(w,delta);addLog(`👻 شبح ${d.name} ${delta>0?`زاد`:`خفض`} شبهة ${w.name} (${delta>0?'+1':'−1'}🔍).`)}
- if(alive().length<=1){endGame(alive()[0]||null);return}
- // ⚖️ بعدها تأتي المواجهة السرية.
- state.phase='confront';state.screen='private';state.bidIndex=state.players.findIndex(p=>p.alive);state.bids=[];render();
-}
-function endRoundCleanup(){
- const a=alive();
- // 🌙 نهاية الجولة: اللعنات ثم انخفاض الشبهة الطبيعي.
- a.forEach(p=>{const poisons=p.hand.filter(c=>c.id==='poison');if(poisons.length){p.hp=Math.max(0,p.hp-poisons.length);addLog(`☠️ سم ${p.name}: −${poisons.length}❤️.`);if(p.hp<=0)eliminate(p,'السم')}})
- alive().forEach(p=>{const bombs=p.hand.filter(c=>c.id==='bomb');if(bombs.length){addSusp(p,1);addLog(`💣 ${p.name}: القنبلة +1🔍.`);if(p.hand.length>=MAX_HAND){p.hp=Math.max(0,p.hp-3);addLog(`💥 القنبلة انفجرت داخل يد ${p.name}: −3❤️.`);if(p.hp<=0)eliminate(p,'القنبلة')}}})
- alive().forEach(p=>addSusp(p,-1));
- if(alive().length<=1){endGame(alive()[0]||null);return}
- state.phase='reveal';state.screen='game';render();
-}
-function nextBidPlayer(){let i=state.players.findIndex((p,idx)=>idx>state.bidIndex&&p.alive);if(i<0)i=state.players.findIndex(p=>p.alive);state.bidIndex=i;if(state.bids.length>=alive().length){resolveBids();return}render()}
-function submitBid(targetId,bid){const p=state.players[state.bidIndex];if(!p||!p.alive)return;bid=Math.max(0,Math.min(p.susp,bid));state.bids.push({pId:p.id,targetId:Number(targetId),bid});addLog(`⚖️ ${p.name} وضع رهانًا سريًا.`);if(state.bids.length>=alive().length){resolveBids();return}nextBidPlayer()}
-function resolveBids(){
- const max=Math.max(0,...state.bids.map(b=>b.bid));const top=state.bids.filter(b=>b.bid===max&&b.bid>0);if(top.length===1){const b=top[0],p=state.players.find(x=>x.id===b.pId),t=state.players.find(x=>x.id===b.targetId);if(t?.alive){p.susp-=b.bid;addSusp(t,b.bid);t.hp=Math.max(0,t.hp-b.bid);addLog(`⚖️ ${p.name} فاز بالمواجهة: ${t.name} −${b.bid}❤️، والرهان انتقل إليه.`);if(t.hp<=0)eliminate(t,'المواجهة')}}else if(max>0){addLog(`⚖️ تعادل أعلى رهان (${max}) — لا أحد يفوز.`)}else addLog('⚖️ لا رهان هذه الجولة.');
- if(alive().length<=1){endGame(alive()[0]||null);return}endRoundCleanup();
-}
-function restart(){state={screen:'setup',playerCount:4,players:[],deck:[],discard:[],market:[],round:1,event:null,phase:'event',turnIndex:0,drawn:null,turnPlays:0,logs:[],winner:null,error:''};render()}
-function renderSetup(){state.screen='setup';document.getElementById('app').innerHTML=`<main class="center"><section class="panel setup"><div class="hero"><div class="eyebrow">أثر الشبهة — النظام الجديد</div><h1>رصيد + بطاقات + شبهة</h1><p class="muted">عشوائية في الأدوات، واستراتيجية في توقيت استخدامها.</p></div><h3>عدد اللاعبين</h3><div class="count">${[3,4,5,6].map(n=>`<button class="${state.playerCount===n?'active':''}" data-count="${n}">${n}</button>`).join('')}</div><div class="section"><h3>الأسماء</h3><div class="grid">${Array.from({length:state.playerCount},(_,i)=>`<input data-name="${i}" placeholder="اللاعب ${i+1}" value="${esc(state.players[i]?.name||'')}">`).join('')}</div></div><div class="section legend"><div>❤️ 3 حياة لكل لاعب</div><div>💰 5 عملات البداية</div><div>🔍 0–10 شبهة</div><div>🃏 يد بحد أقصى 3</div><div>👁️ الشبهة مرئية، اليد سرية</div><div>⚖️ مواجهة سرية في نهاية الجولة</div></div><button id="start" class="btn primary full" style="margin-top:18px">🚀 بدء اللعبة</button></section></main>`;document.querySelectorAll('[data-count]').forEach(b=>b.onclick=()=>{state.playerCount=+b.dataset.count;render()});$('#start').onclick=startGame}
-function playerCard(p,active=false){return `<article class="player ${p.alive?'':'dead'} ${watcher(p)?'watcher':''} ${active?'current':''}"><div class="name"><span>${esc(p.name)} ${watcher(p)?'👁️':''}</span><span class="muted">${p.alive?'حي':'ميت'}</span></div><div class="stats"><span class="stat hp">❤️ ${p.hp}</span><span class="stat coin">💰 ${p.coins}</span><span class="stat sus">🔍 ${p.susp}</span></div><div class="bar"><span style="width:${p.susp/MAX_SUS*100}%"></span></div></article>`}
-function renderGame(){
- const a=alive(); if(state.phase==='end'){document.getElementById('app').innerHTML=`<main class="center"><section class="panel" style="width:min(900px,100%);text-align:center"><div class="eyebrow">🏁 النهاية</div><h1 style="margin:8px 0">${state.winner?`👑 ${esc(state.winner.name)} يفوز!`:'لا فائز'}</h1><p class="muted">${state.winner?'آخر لاعب حي أو الفائز وفق المواجهة النهائية.':'انتهت اللعبة بلا فائز.'}</p><div class="players grid">${state.players.map(p=>playerCard(p,p.id===state.winner?.id)).join('')}</div><button class="btn primary full" id="restart">لعبة جديدة</button></section></main>`;$('#restart').onclick=restart;return}
- document.getElementById('app').innerHTML=`<main class="shell"><div class="top"><div><div class="eyebrow">أثر الشبهة</div><h1 style="font-size:30px;margin:4px 0">الجولة ${state.round}</h1></div><div class="round">${state.phase==='market'?'🏪 السوق':state.phase==='turn'?'⚡ اللعب':state.phase==='confront'?'⚖️ المواجهة':'🌅 الحدث'}</div></div><div class="event"><div style="font-size:34px">${state.event?.icon||'🌅'}</div><h2>${esc(state.event?.name||'حدث')}</h2><div>${esc(state.event?.text||'')}</div>${state.event?`<div class="muted">السعر يتغير لـ ${esc(getCard(state.event.cardId).name)}: ${state.event.delta>0?'+':''}${state.event.delta}💰</div>`:''}</div><div class="players grid">${state.players.map(p=>playerCard(p,p.id===current()?.id&&p.alive)).join('')}</div>${state.phase==='market'?renderMarket():state.phase==='turn'?renderLogPanel():state.phase==='reveal'?renderReveal():renderLogPanel()}</main>`
- if(state.phase==='market')$('#beginRound')?.addEventListener('click',()=>beginTurn());
-}
-function renderMarket(){return `<section class="panel"><div class="top"><h2>🏪 السوق</h2><span class="muted">البطاقات مكشوفة للجميع، والشراء سري أثناء مرحلة اللاعب.</span></div><div class="market">${state.market.map((c,i)=>`<div class="market-card"><div class="title"><strong>${c.icon} ${esc(c.name)}</strong><span class="tag">${price(c)}💰</span></div><div class="muted" style="margin-top:8px">${esc(c.desc)}</div></div>`).join('')}</div><div class="notice">كل لاعب سيأخذ بطاقة مجانية عشوائية ثم يقرر: لعب، احتفاظ، شراء، أو رمي −1❤️.</div><button class="btn primary full" style="margin-top:12px" id="beginRound">ابدأ دور اللاعبين</button><div class="log" style="margin-top:14px">${state.logs.slice(-8).map(x=>`<div>${x}</div>`).join('')}</div></section>`}
-function renderTurnsNotice(){return `<section class="panel"><h2>⚡ مرحلة اللعب</h2><p>يتم تمرير الجهاز للاعب الحالي ليختار حتى بطاقتين. بعد ذلك ينتقل الدور تلقائيًا.</p><button class="btn primary full" id="goTurn">إلى اللاعب التالي/الحالي</button><div class="log" style="margin-top:12px">${state.logs.slice(-10).map(x=>`<div>${x}</div>`).join('')}</div></section>`}
-function renderReveal(){return `<section class="panel"><h2>🌙 نهاية الجولة</h2><p>تمت تسوية الأشباح والمواجهة. الآن تنخفض الشبهة الطبيعية بمقدار 1 للجميع، ثم تبدأ الجولة التالية.</p><button class="btn primary full" id="nextRound">الجولة التالية</button><div class="log" style="margin-top:12px">${state.logs.slice(-12).map(x=>`<div>${x}</div>`).join('')}</div></section>`}
-function renderLogPanel(){return `<section class="panel"><h2>📜 سجل الجولة</h2><div class="log">${state.logs.slice(-15).map(x=>`<div>${x}</div>`).join('')}</div></section>`}
-function renderPrivate(){const p=current();if(!p?.alive){state.screen='game';render();return}if(state.phase==='target')return renderTarget(p);if(state.phase==='bribe')return renderBribe();if(state.phase==='confront')return renderBid();return renderTurnPrivate(p)}
-function privWrap(body){document.getElementById('app').innerHTML=`<main class="private"><section class="panel">${body}</section></main>`}
-function renderTurnPrivate(p){const c=state.drawn;privWrap(`<div class="top"><div><div class="eyebrow">سري — ${esc(p.name)}</div><h2>دورك</h2></div><div class="round">${p.turnPlays||state.turnPlays}/2 بطاقات</div></div><div class="notice">❤️ ${p.hp} &nbsp; 💰 ${p.coins} &nbsp; 🔍 ${p.susp}${watcher(p)?' — 👁️ مُراقَب':''} &nbsp; 🃏 ${p.hand.length}/${MAX_HAND}</div>${c?`<div class="section"><div class="card ${c.curse?'curse':''}"><div class="icon">${c.icon}</div><h3>${esc(c.name)}</h3><div class="scost">تكلفة الشبهة: ${c.sc>0?'+'+c.sc:c.sc}</div><small>${esc(c.desc)}</small><div class="choice-grid" style="margin-top:12px"><button class="choice" id="useDraw">⚡ لعب الآن</button><button class="choice" id="keepDraw" ${p.hand.length>=MAX_HAND?'disabled':''}>🎴 احتفظ في اليد</button><button class="choice" id="discardDraw">🗑️ رمي (−1❤️)</button></div></div></div>`:`<div class="danger-box">لا توجد بطاقة متاحة للسحب.</div>`}<div class="section"><h3>🖐️ يدك</h3><div class="cards">${p.hand.map(c=>`<button class="card ${c.curse?'curse':''}" data-card="${c.uid}"><div class="icon">${c.icon}</div><strong>${esc(c.name)}</strong><small>${esc(c.desc)}</small><div class="scost">${c.sc>0?'+'+c.sc:c.sc}🔍</div></button>`).join('')}</div></div><div class="section"><h3>🏪 السوق</h3><div class="market">${state.market.map((m,i)=>`<div class="market-card"><div class="title"><strong>${m.icon} ${esc(m.name)}</strong><span class="tag">${price(m)}💰</span></div><div class="muted">${esc(m.desc)}</div><button class="btn gold full" style="margin-top:10px" data-buy="${i}" ${p.coins<price(m)||p.hand.length>=MAX_HAND?'disabled':''}>شراء</button></div>`).join('')}</div></div><button class="btn primary full" id="finishTurn" style="margin-top:14px">✅ إنهاء دوري</button>`);
- if($('#useDraw'))$('#useDraw').onclick=()=>playDrawn();if($('#keepDraw'))$('#keepDraw').onclick=keepDrawn;if($('#discardDraw'))$('#discardDraw').onclick=discardDrawn;if($('#finishTurn'))$('#finishTurn').onclick=finalizeTurn;document.querySelectorAll('[data-card]').forEach(b=>b.onclick=()=>playHand(b.dataset.card));document.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>buyMarket(+b.dataset.buy));}
-function renderTarget(p){const ctx=state.targetContext||{card:state.drawn,source:'drawn'};privWrap(`<div class="eyebrow">${ctx.card.icon} ${esc(ctx.card.name)}</div><h2>اختر الهدف</h2><div class="target-grid">${alive().filter(t=>t.id!==p.id).map(t=>`<button class="target" data-target="${t.id}"><strong>${esc(t.name)}</strong><small>❤️${t.hp} • 💰${t.coins} • 🔍${t.susp}</small></button>`).join('')}</div><button class="btn full" id="backTarget" style="margin-top:12px">رجوع</button>`);document.querySelectorAll('[data-target]').forEach(b=>b.onclick=()=>completeTarget(b.dataset.target));$('#backTarget').onclick=()=>{state.targetContext=null;renderTurnPrivate(p)} }
-function renderBribe(){const p=state.players.find(x=>x.id===state.pendingBribe.pId),t=state.players.find(x=>x.id===state.pendingBribe.targetId);privWrap(`<div class="eyebrow">💰 رشوة</div><h2>${esc(p.name)}</h2><p>اختر أين تذهب الـ3 شبهة.</p><div class="choice-grid"><button class="choice" id="toSelf">⬆️ +3 لك / −3 من ${esc(t.name)}</button><button class="choice" id="toTarget">⬇️ −3 لك / +3 لـ ${esc(t.name)}</button></div>`);$('#toSelf').onclick=()=>resolveBribe('self');$('#toTarget').onclick=()=>resolveBribe('target')}
-function renderBid(){const p=state.players[state.bidIndex];if(!p?.alive){nextBidPlayer();return}privWrap(`<div class="eyebrow">⚖️ مواجهة سرية</div><h2>${esc(p.name)}</h2><p>اختر هدفًا وحدد رهانًا من 0 حتى شبهتك. أعلى رهان منفرد يسبب ضررًا مساويًا له، وينقل الرهان إلى الهدف.</p><div class="target-grid">${alive().filter(t=>t.id!==p.id).map(t=>`<button class="target" data-btarget="${t.id}"><strong>${esc(t.name)}</strong><small>❤️${t.hp} • 🔍${t.susp}</small></button>`).join('')}</div><div class="notice" style="margin-top:12px">💡 شبهتك الحالية: ${p.susp}</div><div class="choice-grid" style="margin-top:12px"><input id="bidInput" type="number" min="0" max="${p.susp}" value="0"><button class="btn primary" id="submitBid">وضع الرهان</button></div>`);let chosen=null;document.querySelectorAll('[data-btarget]').forEach(b=>b.onclick=()=>{chosen=b.dataset.btarget;document.querySelectorAll('[data-btarget]').forEach(x=>x.style.outline='none');b.style.outline='2px solid #a78bfa'});$('#submitBid').onclick=()=>{if(chosen==null){alert('اختر هدفًا');return}submitBid(chosen,+$('#bidInput').value||0)} }
-function render(){if(state.screen==='setup')return renderSetup();if(state.screen==='private')return renderPrivate();return renderGame()}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لعبة المحكمة السرية - Secret Court Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --accent-gold: #f59e0b;
+      --accent-red: #ef4444;
+      --accent-green: #10b981;
+      --accent-purple: #8b5cf6;
+      --accent-blue: #06b6d4;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
 
-document.addEventListener('click',e=>{if(e.target.id==='goTurn'){beginTurn()}if(e.target.id==='nextRound'){beginRound()}});render();
-</script></body></html>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 650px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid var(--card-border);
+      padding-bottom: 1rem;
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--accent-gold);
+      letter-spacing: 1px;
+    }
+
+    .header p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Buttons & Inputs */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 0.85rem 1.2rem;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .btn-primary { background: var(--accent-gold); color: #000; }
+    .btn-primary:hover { background: #d97706; }
+
+    .btn-danger { background: var(--accent-red); color: #fff; }
+    .btn-danger:hover { background: #dc2626; }
+
+    .btn-purple { background: var(--accent-purple); color: #fff; }
+    .btn-purple:hover { background: #7c3aed; }
+
+    .btn-secondary { background: var(--card-border); color: var(--text-main); }
+    .btn-secondary:hover { background: #475569; }
+
+    .input-group {
+      margin-bottom: 1rem;
+    }
+
+    .input-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-muted);
+    }
+
+    .input-control {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 10px;
+      border: 1px solid var(--card-border);
+      background: #0f172a;
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    /* Players Setup List */
+    .player-inputs {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Pass and Play Screen */
+    .pass-box {
+      text-align: center;
+      padding: 3rem 1rem;
+    }
+
+    .pass-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* Secret Dashboard */
+    .badge {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .badge-score { background: rgba(245, 158, 11, 0.2); color: var(--accent-gold); border: 1px solid var(--accent-gold); }
+    .badge-status { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); border: 1px solid var(--accent-green); }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+      margin: 1rem 0;
+    }
+
+    .card-item {
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .card-item:hover {
+      border-color: var(--accent-gold);
+      transform: translateY(-2px);
+    }
+
+    .card-item.selected {
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+      background: #1e1b4b;
+    }
+
+    .card-cost {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    .cost-1 { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+    .cost-4 { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+
+    .card-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .card-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.2;
+    }
+
+    .player-select-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    .player-option {
+      padding: 0.8rem;
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .player-option.selected {
+      border-color: var(--accent-purple);
+      background: #2e1065;
+    }
+
+    /* Court & Clue Box */
+    .clue-card {
+      background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+      border: 1px solid var(--accent-purple);
+      border-radius: 14px;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .clue-title {
+      color: var(--accent-purple);
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .event-card {
+      background: linear-gradient(135deg, #451a03 0%, #0f172a 100%);
+      border: 1px solid var(--accent-gold);
+      border-radius: 14px;
+      padding: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .event-title {
+      color: var(--accent-gold);
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .vote-item {
+      padding: 0.8rem;
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .score-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+
+    .score-table th, .score-table td {
+      padding: 0.75rem;
+      text-align: right;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .score-table th { color: var(--text-muted); font-size: 0.85rem; }
+
+    .loading-spinner {
+      text-align: center;
+      padding: 2rem;
+      color: var(--accent-gold);
+      font-weight: 700;
+    }
+
+    .secret-msg-box {
+      background: #0284c7;
+      color: #fff;
+      padding: 0.8rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>⚖️ المحكمة السرية</h1>
+    <p>لعبة الخداع، السمعة والمكائد الاستراتيجية</p>
+  </div>
+
+  <!-- SCREEN 1: Setup Game -->
+  <div id="screen-setup" class="screen active">
+    <h2 style="margin-bottom: 1rem;">إعداد اللعبة</h2>
+    <div class="input-group">
+      <label>عدد اللاعبات / اللاعبين (3 - 8):</label>
+      <input type="number" id="player-count" class="input-control" value="4" min="3" max="8">
+    </div>
+    
+    <div class="player-inputs" id="player-names-container">
+      <!-- Generated dynamically -->
+    </div>
+
+    <div class="input-group">
+      <label>رصيد السمعة الابتدائي:</label>
+      <input type="number" id="initial-score" class="input-control" value="10" min="5" max="20">
+    </div>
+
+    <button class="btn btn-primary" onclick="startGame()">بدء المحاكمة 🚀</button>
+  </div>
+
+  <!-- SCREEN 2: Pass and Play Interstitial -->
+  <div id="screen-pass" class="screen">
+    <div class="pass-box">
+      <div class="pass-icon">📱</div>
+      <h2>انقل الهاتف الآن إلى:</h2>
+      <h1 id="next-player-name" style="color: var(--accent-gold); margin: 1rem 0; font-size: 2.5rem;">سارة</h1>
+      <p style="color: var(--text-muted); margin-bottom: 1.5rem;">يرجى التأكد من عدم رؤية بقية اللاعبين للشاشة!</p>
+      <button class="btn btn-purple" onclick="openSecretTurn()">🔒 اضغط للفتح السرّي</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: Secret Player Turn -->
+  <div id="screen-turn" class="screen">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h2 id="current-player-title">واجهة سارة السرية</h2>
+      <div>
+        <span class="badge badge-score" id="current-player-score">السمعة: 10</span>
+      </div>
+    </div>
+
+    <div id="frozen-banner" style="display: none; background: #1e3a8a; padding: 1rem; border-radius: 12px; text-align: center; margin-bottom: 1rem; border: 1px solid #3b82f6;">
+      ❄️ <strong>أنتِ مجمدة في هذه الجولة!</strong> تم تعطيل استخدام الشراء والبطاقات.
+    </div>
+
+    <div id="turn-actions-area">
+      <div id="secret-message-display" class="secret-msg-box" style="display: none;"></div>
+
+      <p style="font-weight: 700; margin-bottom: 0.5rem;">اختر إجراءً لهذه الجولة (أو تخطَّ):</p>
+
+      <div class="card-grid">
+        <!-- 1 Seme Cards -->
+        <div class="card-item" onclick="selectCard('deduct', 1, this)">
+          <span class="card-cost cost-1">1 سمعة</span>
+          <div class="card-title">📉 خصم مباشر</div>
+          <div class="card-desc">خصم نقاط محددة من رصيد خصم.</div>
+        </div>
+
+        <div class="card-item" onclick="selectCard('steal', 1, this)">
+          <span class="card-cost cost-1">1 سمعة</span>
+          <div class="card-title">⚔️ هجوم وسرقة</div>
+          <div class="card-desc">سلب نقاط من خصم وإضافتها لرصيدك.</div>
+        </div>
+
+        <div class="card-item" onclick="selectCard('alliance', 1, this)">
+          <span class="card-cost cost-1">1 سمعة</span>
+          <div class="card-title">🤝 تحالف سرّي</div>
+          <div class="card-desc">تقاسم الخسائر ومضاعفة المكاسب مع شريك.</div>
+        </div>
+
+        <div class="card-item" onclick="selectCard('betrayal', 1, this)">
+          <span class="card-cost cost-1">1 سمعة</span>
+          <div class="card-title">🗡️ بطاقة الخيانة</div>
+          <div class="card-desc">فبركة دليل يفيد بأنك تعرضت للخيانة من خصم.</div>
+        </div>
+
+        <!-- 4 Seme Cards -->
+        <div class="card-item" onclick="selectCard('frame', 4, this)">
+          <span class="card-cost cost-4">4 سمعة</span>
+          <div class="card-title">🕵️ تشويه سمعة (كمين)</div>
+          <div class="card-desc">توجيه دليل الـ AI نحو بريء وتوريطه مع حصانتك.</div>
+        </div>
+
+        <div class="card-item" onclick="selectCard('swap', 4, this)">
+          <span class="card-cost cost-4">4 سمعة</span>
+          <div class="card-title">🔄 قلب السمعة</div>
+          <div class="card-desc">تبادل رصيدك بالكامل مع صاحب أعلى رصيد.</div>
+        </div>
+
+        <div class="card-item" onclick="selectCard('freeze', 4, this)">
+          <span class="card-cost cost-4">4 سمعة</span>
+          <div class="card-title">❄️ تجميد خصم</div>
+          <div class="card-desc">منع خصم من استخدام أي بطاقات الجولة القادمة.</div>
+        </div>
+
+        <div class="card-item" onclick="selectCard('shield_vote', 4, this)">
+          <span class="card-cost cost-4">4 سمعة</span>
+          <div class="card-title">🛡️ درع التصويت</div>
+          <div class="card-desc">حصانة مطلقة من نتائج التصويت في المحكمة.</div>
+        </div>
+      </div>
+
+      <!-- Target Selection -->
+      <div id="target-selection-area" style="display: none; margin-top: 1rem;">
+        <label id="target-label" style="font-weight: 700; color: var(--accent-gold);">اختر الهدف الإضافي:</label>
+        <div class="player-select-list" id="targets-container"></div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="confirmSecretTurn()">تأكيد الإنهاء وتسليم الهاتف ➔</button>
+  </div>
+
+  <!-- SCREEN 4: Loading AI Court Screen -->
+  <div id="screen-loading" class="screen">
+    <div class="loading-spinner">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">⚖️</div>
+      <h2>انتهت الجولة السريّة!</h2>
+      <p style="color: var(--text-muted); margin-top: 0.5rem;">جاري انعقاد المحكمة العليا وتحليل أدلة الذكاء الاصطناعي...</p>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: Court & Voting -->
+  <div id="screen-court" class="screen">
+    <h2 style="color: var(--accent-gold); text-align: center; margin-bottom: 1rem;">⚖️ قاعة المحكمة والتصويت</h2>
+
+    <!-- AI Clue Display -->
+    <div class="clue-card">
+      <div class="clue-title">🔍 دليل الجولة من الذكاء الاصطناعي:</div>
+      <p id="court-clue-text" style="font-size: 1.05rem; line-height: 1.5;">...</p>
+    </div>
+
+    <!-- AI Event Display -->
+    <div class="event-card">
+      <div class="event-title">🏛️ الحدث الهام الصادر عن الدولة:</div>
+      <p id="court-event-text" style="font-size: 1rem; line-height: 1.4;">...</p>
+    </div>
+
+    <!-- Voting Box (Pass-and-Play Secret Vote) -->
+    <div id="voting-area">
+      <p style="font-weight: 700; margin-bottom: 0.8rem;">التصويت السرّي الحالي للاعب: <span id="voter-name-title" style="color: var(--accent-gold);"></span></p>
+      <div class="player-select-list" id="vote-options-container"></div>
+      <button class="btn btn-danger" id="submit-vote-btn" onclick="submitSingleVote()">تسجيل الصوت والعدالة ⚖️</button>
+    </div>
+
+    <!-- Vote Resolution Summary Screen -->
+    <div id="court-results-area" style="display: none;">
+      <h3 style="color: var(--accent-green); margin-bottom: 0.8rem;">الحكم النهائي للمحكمة:</h3>
+      <div id="court-log-box" style="background: #0f172a; padding: 1rem; border-radius: 10px; margin-bottom: 1rem; line-height: 1.6;"></div>
+      
+      <h3>جدول السمعة المحدث:</h3>
+      <table class="score-table">
+        <thead>
+          <tr>
+            <th>اللاعب</th>
+            <th>السمعة الحالية</th>
+            <th>الحالة</th>
+          </tr>
+        </thead>
+        <tbody id="score-table-body"></tbody>
+      </table>
+
+      <button class="btn btn-primary" onclick="nextRound()">الانتقال للجولة التالية 🔄</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Game State Object
+  let gameState = {
+    players: [],
+    currentTurnIndex: 0,
+    roundNumber: 1,
+    initialScore: 10,
+    roundActions: [],
+    hostilePlayersThisRound: [],
+    isManipulated: false,
+    trapperId: null,
+    framedPlayerName: null,
+    betrayerName: null,
+    victimName: null,
+    votes: {},
+    currentVoterIndex: 0,
+    aiClue: null,
+    aiEvent: null,
+    selectedCard: null,
+    selectedTargetId: null,
+    selectedSecondaryTargetId: null
+  };
+
+  // Setup Dynamic Inputs
+  document.getElementById('player-count').addEventListener('change', generatePlayerInputs);
+
+  function generatePlayerInputs() {
+    const count = parseInt(document.getElementById('player-count').value) || 4;
+    const container = document.getElementById('player-names-container');
+    container.innerHTML = '';
+    
+    const defaultNames = ['سارة', 'أحمد', 'إيفا', 'ياسمين', 'مريم', 'عمر', 'خالد', 'فاطمة'];
+    for (let i = 0; i < count; i++) {
+      const name = defaultNames[i] || `لاعب ${i + 1}`;
+      container.innerHTML += `
+        <div class="input-group">
+          <input type="text" class="input-control player-name-input" value="${name}" placeholder="اسم اللاعب ${i + 1}">
+        </div>
+      `;
+    }
+  }
+  generatePlayerInputs();
+
+  // Start Game
+  function startGame() {
+    const nameInputs = document.querySelectorAll('.player-name-input');
+    const initialScore = parseInt(document.getElementById('initial-score').value) || 10;
+    
+    gameState.players = [];
+    nameInputs.forEach((input, index) => {
+      const name = input.value.trim() || `لاعب ${index + 1}`;
+      gameState.players.push({
+        id: `p_${index + 1}`,
+        name: name,
+        score: initialScore,
+        isFrozen: false,
+        hasVoteShield: false,
+        allianceWith: null,
+        secretMessage: null
+      });
+    });
+
+    gameState.initialScore = initialScore;
+    gameState.roundNumber = 1;
+    startRound();
+  }
+
+  // Start Round
+  function startRound() {
+    gameState.currentTurnIndex = 0;
+    gameState.roundActions = [];
+    gameState.hostilePlayersThisRound = [];
+    gameState.isManipulated = false;
+    gameState.trapperId = null;
+    gameState.framedPlayerName = null;
+    gameState.betrayerName = null;
+    gameState.victimName = null;
+    gameState.votes = {};
+
+    showPassScreen();
+  }
+
+  // Pass and Play Screen
+  function showPassScreen() {
+    const activePlayers = gameState.players.filter(p => p.score > 0);
+    if (gameState.currentTurnIndex >= activePlayers.length) {
+      // All players completed turns -> Go to AI Court processing
+      processCourtPhase();
+      return;
+    }
+
+    const currentPlayer = activePlayers[gameState.currentTurnIndex];
+    document.getElementById('next-player-name').innerText = currentPlayer.name;
+    switchScreen('screen-pass');
+  }
+
+  // Open Secret Player Screen
+  function openSecretTurn() {
+    const activePlayers = gameState.players.filter(p => p.score > 0);
+    const player = activePlayers[gameState.currentTurnIndex];
+
+    document.getElementById('current-player-title').innerText = `واجهة ${player.name} السرية`;
+    document.getElementById('current-player-score').innerText = `السمعة: ${player.score}`;
+
+    // Check Frozen
+    const frozenBanner = document.getElementById('frozen-banner');
+    const actionsArea = document.getElementById('turn-actions-area');
+    
+    if (player.isFrozen) {
+      frozenBanner.style.display = 'block';
+      actionsArea.style.display = 'none';
+      player.isFrozen = false; // reset for next round
+    } else {
+      frozenBanner.style.display = 'none';
+      actionsArea.style.display = 'block';
+    }
+
+    // Secret Message Check
+    const msgBox = document.getElementById('secret-message-display');
+    if (player.secretMessage) {
+      msgBox.style.display = 'block';
+      msgBox.innerText = `📩 رسالة سرية: ${player.secretMessage}`;
+      player.secretMessage = null;
+    } else {
+      msgBox.style.display = 'none';
+    }
+
+    // Reset selected cards UI
+    gameState.selectedCard = null;
+    gameState.selectedTargetId = null;
+    document.querySelectorAll('.card-item').forEach(c => c.classList.remove('selected'));
+    document.getElementById('target-selection-area').style.display = 'none';
+
+    switchScreen('screen-turn');
+  }
+
+  // Select Card Action
+  function selectCard(type, cost, element) {
+    const activePlayers = gameState.players.filter(p => p.score > 0);
+    const currentPlayer = activePlayers[gameState.currentTurnIndex];
+
+    if (currentPlayer.score < cost) {
+      alert('رصيد السمعة لديك غير كافٍ لشراء هذه البطاقة!');
+      return;
+    }
+
+    document.querySelectorAll('.card-item').forEach(c => c.classList.remove('selected'));
+    element.classList.add('selected');
+
+    gameState.selectedCard = { type, cost };
+    
+    // Render target selection list
+    const targetsContainer = document.getElementById('targets-container');
+    targetsContainer.innerHTML = '';
+    const otherPlayers = gameState.players.filter(p => p.id !== currentPlayer.id && p.score > 0);
+
+    otherPlayers.forEach(p => {
+      targetsContainer.innerHTML += `
+        <div class="player-option" onclick="selectTarget('${p.id}', this)">
+          <span>${p.name}</span>
+          <span style="font-size: 0.85rem; color: var(--text-muted);">سمعة: ${p.score}</span>
+        </div>
+      `;
+    });
+
+    document.getElementById('target-selection-area').style.display = 'block';
+  }
+
+  function selectTarget(targetId, el) {
+    document.querySelectorAll('.player-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    gameState.selectedTargetId = targetId;
+  }
+
+  // Confirm Secret Turn
+  function confirmSecretTurn() {
+    const activePlayers = gameState.players.filter(p => p.score > 0);
+    const currentPlayer = activePlayers[gameState.currentTurnIndex];
+
+    if (gameState.selectedCard) {
+      const targetPlayer = gameState.players.find(p => p.id === gameState.selectedTargetId);
+      
+      if (!targetPlayer && ['deduct', 'steal', 'alliance', 'betrayal', 'frame', 'freeze'].includes(gameState.selectedCard.type)) {
+        alert('يرجى اختيار اللاعب الهدف لتطبيق البطاقة!');
+        return;
+      }
+
+      // Deduct Card Cost
+      currentPlayer.score -= gameState.selectedCard.cost;
+
+      // Execute Action
+      switch (gameState.selectedCard.type) {
+        case 'deduct':
+          targetPlayer.score = Math.max(0, targetPlayer.score - 2);
+          gameState.hostilePlayersThisRound.push(currentPlayer.id);
+          gameState.roundActions.push(`${currentPlayer.name} خصم نقاطاً من ${targetPlayer.name}`);
+          break;
+
+        case 'steal':
+          targetPlayer.score = Math.max(0, targetPlayer.score - 2);
+          currentPlayer.score += 2;
+          gameState.hostilePlayersThisRound.push(currentPlayer.id);
+          gameState.roundActions.push(`${currentPlayer.name} سرق نقاطاً من ${targetPlayer.name}`);
+          break;
+
+        case 'alliance':
+          currentPlayer.allianceWith = targetPlayer.id;
+          targetPlayer.allianceWith = currentPlayer.id;
+          gameState.roundActions.push(`${currentPlayer.name} عقد تحالفاً مع ${targetPlayer.name}`);
+          break;
+
+        case 'betrayal':
+          gameState.betrayerName = targetPlayer.name;
+          gameState.victimName = currentPlayer.name;
+          gameState.roundActions.push(`حدثت خيانة بين ${currentPlayer.name} و ${targetPlayer.name}`);
+          break;
+
+        case 'frame':
+          gameState.isManipulated = true;
+          gameState.trapperId = currentPlayer.id;
+          gameState.framedPlayerName = targetPlayer.name;
+          gameState.roundActions.push(`${currentPlayer.name} نصب كمين تشويه سمعة لـ ${targetPlayer.name}`);
+          break;
+
+        case 'swap':
+          const highestPlayer = [...gameState.players].sort((a, b) => b.score - a.score)[0];
+          if (highestPlayer) {
+            const temp = currentPlayer.score;
+            currentPlayer.score = highestPlayer.score;
+            highestPlayer.score = temp;
+          }
+          gameState.roundActions.push(`${currentPlayer.name} قلب رصيده مع أعلى لاعب`);
+          break;
+
+        case 'freeze':
+          targetPlayer.isFrozen = true;
+          gameState.roundActions.push(`${currentPlayer.name} جمد قدرات ${targetPlayer.name}`);
+          break;
+
+        case 'shield_vote':
+          currentPlayer.hasVoteShield = true;
+          break;
+      }
+    }
+
+    gameState.currentTurnIndex++;
+    showPassScreen();
+  }
+
+  // AI Court Processing Phase
+  async function processCourtPhase() {
+    switchScreen('screen-loading');
+
+    try {
+      // 1. Fetch AI Clue
+      const clueRes = await fetch('/api/game?action=generate_clue', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          round_actions: gameState.roundActions,
+          is_manipulated: gameState.isManipulated,
+          framed_player: gameState.framedPlayerName,
+          betrayer: gameState.betrayerName,
+          victim: gameState.victimName
+        })
+      });
+      gameState.aiClue = await clueRes.json();
+
+      // 2. Fetch AI Event
+      const eventRes = await fetch('/api/game?action=generate_event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ players: gameState.players })
+      });
+      gameState.aiEvent = await eventRes.json();
+
+      // Apply Event Effects immediately
+      applyEventEffects(gameState.aiEvent);
+
+    } catch (e) {
+      console.error(e);
+      gameState.aiClue = { clue_text: 'تضاربت الأدلة في هذه الجولة وتشير الشكوك إلى الجميع!' };
+      gameState.aiEvent = { description: 'قررت المحكمة فرض استقرار عام بدون ضرائب.' };
+    }
+
+    // Start Court Voting
+    setupVoting();
+  }
+
+  function applyEventEffects(evt) {
+    if (!evt || !evt.action) return;
+    const sorted = [...gameState.players].sort((a, b) => b.score - a.score);
+
+    if (evt.action === 'deduct') {
+      if (evt.target === 'highest_score' && sorted[0]) sorted[0].score = Math.max(0, sorted[0].score - (evt.value || 2));
+      else if (evt.target === 'all') gameState.players.forEach(p => p.score = Math.max(0, p.score - (evt.value || 1)));
+    } else if (evt.action === 'add') {
+      if (evt.target === 'lowest_score' && sorted[sorted.length - 1]) sorted[sorted.length - 1].score += (evt.value || 2);
+    }
+  }
+
+  // Setup Court Voting
+  function setupVoting() {
+    document.getElementById('court-clue-text').innerText = gameState.aiClue.clue_text || '';
+    document.getElementById('court-event-text').innerText = gameState.aiEvent.description || '';
+
+    gameState.currentVoterIndex = 0;
+    gameState.votes = {};
+
+    document.getElementById('voting-area').style.display = 'block';
+    document.getElementById('court-results-area').style.display = 'none';
+
+    renderVoterTurn();
+    switchScreen('screen-court');
+  }
+
+  function renderVoterTurn() {
+    const activePlayers = gameState.players.filter(p => p.score > 0);
+    if (gameState.currentVoterIndex >= activePlayers.length) {
+      // All votes in -> Resolve court outcome
+      resolveCourtOutcome();
+      return;
+    }
+
+    const voter = activePlayers[gameState.currentVoterIndex];
+    document.getElementById('voter-name-title').innerText = voter.name;
+
+    const optionsContainer = document.getElementById('vote-options-container');
+    optionsContainer.innerHTML = '';
+
+    activePlayers.forEach(p => {
+      optionsContainer.innerHTML += `
+        <div class="vote-item" onclick="selectVoteTarget('${p.id}', this)">
+          <span>${p.name} ${p.id === voter.id ? '(أنت)' : ''}</span>
+        </div>
+      `;
+    });
+  }
+
+  let selectedVoteTargetId = null;
+  function selectVoteTarget(id, el) {
+    document.querySelectorAll('.vote-item').forEach(v => v.style.borderColor = 'var(--card-border)');
+    el.style.borderColor = 'var(--accent-red)';
+    selectedVoteTargetId = id;
+  }
+
+  function submitSingleVote() {
+    if (!selectedVoteTargetId) {
+      alert('الرجاء اختيار شخص للرد عليه أو اتهامه بالتصويت!');
+      return;
+    }
+
+    const activePlayers = gameState.players.filter(p => p.score > 0);
+    const voter = activePlayers[gameState.currentVoterIndex];
+    gameState.votes[voter.id] = selectedVoteTargetId;
+
+    selectedVoteTargetId = null;
+    gameState.currentVoterIndex++;
+    renderVoterTurn();
+  }
+
+  // Resolve Court Outcome & Penalties
+  async function resolveCourtOutcome() {
+    document.getElementById('voting-area').style.display = 'none';
+
+    // Count votes to find accused
+    const voteCounts = {};
+    Object.values(gameState.votes).forEach(accusedId => {
+      voteCounts[accusedId] = (voteCounts[accusedId] || 0) + 1;
+    });
+
+    let accusedId = Object.keys(voteCounts).reduce((a, b) => voteCounts[a] > voteCounts[b] ? a : b, gameState.players[0].id);
+
+    try {
+      const res = await fetch('/api/game?action=resolve_vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          accusedId,
+          votes: gameState.votes,
+          players: gameState.players,
+          trapperId: gameState.trapperId,
+          hostilesThisRound: gameState.hostilePlayersThisRound
+        })
+      });
+
+      const resultData = await res.json();
+      gameState.players = resultData.updatedPlayers;
+
+      // Render Court Log
+      const logBox = document.getElementById('court-log-box');
+      logBox.innerHTML = resultData.logMessages.map(m => `<p style="margin-bottom: 0.5rem;">🔹 ${m}</p>`).join('');
+
+    } catch (e) {
+      console.error(e);
+    }
+
+    // Render Updated Score Table
+    const tbody = document.getElementById('score-table-body');
+    tbody.innerHTML = '';
+    gameState.players.forEach(p => {
+      const status = p.score <= 0 ? '<span style="color:var(--accent-red)">💀 مستبعد</span>' : '<span style="color:var(--accent-green)">🟢 حي</span>';
+      tbody.innerHTML += `
+        <tr>
+          <td><strong>${p.name}</strong></td>
+          <td>${p.score}</td>
+          <td>${status}</td>
+        </tr>
+      `;
+    });
+
+    document.getElementById('court-results-area').style.display = 'block';
+  }
+
+  function nextRound() {
+    gameState.roundNumber++;
+    startRound();
+  }
+
+  // Helper Screen Switcher
+  function switchScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+  }
+</script>
+</body>
+</html>
